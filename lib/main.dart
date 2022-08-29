@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 void main() {
   runApp(const App());
 }
@@ -39,9 +38,6 @@ class MyFirstStatefulWidget extends StatefulWidget{
 class _MyFirstStatefulWidget extends State<MyFirstStatefulWidget>{
   int counter = 0;
 
-  String typeOfContext() {
-     return context.runtimeType.toString();
-   }
 
   @override
   Widget build(BuildContext context){
