@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:places/ui/screen/sight_list_screen.dart';
+
 void main() {
   runApp(const App());
 }
@@ -17,7 +18,6 @@ class App extends StatelessWidget {
 
 class MyFirstStatelessWidget extends StatelessWidget{
   int counter = 0;
-
   @override
   Widget build(BuildContext context){
     counter++;
@@ -33,13 +33,12 @@ class MyFirstStatelessWidget extends StatelessWidget{
 }
 
 class MyFirstStatefulWidget extends StatefulWidget{
-
   @override
   State<MyFirstStatefulWidget> createState() => _MyFirstStatefulWidget();  
+
 }
 class _MyFirstStatefulWidget extends State<MyFirstStatefulWidget>{
   int counter = 0;
-
 
   @override
   Widget build(BuildContext context){
