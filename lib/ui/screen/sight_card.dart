@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/domain/sight.dart';
 
@@ -15,23 +16,27 @@ class SightCard extends StatelessWidget{
         children:[ 
           Stack(
               children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
+                SizedBox(
+                  height: 96,
+                  width: 328,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(12),
                       topRight: Radius.circular(12),
                     ),
-                    color:Colors.blueAccent,
+                    child: Image.network(
+                      sight.url,
+                      loadingBuilder: (context, child, loadingProgress) => 
+                        loadingProgress == null? child : const CupertinoActivityIndicator(),
+                      fit: BoxFit.fitWidth,
+                    ),
                   ),
-                  height: 96,
-                  width: 328,
                 ),
-                Positioned(
+                const Positioned(
                   top:19,
                   right: 18,
-                  child: Container(
-                    height:20,
-                    width:20,
+                  child: Icon(
+                    Icons.favorite_outline,
                     color: Colors.white,
                   ),
                 ),
