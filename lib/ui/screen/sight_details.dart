@@ -1,10 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/domain/sight.dart';
 
 class SightDetailsScreen extends StatelessWidget{
   final Sight sight;
 
-  SightDetailsScreen(this.sight, {Key? key}) : super(key: key);
+  const SightDetailsScreen(this.sight, {Key? key}) : super(key: key);
 
   @override
    Widget build(BuildContext context) {
@@ -12,10 +13,15 @@ class SightDetailsScreen extends StatelessWidget{
       body: Column(
         children: [
           Stack(children: [
-            Container(
+            SizedBox(
               width: double.infinity,
-              color: Colors.blueAccent,
+              //color: Colors.blueAccent,
               height: 360,
+              child: Image.network(
+                sight.url,
+                loadingBuilder: (context, child, loadingProgress) => loadingProgress == null?child : const CupertinoActivityIndicator(),
+                fit: BoxFit.fitHeight,
+              ),
             ),
             Positioned(
               top:36,
