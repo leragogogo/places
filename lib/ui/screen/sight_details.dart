@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/domain/sight.dart';
+import 'package:places/ui/screen/res/app_colors.dart';
+import 'package:places/ui/screen/res/app_strings.dart';
+import 'package:places/ui/screen/res/app_styles.dart';
 
 class SightDetailsScreen extends StatelessWidget{
   final Sight sight;
@@ -15,7 +18,6 @@ class SightDetailsScreen extends StatelessWidget{
           Stack(children: [
             SizedBox(
               width: double.infinity,
-              //color: Colors.blueAccent,
               height: 360,
               child: Image.network(
                 sight.url,
@@ -39,12 +41,7 @@ class SightDetailsScreen extends StatelessWidget{
             alignment: Alignment.topLeft,
             child: Text(
               sight.name,
-              style: const TextStyle(
-                color: Color.fromRGBO(37, 40, 73, 1),
-                fontSize: 24,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.bold,
-              ),  
+              style: nameDetailsTextStyle,  
             ),
           ),
           Container(
@@ -52,12 +49,7 @@ class SightDetailsScreen extends StatelessWidget{
             alignment: Alignment.topLeft,
             child: Text(
               sight.type,
-              style: const TextStyle(
-                color: Color.fromRGBO(37, 40, 73, 1),
-                fontSize: 14,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.bold,
-              ),  
+              style: typeAndDetailsTextStyle,  
             ),
           ),
           Container(
@@ -65,11 +57,7 @@ class SightDetailsScreen extends StatelessWidget{
             alignment: Alignment.topLeft,
             child: Text(
               sight.details,
-              style: const TextStyle(
-                color: Color.fromRGBO(37, 40, 73, 1),
-                fontSize: 14,
-                fontFamily: 'Roboto',
-              ),  
+              style: typeAndDetailsTextStyle, 
             ),
           ),
           Padding(
@@ -78,7 +66,7 @@ class SightDetailsScreen extends StatelessWidget{
               padding: const EdgeInsets.only(left:16,top:15,right:16,bottom: 15),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: const Color.fromRGBO(76, 175, 80, 1),
+                color: planButtonColor,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -88,47 +76,35 @@ class SightDetailsScreen extends StatelessWidget{
                     height: 20,
                     color: Colors.white,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(left:5),
+                  Padding(
+                    padding: const EdgeInsets.only(left:5),
                     child: Text(
-                      'ПОСТРОИТЬ МАРШРУТ',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                      ),
+                      buildRouteButtonText,
+                      style: buildRouteButtonTextStyle,
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          const Divider(
+          Divider(
             height: 39,
-            color:Color.fromRGBO(124, 126, 146, 1),
+            color: textColor,
             indent: 16,
             endIndent: 16,
             thickness: 0.8,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: const [
+            children: [
               Text(
-                'Запланировать',
-                style: TextStyle(
-                  color: Color.fromRGBO(37, 40, 73, 1),
-                  fontSize: 14,
-                  fontFamily: 'Roboto',
-                ),
+                planButtomText,
+                style: buttomTextStyle,
               ),
               Text(
-                'Избранное',
-                style: TextStyle(
-                  color: Color.fromRGBO(37, 40, 73, 1),
-                  fontSize: 14,
-                  fontFamily: 'Roboto',
+                favouriteButtonText,
+                style: buttomTextStyle,
                 ),
-              ),
             ],
           ),
         ],
