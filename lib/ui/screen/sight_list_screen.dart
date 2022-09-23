@@ -3,7 +3,7 @@ import 'package:places/mocks.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/res/app_styles.dart';
-import 'package:places/ui/screen/sight_card.dart';
+import 'package:places/ui/screen/widgets/sight_card.dart';
 
 class SightListScreen extends StatefulWidget {
   const SightListScreen({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class _SightListScreen extends State<SightListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const TextTitle(),
-        backgroundColor: tabTextColor,
+        backgroundColor: AppColors.tabTextColor,
         elevation: 0,
         toolbarHeight: 136,
       ),
@@ -33,7 +33,6 @@ class _SightListScreen extends State<SightListScreen> {
         selectedItemColor: Colors.black,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        currentIndex: 0,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
@@ -69,9 +68,9 @@ class TextTitle extends StatelessWidget {
         height: 72,
         child: Text(
           textAlign: TextAlign.start,
-          titleText,
+          AppStrings.titleText,
           maxLines: 2,
-          style: titleTextStyle,
+          style: AppTypography.titleTextStyle,
         ),
       ),
     );

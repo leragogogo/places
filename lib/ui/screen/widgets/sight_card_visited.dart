@@ -4,24 +4,25 @@ import 'package:places/domain/sight.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_styles.dart';
 
-class SightCardWantToVisited extends StatelessWidget {
+class SightCardVisited extends StatelessWidget {
   final Sight sight;
-  const SightCardWantToVisited(this.sight, {Key? key}) : super(key: key);
+  const SightCardVisited(this.sight, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        UpperPartWantToVisited(sight),
-        LowerPartWantToVisited(sight),
+        UpperPartVisited(sight),
+        LowerPartVisited(sight),
       ],
     );
   }
 }
 
-class UpperPartWantToVisited extends StatelessWidget {
+// верхняя часть верстки карточки
+class UpperPartVisited extends StatelessWidget {
   final Sight sight;
-  const UpperPartWantToVisited(this.sight, {Key? key}) : super(key: key);
+  const UpperPartVisited(this.sight, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class UpperPartWantToVisited extends StatelessWidget {
       children: [
         SizedBox(
           height: 96,
-          width: 328,
+          width: double.infinity,
           child: ClipRRect(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(12),
@@ -56,7 +57,7 @@ class UpperPartWantToVisited extends StatelessWidget {
                   width: 12,
                   height: 12,
                   child: Icon(
-                    Icons.calendar_month,
+                    Icons.share,
                     color: Colors.white,
                   ),
                 ),
@@ -88,15 +89,16 @@ class UpperPartWantToVisited extends StatelessWidget {
   }
 }
 
-class LowerPartWantToVisited extends StatelessWidget {
+// нижняя часть верстки карточки
+class LowerPartVisited extends StatelessWidget {
   final Sight sight;
-  const LowerPartWantToVisited(this.sight, {Key? key}) : super(key: key);
+  const LowerPartVisited(this.sight, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 92,
-      width: 328,
+      width: double.infinity,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(12),
@@ -111,18 +113,18 @@ class LowerPartWantToVisited extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: Text(
               sight.name,
-              style: nameTextStyle,
+              style: AppTypography.nameTextStyle,
             ),
           ),
           Container(
             padding: const EdgeInsets.only(left: 16, top: 2, right: 16),
             alignment: Alignment.topLeft,
             child: Text(
-              'Запланировано на  12 октября.',
+              'Цель достигнута 12 октября.',
               style: TextStyle(
-                color: planButtonColor,
-                fontFamily: 'Roboto',
+                color: AppColors.textColor,
                 fontSize: 14,
+                fontFamily: 'Roboto',
               ),
             ),
           ),

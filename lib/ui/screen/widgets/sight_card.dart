@@ -23,6 +23,7 @@ class SightCard extends StatelessWidget{
    }
 }
 
+// верхняя часть верстки карточки
 class UpperPart extends StatelessWidget{
    final Sight sight;
   const UpperPart(this.sight,{Key? key}) : super(key: key);
@@ -33,7 +34,7 @@ class UpperPart extends StatelessWidget{
       children: [
         SizedBox(
           height: 96,
-          width: 328,
+          width: double.infinity,
           child: ClipRRect(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(12),
@@ -70,6 +71,7 @@ class UpperPart extends StatelessWidget{
   }
 }
 
+// нижняя часть верстки карточки
 class LowerPart extends StatelessWidget{
   final Sight sight;
   const LowerPart(this.sight,{Key? key}) : super(key: key);
@@ -78,7 +80,7 @@ class LowerPart extends StatelessWidget{
   Widget build(BuildContext context) {
     return Container(
       height: 92,
-      width: 328,
+      width: double.infinity,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(12),
@@ -93,7 +95,7 @@ class LowerPart extends StatelessWidget{
             alignment: Alignment.topLeft,
             child: Text(
               sight.name,
-              style: nameTextStyle,
+              style: AppTypography.nameTextStyle,
             ),
           ),
           Container(
@@ -102,7 +104,7 @@ class LowerPart extends StatelessWidget{
             child: Text(
               sight.details,
               overflow: TextOverflow.ellipsis,
-              style: descriptionTextStyle,
+              style: AppTypography.descriptionTextStyle,
             ),
           ),
         ],
