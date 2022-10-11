@@ -99,12 +99,12 @@ class LowerPartWantToVisited extends StatelessWidget {
     return Container(
       height: 92,
       width: double.infinity,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(12),
           bottomRight: Radius.circular(12),
         ),
-        color: Color.fromRGBO(245, 245, 245, 1),
+        color: Theme.of(context).primaryColor,
       ),
       child: Column(
         children: [
@@ -113,7 +113,8 @@ class LowerPartWantToVisited extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: Text(
               sight.name,
-              style: AppTypography.nameTextStyle,
+              style: AppTypography.nameTextStyle
+                  ?.copyWith(color: Theme.of(context).backgroundColor),
             ),
           ),
           Container(
@@ -121,11 +122,8 @@ class LowerPartWantToVisited extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: Text(
               'Запланировано на  12 октября.',
-              style: TextStyle(
-                color: AppColors.planButtonColor,
-                fontFamily: 'Roboto',
-                fontSize: 14,
-              ),
+              style: AppTypography.descriptionTextStyle
+                  ?.copyWith(color: AppColors.planButtonColor),
             ),
           ),
         ],
