@@ -8,6 +8,11 @@ class AppThemes {
     primaryColorLight: AppColors.ltBackgroundColor,
     primaryColorDark: AppColors.ltTextColor,
     backgroundColor: AppColors.ltTitleColor,
+    textTheme: TextTheme(
+      bodyLarge: AppTypography.titleTextStyle,
+      bodyMedium: AppTypography.nameTextStyle,
+      bodySmall: AppTypography.descriptionTextStyle,
+    ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: AppColors.ltBackgroundColor,
       unselectedItemColor: Colors.grey,
@@ -27,6 +32,11 @@ class AppThemes {
     primaryColorLight: AppColors.dtLabelColor,
     primaryColorDark: AppColors.dtUnselectedLabelColor,
     backgroundColor: AppColors.ltBackgroundColor,
+    textTheme: TextTheme(
+      bodyLarge: AppTypography.titleTextStyle,
+      bodyMedium: AppTypography.nameTextStyle,
+      bodySmall: AppTypography.descriptionTextStyle,
+    ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: AppColors.dtBackgroundColor,
       unselectedItemColor: Colors.grey,

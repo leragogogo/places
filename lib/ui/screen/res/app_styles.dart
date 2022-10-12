@@ -17,28 +17,8 @@ class AppTypography {
     fontWeight: FontWeight.bold,
   );
 
-  static TextStyle? nameDetailsTextStyle = TextStyle(
-    color: AppColors.ltTitleColor,
-    fontSize: 24,
-    fontFamily: 'Roboto',
-    fontWeight: FontWeight.bold,
-  );
-
-  static TextStyle? typeAndDetailsTextStyle = TextStyle(
-    color: AppColors.ltTitleColor,
-    fontSize: 14,
-    fontFamily: 'Roboto',
-    fontWeight: FontWeight.bold,
-  );
-
   static TextStyle? buildRouteButtonTextStyle = const TextStyle(
     color: Colors.white,
-    fontSize: 14,
-    fontFamily: 'Roboto',
-  );
-
-  static TextStyle? buttomTextStyle = TextStyle(
-    color: AppColors.ltTitleColor,
     fontSize: 14,
     fontFamily: 'Roboto',
   );
@@ -60,19 +40,6 @@ class AppTypography {
   static TextStyle? dtTitleFavouriteTextStyle = TextStyle(
     color: AppColors.dtTitleColor,
     fontSize: 18,
-    fontFamily: 'Roboto',
-    fontWeight: FontWeight.bold,
-  );
-
-  static TextStyle? tabTextStyle1 = TextStyle(
-    color: AppColors.ltBackgroundColor,
-    fontSize: 14,
-    fontFamily: 'Roboto',
-    fontWeight: FontWeight.bold,
-  );
-  static TextStyle? tabTextStyle2 = TextStyle(
-    color: AppColors.ltTextColor,
-    fontSize: 14,
     fontFamily: 'Roboto',
     fontWeight: FontWeight.bold,
   );

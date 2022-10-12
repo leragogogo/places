@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/domain/sight.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
-import 'package:places/ui/screen/res/app_styles.dart';
 
 class SightCardVisited extends StatelessWidget {
   final Sight sight;
@@ -96,6 +95,8 @@ class LowerPartVisited extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       height: 92,
       width: double.infinity,
@@ -104,7 +105,7 @@ class LowerPartVisited extends StatelessWidget {
           bottomLeft: Radius.circular(12),
           bottomRight: Radius.circular(12),
         ),
-        color: Theme.of(context).primaryColor,
+        color: theme.primaryColor,
       ),
       child: Column(
         children: [
@@ -113,8 +114,11 @@ class LowerPartVisited extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: Text(
               sight.name,
-              style: AppTypography.nameTextStyle
-                  ?.copyWith(color: Theme.of(context).backgroundColor),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).backgroundColor,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           Container(
@@ -122,8 +126,10 @@ class LowerPartVisited extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: Text(
               'Цель достигнута 12 октября.',
-              style: AppTypography.descriptionTextStyle
-                  ?.copyWith(color: AppColors.planButtonColor),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppColors.planButtonColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],

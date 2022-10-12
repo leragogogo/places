@@ -52,5 +52,3 @@ class _SightListScreen extends State<SightListScreen> {
     );
   }
 }
-
-

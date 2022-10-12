@@ -15,6 +15,8 @@ class _VisitingScreen extends State<StatefulWidget>
     with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -33,18 +35,18 @@ class _VisitingScreen extends State<StatefulWidget>
                     height: 50,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
+                      color: theme.primaryColor,
                       borderRadius: BorderRadius.circular(40),
                     ),
                   ),
                 ),
                 TabBar(
-                  unselectedLabelColor: Theme.of(context).primaryColorDark,
-                  labelColor: Theme.of(context).primaryColorLight,
+                  unselectedLabelColor: theme.primaryColorDark,
+                  labelColor: theme.primaryColorLight,
                   indicatorSize: TabBarIndicatorSize.label,
                   indicator: BoxDecoration(
                     borderRadius: BorderRadius.circular(40),
-                    color: Theme.of(context).backgroundColor,
+                    color: theme.backgroundColor,
                   ),
                   tabs: [
                     Tab(

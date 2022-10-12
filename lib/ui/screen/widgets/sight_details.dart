@@ -15,11 +15,11 @@ class SightDetailsScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          ImageDetails(sight),
-          NameOfSight(sight),
-          TypeOfSight(sight),
-          DetailsOfSight(sight),
-          BuildRouteButton(sight),
+          _ImageDetails(sight),
+          _NameOfSight(sight),
+          _TypeOfSight(sight),
+          _DetailsOfSight(sight),
+          _BuildRouteButton(sight),
           Divider(
             height: 39,
             color: AppColors.ltTextColor,
@@ -27,7 +27,7 @@ class SightDetailsScreen extends StatelessWidget {
             endIndent: 16,
             thickness: 0.8,
           ),
-          RowOfLowerButtons(sight),
+          _RowOfLowerButtons(sight),
         ],
       ),
     );
@@ -35,10 +35,10 @@ class SightDetailsScreen extends StatelessWidget {
 }
 
 // верстка изображений объекта
-class ImageDetails extends StatelessWidget {
+class _ImageDetails extends StatelessWidget {
   final Sight sight;
 
-  const ImageDetails(this.sight, {Key? key}) : super(key: key);
+  const _ImageDetails(this.sight, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -70,37 +70,43 @@ class ImageDetails extends StatelessWidget {
 }
 
 // верстка имени объекта
-class NameOfSight extends StatelessWidget {
+class _NameOfSight extends StatelessWidget {
   final Sight sight;
 
-  const NameOfSight(this.sight, {Key? key}) : super(key: key);
+  const _NameOfSight(this.sight, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.only(left: 16, top: 24),
       alignment: Alignment.topLeft,
       child: Text(
         sight.name,
-        style: AppTypography.nameDetailsTextStyle
-            ?.copyWith(color: Theme.of(context).backgroundColor),
+        style: theme.textTheme.bodyLarge?.copyWith(
+          color: theme.backgroundColor,
+          fontSize: 24,
+        ),
       ),
     );
   }
 }
 
 // верстка типа объекта
-class TypeOfSight extends StatelessWidget {
+class _TypeOfSight extends StatelessWidget {
   final Sight sight;
 
-  const TypeOfSight(this.sight, {Key? key}) : super(key: key);
+  const _TypeOfSight(this.sight, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.only(left: 16, top: 2),
       alignment: Alignment.topLeft,
       child: Text(
         sight.type,
-        style: AppTypography.typeAndDetailsTextStyle
+        style: theme.textTheme.bodySmall
             ?.copyWith(color: Theme.of(context).primaryColorDark),
       ),
     );
@@ -108,18 +114,20 @@ class TypeOfSight extends StatelessWidget {
 }
 
 // верстка описания объекта
-class DetailsOfSight extends StatelessWidget {
+class _DetailsOfSight extends StatelessWidget {
   final Sight sight;
 
-  const DetailsOfSight(this.sight, {Key? key}) : super(key: key);
+  const _DetailsOfSight(this.sight, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.only(left: 16, top: 24, right: 16),
       alignment: Alignment.topLeft,
       child: Text(
         sight.details,
-        style: AppTypography.typeAndDetailsTextStyle
+        style: theme.textTheme.bodySmall
             ?.copyWith(color: Theme.of(context).backgroundColor),
       ),
     );
@@ -127,10 +135,10 @@ class DetailsOfSight extends StatelessWidget {
 }
 
 // верстка кнопки(пока заглушка) построить маршрут
-class BuildRouteButton extends StatelessWidget {
+class _BuildRouteButton extends StatelessWidget {
   final Sight sight;
 
-  const BuildRouteButton(this.sight, {Key? key}) : super(key: key);
+  const _BuildRouteButton(this.sight, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -169,24 +177,26 @@ class BuildRouteButton extends StatelessWidget {
 }
 
 // верстка кнопок(пока заглушки) в избранное и запланировать
-class RowOfLowerButtons extends StatelessWidget {
+class _RowOfLowerButtons extends StatelessWidget {
   final Sight sight;
 
-  const RowOfLowerButtons(this.sight, {Key? key}) : super(key: key);
+  const _RowOfLowerButtons(this.sight, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         Text(
           AppStrings.planButtomText,
-          style: AppTypography.buttomTextStyle
-              ?.copyWith(color: Theme.of(context).primaryColorDark),
+          style: theme.textTheme.bodySmall
+              ?.copyWith(color: theme.primaryColorDark),
         ),
         Text(
           AppStrings.favouriteButtonText,
-          style: AppTypography.buttomTextStyle
-              ?.copyWith(color: Theme.of(context).backgroundColor),
+          style: theme.textTheme.bodySmall
+              ?.copyWith(color: theme.backgroundColor),
         ),
       ],
     );
