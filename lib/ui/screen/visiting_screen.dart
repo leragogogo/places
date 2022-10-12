@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:places/mocks.dart';
-import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
-import 'package:places/ui/screen/res/app_styles.dart';
 import 'package:places/ui/screen/widgets/sight_card_visited.dart';
 import 'package:places/ui/screen/widgets/sight_card_want_to_visited.dart';
 
@@ -17,15 +15,15 @@ class _VisitingScreen extends State<StatefulWidget>
     with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: Text(
             AppStrings.favouriteButtonText,
-            style: AppTypography.titleFavouriteTextStyle,
           ),
-          backgroundColor: AppColors.tabTextColor,
           elevation: 0,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(50),
@@ -37,17 +35,18 @@ class _VisitingScreen extends State<StatefulWidget>
                     height: 50,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: AppColors.notSelectedColor,
+                      color: theme.primaryColor,
                       borderRadius: BorderRadius.circular(40),
                     ),
                   ),
                 ),
                 TabBar(
-                  unselectedLabelColor: AppColors.textColor,
+                  unselectedLabelColor: theme.primaryColorDark,
+                  labelColor: theme.primaryColorLight,
                   indicatorSize: TabBarIndicatorSize.label,
                   indicator: BoxDecoration(
                     borderRadius: BorderRadius.circular(40),
-                    color: AppColors.titleColor,
+                    color: theme.backgroundColor,
                   ),
                   tabs: [
                     Tab(
@@ -55,9 +54,9 @@ class _VisitingScreen extends State<StatefulWidget>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        child: const Align(
+                        child: Align(
                           child: Text(
-                            'Хочу посетить',
+                            AppStrings.firstTabFavouriteScreenText,
                           ),
                         ),
                       ),
@@ -67,9 +66,9 @@ class _VisitingScreen extends State<StatefulWidget>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        child: const Align(
+                        child: Align(
                           child: Text(
-                            'Посетил',
+                            AppStrings.secondTabFavouriteScreenText,
                           ),
                         ),
                       ),
@@ -93,8 +92,7 @@ class _VisitingScreen extends State<StatefulWidget>
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
-          unselectedItemColor: Colors.grey,
-          selectedItemColor: Colors.black,
+          type: BottomNavigationBarType.fixed,
           showSelectedLabels: false,
           showUnselectedLabels: false,
           currentIndex: 2,

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/domain/sight.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
-import 'package:places/ui/screen/res/app_styles.dart';
 
 class SightCardWantToVisited extends StatelessWidget {
   final Sight sight;
@@ -96,15 +95,17 @@ class LowerPartWantToVisited extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       height: 92,
       width: double.infinity,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(12),
           bottomRight: Radius.circular(12),
         ),
-        color: Color.fromRGBO(245, 245, 245, 1),
+        color: theme.primaryColor,
       ),
       child: Column(
         children: [
@@ -113,7 +114,11 @@ class LowerPartWantToVisited extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: Text(
               sight.name,
-              style: AppTypography.nameTextStyle,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).backgroundColor,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           Container(
@@ -121,10 +126,9 @@ class LowerPartWantToVisited extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: Text(
               'Запланировано на  12 октября.',
-              style: TextStyle(
+              style: theme.textTheme.bodySmall?.copyWith(
                 color: AppColors.planButtonColor,
-                fontFamily: 'Roboto',
-                fontSize: 14,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:places/mocks.dart';
-import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
-import 'package:places/ui/screen/res/app_styles.dart';
 import 'package:places/ui/screen/widgets/sight_card.dart';
 
 class SightListScreen extends StatefulWidget {
@@ -17,10 +15,10 @@ class _SightListScreen extends State<SightListScreen> {
   Widget build(Object context) {
     return Scaffold(
       appBar: AppBar(
-        title: const TextTitle(),
-        backgroundColor: AppColors.tabTextColor,
+        title: Text(
+          AppStrings.titleText,
+        ),
         elevation: 0,
-        toolbarHeight: 136,
       ),
       body: Column(
         children: [
@@ -29,8 +27,7 @@ class _SightListScreen extends State<SightListScreen> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.black,
+        type: BottomNavigationBarType.fixed,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         items: const [
@@ -51,27 +48,6 @@ class _SightListScreen extends State<SightListScreen> {
             label: '4',
           ),
         ],
-      ),
-    );
-  }
-}
-
-class TextTitle extends StatelessWidget {
-  const TextTitle({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 40, 16, 0),
-      child: SizedBox(
-        width: 328,
-        height: 72,
-        child: Text(
-          textAlign: TextAlign.start,
-          AppStrings.titleText,
-          maxLines: 2,
-          style: AppTypography.titleTextStyle,
-        ),
       ),
     );
   }
