@@ -26,29 +26,6 @@ class _SightListScreen extends State<SightListScreen> {
           SightCard(mocks[1]),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: '1',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: '2',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: '3',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '4',
-          ),
-        ],
-      ),
     );
   }
 }

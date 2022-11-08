@@ -9,11 +9,29 @@ class SightCardVisited extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        UpperPartVisited(sight),
-        LowerPartVisited(sight),
-      ],
+    final theme = Theme.of(context);
+
+    return Ink(
+      height: 192,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(
+          Radius.circular(12),
+        ),
+        color: theme.primaryColor,
+      ),
+      child: InkWell(
+        child: Column(
+          children: [
+            UpperPartVisited(sight),
+            LowerPartVisited(sight),
+          ],
+        ),
+        onTap: () {
+            // ignore: avoid_print
+            print('Карточка нажата');
+          },
+      ),
     );
   }
 }
@@ -46,31 +64,31 @@ class UpperPartVisited extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 16,
-          right: 16,
-          child: SizedBox(
-            width: 60,
+          right: 0,
             child: Row(
-              children: const [
-                SizedBox(
-                  width: 12,
-                  height: 12,
-                  child: Icon(
-                    Icons.share,
-                    color: Colors.white,
-                  ),
+              children: [
+                TextButton(
+                    onPressed: (){
+                      // ignore: avoid_print
+                      print('Кнопка поделиться нажата.');
+                    }, 
+                    child: const Icon(
+                      Icons.share,
+                      color: Colors.white,
+                    ),
                 ),
-                SizedBox(
-                  width: 12,
-                  height: 12,
-                  child: Icon(
+                TextButton(
+                  onPressed: (){
+                    // ignore: avoid_print
+                    print('Кнопка закрыть нажата.');
+                  }, 
+                  child:const Icon(
                     Icons.close,
                     color: Colors.white,
                   ),
                 ),
               ],
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-            ),
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
           ),
         ),
         Positioned(
@@ -97,16 +115,7 @@ class LowerPartVisited extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
-      height: 92,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
-        ),
-        color: theme.primaryColor,
-      ),
+    return SizedBox(
       child: Column(
         children: [
           Container(

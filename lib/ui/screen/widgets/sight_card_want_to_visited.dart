@@ -9,11 +9,29 @@ class SightCardWantToVisited extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        UpperPartWantToVisited(sight),
-        LowerPartWantToVisited(sight),
-      ],
+    final theme = Theme.of(context);
+
+    return Ink(
+      height: 192,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(
+          Radius.circular(12),
+        ),
+        color: theme.primaryColor,
+      ),
+      child: InkWell(
+        child: Column(
+          children: [
+            UpperPartWantToVisited(sight),
+            LowerPartWantToVisited(sight),
+          ],
+        ),
+        onTap: () {
+          // ignore: avoid_print
+          print('Карточка нажата');
+        },
+      ),
     );
   }
 }
@@ -46,31 +64,31 @@ class UpperPartWantToVisited extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 16,
-          right: 16,
-          child: SizedBox(
-            width: 60,
-            child: Row(
-              children: const [
-                SizedBox(
-                  width: 12,
-                  height: 12,
-                  child: Icon(
-                    Icons.calendar_month,
-                    color: Colors.white,
-                  ),
+          right: 0,
+          child: Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  // ignore: avoid_print
+                  print('Кнопка календарь нажата.');
+                },
+                child: const Icon(
+                  Icons.calendar_month,
+                  color: Colors.white,
                 ),
-                SizedBox(
-                  width: 12,
-                  height: 12,
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.white,
-                  ),
+              ),
+              TextButton(
+                onPressed: () {
+                  // ignore: avoid_print
+                  print('Кнопка закрыть нажата.');
+                },
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.white,
                 ),
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-            ),
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
           ),
         ),
         Positioned(
@@ -97,16 +115,9 @@ class LowerPartWantToVisited extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
+    return SizedBox(
       height: 92,
       width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
-        ),
-        color: theme.primaryColor,
-      ),
       child: Column(
         children: [
           Container(

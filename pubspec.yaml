@@ -15,6 +15,7 @@ dependencies:
   dart_code_metrics: ^4.17.1
   flutter_svg: ^1.1.4
   surf_lint_rules: ^1.5.0
+  provider: ^6.0.4
 
 dev_dependencies:
   flutter_test:
@@ -27,8 +28,13 @@ flutter:
   uses-material-design: true
   
   assets:
-    - res/
-  
+    - res/icons/hotels.png
+    - res/icons/restaurants.png
+    - res/icons/special_places.png
+    - res/icons/parks.png
+    - res/icons/museums.png
+    - res/icons/cafes.png
+
   fonts:
     - family: Roboto     
       fonts:

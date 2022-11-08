@@ -9,13 +9,29 @@ class SightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(left: 16, top: 10, right: 16),
-      child: Column(
-        children: [
-          UpperPart(sight),
-          LowerPart(sight),
-        ],
+      child: Ink(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(12),
+          ),
+          color: theme.primaryColor,
+        ),
+        child: InkWell(
+          child: Column(
+            children: [
+              UpperPart(sight),
+              LowerPart(sight),
+            ],
+          ),
+          onTap: () {
+            // ignore: avoid_print
+            print('Карточка нажата');
+          },
+        ),
       ),
     );
   }
@@ -27,44 +43,54 @@ class UpperPart extends StatelessWidget {
   const UpperPart(this.sight, {Key? key}) : super(key: key);
 
   @override
-  Widget build(Object context) {
-    return Stack(
+  Widget build(BuildContext context) {
+
+    return Column(
       children: [
-        SizedBox(
-          height: 96,
-          width: double.infinity,
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
+        Stack(
+          children: [
+            SizedBox(
+              height: 96,
+              width: double.infinity,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+                child: Image.network(
+                  sight.url,
+                  loadingBuilder: (context, child, loadingProgress) =>
+                      loadingProgress == null
+                          ? child
+                          : const CupertinoActivityIndicator(),
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
             ),
-            child: Image.network(
-              sight.url,
-              loadingBuilder: (context, child, loadingProgress) =>
-                  loadingProgress == null
-                      ? child
-                      : const CupertinoActivityIndicator(),
-              fit: BoxFit.fitWidth,
+            Positioned(
+              right: 0,
+              child: TextButton(
+                onPressed: () {
+                  // ignore: avoid_print
+                  print('Кнопка добавить в избранное нажата.');
+                },
+                child: const Icon(
+                  Icons.favorite_outline,
+                  color: Colors.white,
+                ),
+              ),
             ),
-          ),
-        ),
-        const Positioned(
-          top: 19,
-          right: 18,
-          child: Icon(
-            Icons.favorite_outline,
-            color: Colors.white,
-          ),
-        ),
-        Positioned(
-          top: 16,
-          left: 16,
-          child: Text(
-            sight.type,
-            style: const TextStyle(
-              color: Colors.white,
+            Positioned(
+              top: 16,
+              left: 16,
+              child: Text(
+                sight.type,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );
@@ -80,16 +106,9 @@ class LowerPart extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
+    return SizedBox(
       height: 92,
       width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
-        ),
-        color: theme.primaryColor,
-      ),
       child: Column(
         children: [
           Container(

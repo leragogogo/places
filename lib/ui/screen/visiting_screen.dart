@@ -83,35 +83,19 @@ class _VisitingScreen extends State<StatefulWidget>
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
-              child: SightCardWantToVisited(mocks[0]),
+              child: Column(
+                children: [
+                  SightCardWantToVisited(mocks[0]),
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(16),
-              child: SightCardVisited(mocks[1]),
-            ),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          currentIndex: 2,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.list),
-              label: '1',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              label: '2',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              label: '3',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: '4',
+              child: Column(
+                children: [
+                  SightCardVisited(mocks[1]),
+                ],
+              ),
             ),
           ],
         ),
