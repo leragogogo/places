@@ -17,5 +17,11 @@ class AppStrings{
   static String chooseThemeText = 'Темная тема';
   static String settingsText = 'Настройки';
   static String watchTutorialText = 'Смотреть туториал';
+  static String label1 = 'Список мест';
+  static String label2 = 'Карта';
+  static String label3 = 'Избранное';
+  static String label4 = 'Настройки';
+  static String buttonShowText = 'ПОКАЗАТЬ';
+  static String distanceText = 'Расстояние';
 }
 

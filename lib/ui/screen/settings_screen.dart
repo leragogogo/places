@@ -1,5 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:places/main.dart';
+import 'package:places/data_providers/theme_provider.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: Column(
         children: [
+          ListTile(
+            leading: Text(
+              AppStrings.chooseThemeText,
+              style: theme.textTheme.bodyMedium
+                  ?.copyWith(color: theme.backgroundColor),
+            ),
+            trailing: CupertinoSwitch(
+              value: context.watch<ThemeProvider>().isDarkTheme,
+              activeColor: AppColors.planButtonColor,
+              // ignore: unnecessary_parenthesis
+              onChanged: ((value) {
+                context.read<ThemeProvider>().changeTheme();
+              }),
+            ),
+          ),
+          ListTile(
+            leading: Text(
+              AppStrings.watchTutorialText,
+              style: theme.textTheme.bodyMedium
+                  ?.copyWith(color: theme.backgroundColor),
+            ),
+            trailing: IconButton(
+              icon: Icon(
+                Icons.info_outline,
+                color: AppColors.planButtonColor,
+              ),
+              onPressed: () {
+                // ignore: avoid_print
+                print('Инфо кнопка нажата');
+              },
+            ),
+          ),
+        ],
+      ),
+
+      /*Column(
+        children: [
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, top: 42),
             child: Row(
@@ -36,13 +74,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: theme.textTheme.bodyMedium
                       ?.copyWith(color: theme.backgroundColor),
                 ),
-                Switch(
+                CupertinoSwitch(
                   value: context.watch<ThemeModel>().isDarkTheme,
+                  activeColor: AppColors.planButtonColor,
                   // ignore: unnecessary_parenthesis
-                  onChanged: ((value) {
+                  onChanged:((value) {
                     context.read<ThemeModel>().changeTheme();
                   }),
-                  activeColor: AppColors.planButtonColor,
                 ),
               ],
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -86,7 +124,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             thickness: 0.8,
           ),
         ],
-      ),
+      ),*/
     );
   }
 }

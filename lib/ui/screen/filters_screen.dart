@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:places/domain/location.dart';
+import 'package:places/functions.dart';
+import 'package:places/mocks.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 
@@ -20,8 +23,11 @@ class _FiltersScreenState extends State<FiltersScreen> {
     Categories.museum: false,
     Categories.cafe: false,
   };
+
   String distance = 'от 500 до 3000 м';
   RangeValues curValues = const RangeValues(500, 3000);
+  Location userLocation = Location(45, 44);
+  int sightCount = mocks.length;
   Map<int, int> points = {
     100: 100,
     1200: 500,
@@ -33,6 +39,15 @@ class _FiltersScreenState extends State<FiltersScreen> {
     7800: 6000,
     8900: 7500,
     10000: 10000,
+  };
+  bool isButtonDisabled = false;
+  Map<String, Categories> locationOfCategories = {
+    '00': Categories.hotel,
+    '01': Categories.restaurant,
+    '02': Categories.specialPlace,
+    '10': Categories.park,
+    '11': Categories.museum,
+    '12': Categories.cafe,
   };
 
   @override
@@ -85,96 +100,8 @@ class _FiltersScreenState extends State<FiltersScreen> {
           const SizedBox(
             height: 24,
           ),
-          Row(
-            children: [
-              CategoryButton(
-                Categories.hotel,
-                statesOfCategories[Categories.hotel]!,
-                () {
-                  setState(() {
-                    statesOfCategories[Categories.hotel] =
-                        !statesOfCategories[Categories.hotel]!;
-                  });
-                },
-                (value) {
-                  statesOfCategories[Categories.hotel] = value!;
-                },
-              ),
-              CategoryButton(
-                Categories.restaurant,
-                statesOfCategories[Categories.restaurant]!,
-                () {
-                  setState(() {
-                    statesOfCategories[Categories.restaurant] =
-                        !statesOfCategories[Categories.restaurant]!;
-                  });
-                },
-                (value) {
-                  statesOfCategories[Categories.restaurant] = value!;
-                },
-              ),
-              CategoryButton(
-                Categories.specialPlace,
-                statesOfCategories[Categories.specialPlace]!,
-                () {
-                  setState(() {
-                    statesOfCategories[Categories.specialPlace] =
-                        !statesOfCategories[Categories.specialPlace]!;
-                  });
-                },
-                (value) {
-                  statesOfCategories[Categories.specialPlace] = value!;
-                },
-              ),
-            ],
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-          ),
-          const SizedBox(
-            height: 40,
-          ),
-          Row(
-            children: [
-              CategoryButton(
-                Categories.park,
-                statesOfCategories[Categories.park]!,
-                () {
-                  setState(() {
-                    statesOfCategories[Categories.park] =
-                        !statesOfCategories[Categories.park]!;
-                  });
-                },
-                (value) {
-                  statesOfCategories[Categories.park] = value!;
-                },
-              ),
-              CategoryButton(
-                Categories.museum,
-                statesOfCategories[Categories.museum]!,
-                () {
-                  setState(() {
-                    statesOfCategories[Categories.museum] =
-                        !statesOfCategories[Categories.museum]!;
-                  });
-                },
-                (value) {
-                  statesOfCategories[Categories.museum] = value!;
-                },
-              ),
-              CategoryButton(
-                Categories.cafe,
-                statesOfCategories[Categories.cafe]!,
-                () {
-                  setState(() {
-                    statesOfCategories[Categories.cafe] =
-                        !statesOfCategories[Categories.cafe]!;
-                  });
-                },
-                (value) {
-                  statesOfCategories[Categories.cafe] = value!;
-                },
-              ),
-            ],
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          Column(
+            children: categoryButtonsRows(),
           ),
           const SizedBox(
             height: 60,
@@ -184,7 +111,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
             child: Row(
               children: [
                 Text(
-                  'Расстояние',
+                  AppStrings.distanceText,
                   style: theme.textTheme.bodyMedium
                       ?.copyWith(color: theme.backgroundColor),
                 ),
@@ -211,6 +138,15 @@ class _FiltersScreenState extends State<FiltersScreen> {
                   curValues = values;
                   distance =
                       'от ${points[values.start.toInt()]} до ${points[values.end.toInt()]} м';
+                  sightCount = mocks
+                      .where((element) => Functions.isPointInArea(
+                            userLocation,
+                            Location(element.lat, element.lon),
+                            curValues.start,
+                            curValues.end,
+                          ))
+                      .length;
+                  isButtonDisabled = sightCount == 0 ? true : false;
                 });
               },
               min: 100,
@@ -220,23 +156,29 @@ class _FiltersScreenState extends State<FiltersScreen> {
               divisions: 9,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16, left: 16, top: 176),
-            child: SizedBox(
-              height: 48,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: AppColors.planButtonColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                ),
-                onPressed: () {},
-                child: Center(
-                  child: Text(
-                    'ПОКАЗАТЬ (190)',
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(color: Colors.white, fontSize: 14),
+          Expanded(
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16),
+                child: SizedBox(
+                  height: 48,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: AppColors.planButtonColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    onPressed: isButtonDisabled ? null : () {},
+                    child: Center(
+                      child: Text(
+                        'ПОКАЗАТЬ ($sightCount)',
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(color: Colors.white, fontSize: 14),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -246,13 +188,54 @@ class _FiltersScreenState extends State<FiltersScreen> {
       ),
     );
   }
+
+  List<Widget> categoryButtonsRow(int numberOfRow) {
+    final row = <Widget>[];
+    for (var i = 0; i < 3; i++) {
+      final category =
+          locationOfCategories[numberOfRow.toString() + i.toString()]!;
+      row.add(CategoryButton(
+        category,
+        statesOfCategories[category]!,
+        () {
+          setState(() {
+            statesOfCategories[category] = !statesOfCategories[category]!;
+          });
+        },
+        (value) {
+          statesOfCategories[category] = value;
+        },
+      ));
+    }
+
+    return row;
+  }
+
+  List<Widget> categoryButtonsRows() {
+    final widgets = <Widget>[];
+    for (var i = 0; i < 2; i++) {
+      widgets.add(
+        Row(
+          children: categoryButtonsRow(i),
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        ),
+      );
+      if (i < 1) {
+        widgets.add(const SizedBox(
+          height: 40,
+        ));
+      }
+    }
+
+    return widgets;
+  }
 }
 
 class CategoryButton extends StatelessWidget {
   final Categories name;
   final bool isChosen;
-  final Function()? onPressed;
-  final Function(bool?)? onChanged;
+  final VoidCallback? onPressed;
+  final Function(bool)? onChanged;
   const CategoryButton(
     this.name,
     this.isChosen,

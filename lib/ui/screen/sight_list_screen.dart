@@ -14,12 +14,7 @@ class _SightListScreen extends State<SightListScreen> {
   @override
   Widget build(Object context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          AppStrings.titleText,
-        ),
-        elevation: 0,
-      ),
+      appBar: _AppBar(),
       body: Column(
         children: [
           SightCard(mocks[0]),
@@ -28,4 +23,19 @@ class _SightListScreen extends State<SightListScreen> {
       ),
     );
   }
+}
+
+class _AppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Widget build(Object context) {
+    return AppBar(
+      title: Text(
+        AppStrings.titleText,
+      ),
+      elevation: 0,
+    );
+  }
+  
+  @override
+  Size get preferredSize => const Size(double.infinity, 62);
 }

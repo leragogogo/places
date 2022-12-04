@@ -41,6 +41,9 @@ class _VisitingScreen extends State<StatefulWidget>
                   ),
                 ),
                 TabBar(
+                  overlayColor: MaterialStateProperty.all(
+                    theme.bottomNavigationBarTheme.backgroundColor,
+                  ),
                   unselectedLabelColor: theme.primaryColorDark,
                   labelColor: theme.primaryColorLight,
                   indicatorSize: TabBarIndicatorSize.label,
