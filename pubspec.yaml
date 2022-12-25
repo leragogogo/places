@@ -14,7 +14,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   dart_code_metrics: ^4.17.1
   flutter_svg: ^1.1.4
+  provider: ^6.0.4
   surf_lint_rules: ^1.5.0
+  
 
 dev_dependencies:
   flutter_test:
@@ -27,8 +29,15 @@ flutter:
   uses-material-design: true
   
   assets:
-    - res/
-  
+    - res/icons/hotels.png
+    - res/icons/restaurants.png
+    - res/icons/special_places.png
+    - res/icons/parks.png
+    - res/icons/museums.png
+    - res/icons/cafes.png
+    - res/icons/want_to_visited_empty.png
+    - res/icons/visited_empty.png
+
   fonts:
     - family: Roboto     
       fonts:
