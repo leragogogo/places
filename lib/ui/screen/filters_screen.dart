@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:places/domain/location.dart';
-import 'package:places/functions.dart';
+import 'package:places/domain/sight.dart';
 import 'package:places/mocks.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
-
-enum Categories { hotel, restaurant, specialPlace, park, museum, cafe }
+import 'package:places/utils/filter_utils.dart';
+import 'package:provider/provider.dart';
 
 class FiltersScreen extends StatefulWidget {
   const FiltersScreen({Key? key}) : super(key: key);
@@ -15,6 +15,8 @@ class FiltersScreen extends StatefulWidget {
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
+  String distance = 'от 100 до 10000 м';
+
   Map<Categories, bool> statesOfCategories = {
     Categories.hotel: false,
     Categories.restaurant: false,
@@ -24,10 +26,22 @@ class _FiltersScreenState extends State<FiltersScreen> {
     Categories.cafe: false,
   };
 
-  String distance = 'от 500 до 3000 м';
-  RangeValues curValues = const RangeValues(500, 3000);
-  Location userLocation = Location(45, 44);
+  RangeValues curValues = const RangeValues(100, 10000);
+
   int sightCount = mocks.length;
+
+  bool isButtonDisabled = false;
+
+  Location userLocation = Location(45, 44);
+
+  Map<String, Categories> locationOfCategories = {
+    '00': Categories.hotel,
+    '01': Categories.restaurant,
+    '02': Categories.specialPlace,
+    '10': Categories.park,
+    '11': Categories.museum,
+    '12': Categories.cafe,
+  };
   Map<int, int> points = {
     100: 100,
     1200: 500,
@@ -40,19 +54,12 @@ class _FiltersScreenState extends State<FiltersScreen> {
     8900: 7500,
     10000: 10000,
   };
-  bool isButtonDisabled = false;
-  Map<String, Categories> locationOfCategories = {
-    '00': Categories.hotel,
-    '01': Categories.restaurant,
-    '02': Categories.specialPlace,
-    '10': Categories.park,
-    '11': Categories.museum,
-    '12': Categories.cafe,
-  };
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    sightCount = Provider.of<FiltersProvider>(context).sightCount;
+    isButtonDisabled = Provider.of<FiltersProvider>(context).isButtonDisabled;
 
     return Scaffold(
       appBar: AppBar(
@@ -74,7 +81,12 @@ class _FiltersScreenState extends State<FiltersScreen> {
                 for (final key in statesOfCategories.keys) {
                   statesOfCategories[key] = false;
                 }
+                sightCount = mocks.length;
+                isButtonDisabled = false;
+                curValues = const RangeValues(100, 10000);
               });
+              Provider.of<FiltersProvider>(context, listen: false)
+                  .changeState(sightCount, isButtonDisabled);
             },
             child: Text(
               AppStrings.cleanButtonText,
@@ -100,8 +112,13 @@ class _FiltersScreenState extends State<FiltersScreen> {
           const SizedBox(
             height: 24,
           ),
-          Column(
-            children: categoryButtonsRows(),
+          CategoryButtonsRows(
+            sightCount,
+            userLocation,
+            curValues,
+            isButtonDisabled,
+            locationOfCategories,
+            statesOfCategories,
           ),
           const SizedBox(
             height: 60,
@@ -139,15 +156,19 @@ class _FiltersScreenState extends State<FiltersScreen> {
                   distance =
                       'от ${points[values.start.toInt()]} до ${points[values.end.toInt()]} м';
                   sightCount = mocks
-                      .where((element) => Functions.isPointInArea(
+                      .where((element) => FilterUtils.isPointInArea(
                             userLocation,
                             Location(element.lat, element.lon),
                             curValues.start,
                             curValues.end,
+                            statesOfCategories,
+                            element.type,
                           ))
                       .length;
                   isButtonDisabled = sightCount == 0 ? true : false;
                 });
+                Provider.of<FiltersProvider>(context, listen: false)
+                    .changeState(sightCount, isButtonDisabled);
               },
               min: 100,
               max: 10000,
@@ -188,36 +209,110 @@ class _FiltersScreenState extends State<FiltersScreen> {
       ),
     );
   }
+}
 
-  List<Widget> categoryButtonsRow(int numberOfRow) {
+// ignore: must_be_immutable
+class CategoryButtonsRow extends StatefulWidget {
+  final Location userLocation;
+  final RangeValues curValues;
+  final Map<String, Categories> locationOfCategories;
+  final int numberOfRow;
+  final Map<Categories, bool> statesOfCategories;
+  bool isButtonDisabled;
+  int sightCount;
+  CategoryButtonsRow(
+    this.sightCount,
+    this.userLocation,
+    this.curValues,
+    this.isButtonDisabled,
+    this.locationOfCategories,
+    this.numberOfRow,
+    this.statesOfCategories, {
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<CategoryButtonsRow> createState() => _CategoryButtonsRowState();
+}
+
+class _CategoryButtonsRowState extends State<CategoryButtonsRow> {
+  @override
+  Widget build(BuildContext context) {
     final row = <Widget>[];
     for (var i = 0; i < 3; i++) {
-      final category =
-          locationOfCategories[numberOfRow.toString() + i.toString()]!;
+      final category = widget
+          .locationOfCategories[widget.numberOfRow.toString() + i.toString()]!;
       row.add(CategoryButton(
         category,
-        statesOfCategories[category]!,
+        widget.statesOfCategories[category]!,
         () {
-          setState(() {
-            statesOfCategories[category] = !statesOfCategories[category]!;
-          });
-        },
-        (value) {
-          statesOfCategories[category] = value;
+          setState(
+            () {
+              widget.statesOfCategories[category] =
+                  !widget.statesOfCategories[category]!;
+              widget
+                ..sightCount = mocks
+                    .where((element) => FilterUtils.isPointInArea(
+                          widget.userLocation,
+                          Location(element.lat, element.lon),
+                          widget.curValues.start,
+                          widget.curValues.end,
+                          widget.statesOfCategories,
+                          element.type,
+                        ))
+                    .length
+                ..isButtonDisabled = widget.sightCount == 0 ? true : false;
+            },
+          );
+          Provider.of<FiltersProvider>(context, listen: false)
+              .changeState(widget.sightCount, widget.isButtonDisabled);
         },
       ));
     }
 
-    return row;
+    return Row(
+      children: row,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+    );
   }
+}
 
-  List<Widget> categoryButtonsRows() {
+// ignore: must_be_immutable
+class CategoryButtonsRows extends StatefulWidget {
+  final Location userLocation;
+  final RangeValues curValues;
+  final bool isButtonDisabled;
+  final Map<String, Categories> locationOfCategories;
+  final Map<Categories, bool> statesOfCategories;
+  int sightCount;
+  CategoryButtonsRows(
+    this.sightCount,
+    this.userLocation,
+    this.curValues,
+    this.isButtonDisabled,
+    this.locationOfCategories,
+    this.statesOfCategories, {
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<CategoryButtonsRows> createState() => _CategoryButtonsRowsState();
+}
+
+class _CategoryButtonsRowsState extends State<CategoryButtonsRows> {
+  @override
+  Widget build(BuildContext context) {
     final widgets = <Widget>[];
     for (var i = 0; i < 2; i++) {
       widgets.add(
-        Row(
-          children: categoryButtonsRow(i),
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        CategoryButtonsRow(
+          widget.sightCount,
+          widget.userLocation,
+          widget.curValues,
+          widget.isButtonDisabled,
+          widget.locationOfCategories,
+          i,
+          widget.statesOfCategories,
         ),
       );
       if (i < 1) {
@@ -227,7 +322,19 @@ class _FiltersScreenState extends State<FiltersScreen> {
       }
     }
 
-    return widgets;
+    return Column(
+      children: widgets,
+    );
+  }
+}
+
+class FiltersProvider extends ChangeNotifier {
+  int sightCount = 3;
+  bool isButtonDisabled = false;
+  void changeState(int newSightCount, bool newIsButtonDisabled) {
+    sightCount = newSightCount;
+    isButtonDisabled = newIsButtonDisabled;
+    notifyListeners();
   }
 }
 
@@ -235,12 +342,11 @@ class CategoryButton extends StatelessWidget {
   final Categories name;
   final bool isChosen;
   final VoidCallback? onPressed;
-  final Function(bool)? onChanged;
+
   const CategoryButton(
     this.name,
     this.isChosen,
-    this.onPressed,
-    this.onChanged, {
+    this.onPressed, {
     Key? key,
   }) : super(key: key);
 
@@ -296,6 +402,7 @@ class CategoryButton extends StatelessWidget {
               title(),
               style: theme.textTheme.bodySmall
                   ?.copyWith(color: theme.backgroundColor),
+              maxLines: 1,
             ),
           ),
         ),

@@ -6,10 +6,13 @@ import 'package:places/ui/screen/res/app_themes.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(
-    create: (context) => ThemeProvider(),
-    child: const App(),
-  ));
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => FiltersProvider(),
+      //create: (context) => ThemeProvider(),
+      child: const App(),
+    ),
+  );
 }
 
 class App extends StatelessWidget {
@@ -18,10 +21,10 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      //theme: AppThemes.lightTheme,
-      //home: FiltersScreen(),
-      theme: context.watch<ThemeProvider>().themeMode,
-      home: const MainScreens(),
+      theme: AppThemes.lightTheme,
+      home: FiltersScreen(),
+      //theme: context.watch<ThemeProvider>().themeMode,
+      //home: const MainScreens(),
     );
   }
 }

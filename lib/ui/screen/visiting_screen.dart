@@ -21,8 +21,10 @@ class _VisitingScreen extends State<StatefulWidget>
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            AppStrings.favouriteButtonText,
+          title: Center(
+            child: Text(
+              AppStrings.favouriteButtonText,
+            ),
           ),
           elevation: 0,
           bottom: PreferredSize(
@@ -82,7 +84,15 @@ class _VisitingScreen extends State<StatefulWidget>
             ),
           ),
         ),
-        body: TabBarView(
+        body:
+            // пустые экраны
+            /*TabBarView(
+          children: [
+            _EmptyScreen('res/icons/want_to_visited_empty.png',AppStrings.wantToVisetedEmptyText),
+            _EmptyScreen('res/icons/visited_empty.png',AppStrings.visitedEmptyText),
+          ],
+        ),*/
+            TabBarView(
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
@@ -102,6 +112,50 @@ class _VisitingScreen extends State<StatefulWidget>
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _EmptyScreen extends StatelessWidget {
+  final String path;
+  final String text;
+
+  const _EmptyScreen(this.path, this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            path,
+            height: 64,
+            width: 64,
+            color: theme.primaryColorDark,
+          ),
+          const SizedBox(height: 32),
+          Text(
+            AppStrings.emptyText,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.primaryColorDark,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.primaryColorDark,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }

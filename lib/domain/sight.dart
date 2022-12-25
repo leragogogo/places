@@ -1,3 +1,5 @@
+enum Categories { hotel, restaurant, specialPlace, park, museum, cafe }
+
 class Sight{
   
   final String name;
@@ -5,7 +7,7 @@ class Sight{
   final double lon;
   final String url;
   final String details;
-  final String type;
+  final Categories type;
 
   Sight(this.name,this.lat,this.lon,this.url,this.details,this.type);
 }

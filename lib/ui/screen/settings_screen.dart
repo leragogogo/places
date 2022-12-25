@@ -20,10 +20,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Text(
-          AppStrings.settingsText,
-          style: theme.textTheme.bodyMedium
-              ?.copyWith(color: theme.backgroundColor),
+        title: Center(
+          child: Text(
+            AppStrings.settingsText,
+            style: theme.textTheme.bodyMedium
+                ?.copyWith(color: theme.backgroundColor),
+          ),
         ),
       ),
       body: Column(
@@ -62,69 +64,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ),
-
-      /*Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 42),
-            child: Row(
-              children: [
-                Text(
-                  AppStrings.chooseThemeText,
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: theme.backgroundColor),
-                ),
-                CupertinoSwitch(
-                  value: context.watch<ThemeModel>().isDarkTheme,
-                  activeColor: AppColors.planButtonColor,
-                  // ignore: unnecessary_parenthesis
-                  onChanged:((value) {
-                    context.read<ThemeModel>().changeTheme();
-                  }),
-                ),
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            ),
-          ),
-          Divider(
-            height: 36,
-            color: AppColors.ltTextColor,
-            indent: 16,
-            endIndent: 16,
-            thickness: 0.8,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16),
-            child: Row(
-              children: [
-                Text(
-                  AppStrings.watchTutorialText,
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: theme.backgroundColor),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.info_outline,
-                    color: AppColors.planButtonColor,
-                  ),
-                  onPressed: () {
-                    // ignore: avoid_print
-                    print('Инфо кнопка нажата');
-                  },
-                ),
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            ),
-          ),
-          Divider(
-            height: 36,
-            color: AppColors.ltTextColor,
-            indent: 16,
-            endIndent: 16,
-            thickness: 0.8,
-          ),
-        ],
-      ),*/
     );
   }
 }

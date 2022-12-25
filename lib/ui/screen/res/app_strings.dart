@@ -1,9 +1,8 @@
-
-class AppStrings{
+class AppStrings {
   static String buildRouteButtonText = 'ПОСТРОИТЬ МАРШРУТ';
   static String planButtomText = 'Запланировать';
   static String favouriteButtonText = 'Избранное';
-  static String titleText = 'Список интересных мест';
+  static String titleText = 'Список \nинтересных мест';
   static String firstTabFavouriteScreenText = 'Хочу посетить';
   static String secondTabFavouriteScreenText = 'Посетил';
   static String hotelCategoryText = 'Отель';
@@ -23,5 +22,9 @@ class AppStrings{
   static String label4 = 'Настройки';
   static String buttonShowText = 'ПОКАЗАТЬ';
   static String distanceText = 'Расстояние';
+  static String emptyText = 'Пусто';
+  static String wantToVisetedEmptyText =
+      'Отмечайте понравивишиеся \nместа и они появиятся здесь';
+  static String visitedEmptyText =
+      'Завершите маршрут, \nчтобы место попало сюда';
 }
-

@@ -12,7 +12,7 @@ class SightListScreen extends StatefulWidget {
 
 class _SightListScreen extends State<SightListScreen> {
   @override
-  Widget build(Object context) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: _AppBar(),
       body: Column(
@@ -27,15 +27,24 @@ class _SightListScreen extends State<SightListScreen> {
 
 class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
-  Widget build(Object context) {
+  Size get preferredSize => const Size(double.infinity, 136);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return AppBar(
-      title: Text(
-        AppStrings.titleText,
+      toolbarHeight: 136,
+      title: Container(
+        alignment: Alignment.bottomLeft,
+        child: Text(
+          AppStrings.titleText,
+          maxLines: 2,
+          style:
+              theme.textTheme.bodyLarge?.copyWith(color: theme.backgroundColor),
+        ),
       ),
       elevation: 0,
     );
   }
-  
-  @override
-  Size get preferredSize => const Size(double.infinity, 62);
 }

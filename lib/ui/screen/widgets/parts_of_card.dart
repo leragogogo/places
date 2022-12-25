@@ -34,7 +34,7 @@ class ImagePart extends StatelessWidget {
           top: 16,
           left: 16,
           child: Text(
-            sight.type,
+            sight.type.toString(),
             style: const TextStyle(
               color: Colors.white,
             ),
