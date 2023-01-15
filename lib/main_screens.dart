@@ -34,19 +34,19 @@ class _MainScreensState extends State<MainScreens> {
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.list),
+            icon: const ImageIcon(AssetImage('res/icons/list_of_sights.png')),
             label: AppStrings.label1,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.map),
+            icon: const ImageIcon(AssetImage('res/icons/map.png')),
             label: AppStrings.label2,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.favorite_border),
+            icon: const ImageIcon(AssetImage('res/icons/heart.png')),
             label: AppStrings.label3,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
+            icon: const ImageIcon(AssetImage('res/icons/settings.png')),
             label: AppStrings.label4,
           ),
         ],

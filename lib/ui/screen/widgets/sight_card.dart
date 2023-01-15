@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:places/domain/sight.dart';
 import 'package:places/ui/screen/widgets/parts_of_card.dart';
@@ -21,54 +20,52 @@ class SightCard extends StatelessWidget {
           borderRadius: const BorderRadius.all(
             Radius.circular(12),
           ),
-        color: theme.primaryColor,
-      ),
+          color: theme.primaryColor,
+        ),
         child: Stack(
-        children: [
-          ImagePart(sight),
-          Positioned(
-            top: 96,
-            left:16,
-            child:  LowerPart2(sight),
-          ),
-          Positioned.fill(
-            child: Material(
-              type: MaterialType.transparency,
-              child: InkWell(
-                customBorder: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          children: [
+            ImagePart(sight),
+            Positioned(
+              top: 96,
+              left: 16,
+              child: LowerPart2(sight),
+            ),
+            Positioned.fill(
+              child: Material(
+                type: MaterialType.transparency,
+                child: InkWell(
+                  customBorder: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  onTap: () {
+                    // ignore: avoid_print
+                    print('Клик по фото');
+                  },
                 ),
-                onTap: () {
+              ),
+            ),
+            Positioned(
+              right: 0,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  shape: const CircleBorder(),
+                ),
+                onPressed: () {
                   // ignore: avoid_print
-                  print('Клик по фото');
+                  print('Кнопка добавить в избранное нажата.');
                 },
+                child: const Icon(
+                  Icons.favorite_outline,
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
-          Positioned(
-            
-            right: 0,
-            child: TextButton(
-              style: TextButton.styleFrom(
-                shape: const CircleBorder(),
-              ),
-              onPressed: () {
-                // ignore: avoid_print
-                print('Кнопка добавить в избранное нажата.');
-              },
-              child: const Icon(
-                Icons.favorite_outline,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
 }
-
 
 class LowerPart2 extends StatelessWidget {
   final Sight sight;

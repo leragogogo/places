@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:places/data_providers/filter_provider.dart';
 import 'package:places/domain/location.dart';
 import 'package:places/domain/sight.dart';
 import 'package:places/mocks.dart';
@@ -28,20 +29,21 @@ class _FiltersScreenState extends State<FiltersScreen> {
 
   RangeValues curValues = const RangeValues(100, 10000);
 
-  int sightCount = mocks.length;
+  int sightCount = 0;
 
-  bool isButtonDisabled = false;
+  bool isButtonDisabled = true;
 
-  Location userLocation = Location(45, 44);
+  Location userLocation = Location(lat: 45, lon: 44);
 
-  Map<String, Categories> locationOfCategories = {
-    '00': Categories.hotel,
-    '01': Categories.restaurant,
-    '02': Categories.specialPlace,
-    '10': Categories.park,
-    '11': Categories.museum,
-    '12': Categories.cafe,
+  Map<int, Categories> locationOfCategories = {
+    0: Categories.hotel,
+    1: Categories.restaurant,
+    2: Categories.specialPlace,
+    3: Categories.park,
+    4: Categories.museum,
+    5: Categories.cafe,
   };
+
   Map<int, int> points = {
     100: 100,
     1200: 500,
@@ -81,12 +83,14 @@ class _FiltersScreenState extends State<FiltersScreen> {
                 for (final key in statesOfCategories.keys) {
                   statesOfCategories[key] = false;
                 }
-                sightCount = mocks.length;
-                isButtonDisabled = false;
+                sightCount = 0;
+                isButtonDisabled = true;
                 curValues = const RangeValues(100, 10000);
               });
-              Provider.of<FiltersProvider>(context, listen: false)
-                  .changeState(sightCount, isButtonDisabled);
+              Provider.of<FiltersProvider>(context, listen: false).changeState(
+                newSightCount: sightCount,
+                newIsButtonDisabled: isButtonDisabled,
+              );
             },
             child: Text(
               AppStrings.cleanButtonText,
@@ -112,13 +116,14 @@ class _FiltersScreenState extends State<FiltersScreen> {
           const SizedBox(
             height: 24,
           ),
-          CategoryButtonsRows(
-            sightCount,
-            userLocation,
-            curValues,
-            isButtonDisabled,
-            locationOfCategories,
-            statesOfCategories,
+          SizedBox(
+            width: 368,
+            child: _Categories(
+              userLocation: userLocation,
+              curValues: curValues,
+              locationOfCategories: locationOfCategories,
+              statesOfCategories: statesOfCategories,
+            ),
           ),
           const SizedBox(
             height: 60,
@@ -158,17 +163,20 @@ class _FiltersScreenState extends State<FiltersScreen> {
                   sightCount = mocks
                       .where((element) => FilterUtils.isPointInArea(
                             userLocation,
-                            Location(element.lat, element.lon),
+                            Location(lat: element.lat, lon: element.lon),
                             curValues.start,
                             curValues.end,
                             statesOfCategories,
                             element.type,
                           ))
                       .length;
-                  isButtonDisabled = sightCount == 0 ? true : false;
+                  isButtonDisabled = sightCount == 0;
                 });
                 Provider.of<FiltersProvider>(context, listen: false)
-                    .changeState(sightCount, isButtonDisabled);
+                    .changeState(
+                  newSightCount: sightCount,
+                  newIsButtonDisabled: isButtonDisabled,
+                );
               },
               min: 100,
               max: 10000,
@@ -211,142 +219,79 @@ class _FiltersScreenState extends State<FiltersScreen> {
   }
 }
 
-// ignore: must_be_immutable
-class CategoryButtonsRow extends StatefulWidget {
+// отрисовка всех категорий
+class _Categories extends StatefulWidget {
   final Location userLocation;
   final RangeValues curValues;
-  final Map<String, Categories> locationOfCategories;
-  final int numberOfRow;
+  final Map<int, Categories> locationOfCategories;
   final Map<Categories, bool> statesOfCategories;
-  bool isButtonDisabled;
-  int sightCount;
-  CategoryButtonsRow(
-    this.sightCount,
-    this.userLocation,
-    this.curValues,
-    this.isButtonDisabled,
-    this.locationOfCategories,
-    this.numberOfRow,
-    this.statesOfCategories, {
+
+  const _Categories({
+    required this.userLocation,
+    required this.curValues,
+    required this.locationOfCategories,
+    required this.statesOfCategories,
     Key? key,
   }) : super(key: key);
 
   @override
-  State<CategoryButtonsRow> createState() => _CategoryButtonsRowState();
+  State<_Categories> createState() => _CategoriesState();
 }
 
-class _CategoryButtonsRowState extends State<CategoryButtonsRow> {
+class _CategoriesState extends State<_Categories> {
+  bool isButtonDisabled = true;
+  int sightCount = 0;
   @override
   Widget build(BuildContext context) {
     final row = <Widget>[];
-    for (var i = 0; i < 3; i++) {
-      final category = widget
-          .locationOfCategories[widget.numberOfRow.toString() + i.toString()]!;
-      row.add(CategoryButton(
-        category,
-        widget.statesOfCategories[category]!,
-        () {
+    for (var i = 0; i < 6; i++) {
+      final category = widget.locationOfCategories[i]!;
+      row.add(_CategoryButton(
+        name: category,
+        isChosen: widget.statesOfCategories[category]!,
+        onPressed: () {
           setState(
             () {
               widget.statesOfCategories[category] =
                   !widget.statesOfCategories[category]!;
-              widget
-                ..sightCount = mocks
-                    .where((element) => FilterUtils.isPointInArea(
-                          widget.userLocation,
-                          Location(element.lat, element.lon),
-                          widget.curValues.start,
-                          widget.curValues.end,
-                          widget.statesOfCategories,
-                          element.type,
-                        ))
-                    .length
-                ..isButtonDisabled = widget.sightCount == 0 ? true : false;
+              sightCount = mocks
+                  .where((element) => FilterUtils.isPointInArea(
+                        widget.userLocation,
+                        Location(lat: element.lat, lon: element.lon),
+                        widget.curValues.start,
+                        widget.curValues.end,
+                        widget.statesOfCategories,
+                        element.type,
+                      ))
+                  .length;
+              isButtonDisabled = sightCount == 0;
             },
           );
-          Provider.of<FiltersProvider>(context, listen: false)
-              .changeState(widget.sightCount, widget.isButtonDisabled);
+          Provider.of<FiltersProvider>(context, listen: false).changeState(
+            newSightCount: sightCount,
+            newIsButtonDisabled: isButtonDisabled,
+          );
         },
       ));
     }
 
-    return Row(
+    return Wrap(
+      runSpacing: 40,
+      alignment: WrapAlignment.spaceBetween,
       children: row,
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
     );
   }
 }
 
-// ignore: must_be_immutable
-class CategoryButtonsRows extends StatefulWidget {
-  final Location userLocation;
-  final RangeValues curValues;
-  final bool isButtonDisabled;
-  final Map<String, Categories> locationOfCategories;
-  final Map<Categories, bool> statesOfCategories;
-  int sightCount;
-  CategoryButtonsRows(
-    this.sightCount,
-    this.userLocation,
-    this.curValues,
-    this.isButtonDisabled,
-    this.locationOfCategories,
-    this.statesOfCategories, {
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  State<CategoryButtonsRows> createState() => _CategoryButtonsRowsState();
-}
-
-class _CategoryButtonsRowsState extends State<CategoryButtonsRows> {
-  @override
-  Widget build(BuildContext context) {
-    final widgets = <Widget>[];
-    for (var i = 0; i < 2; i++) {
-      widgets.add(
-        CategoryButtonsRow(
-          widget.sightCount,
-          widget.userLocation,
-          widget.curValues,
-          widget.isButtonDisabled,
-          widget.locationOfCategories,
-          i,
-          widget.statesOfCategories,
-        ),
-      );
-      if (i < 1) {
-        widgets.add(const SizedBox(
-          height: 40,
-        ));
-      }
-    }
-
-    return Column(
-      children: widgets,
-    );
-  }
-}
-
-class FiltersProvider extends ChangeNotifier {
-  int sightCount = 3;
-  bool isButtonDisabled = false;
-  void changeState(int newSightCount, bool newIsButtonDisabled) {
-    sightCount = newSightCount;
-    isButtonDisabled = newIsButtonDisabled;
-    notifyListeners();
-  }
-}
-
-class CategoryButton extends StatelessWidget {
+class _CategoryButton extends StatelessWidget {
   final Categories name;
   final bool isChosen;
   final VoidCallback? onPressed;
 
-  const CategoryButton(
-    this.name,
-    this.isChosen,
-    this.onPressed, {
+  const _CategoryButton({
+    required this.name,
+    required this.isChosen,
+    required this.onPressed,
     Key? key,
   }) : super(key: key);
 

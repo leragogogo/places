@@ -34,7 +34,7 @@ class ImagePart extends StatelessWidget {
           top: 16,
           left: 16,
           child: Text(
-            sight.type.toString(),
+            sight.type.message,
             style: const TextStyle(
               color: Colors.white,
             ),
@@ -55,8 +55,7 @@ class LowerPart extends StatelessWidget {
     final theme = Theme.of(context);
 
     return SizedBox(
-      child:
-      Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(

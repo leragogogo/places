@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:places/mocks.dart';
+import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/sight_card_visited.dart';
 import 'package:places/ui/screen/widgets/sight_card_want_to_visited.dart';
@@ -88,8 +89,8 @@ class _VisitingScreen extends State<StatefulWidget>
             // пустые экраны
             /*TabBarView(
           children: [
-            _EmptyScreen('res/icons/want_to_visited_empty.png',AppStrings.wantToVisetedEmptyText),
-            _EmptyScreen('res/icons/visited_empty.png',AppStrings.visitedEmptyText),
+            _EmptyScreen(AppAssets.wantToVisitedEmpty,AppStrings.wantToVisetedEmptyText),
+            _EmptyScreen(AppAssets.visitedEmpty,AppStrings.visitedEmptyText),
           ],
         ),*/
             TabBarView(

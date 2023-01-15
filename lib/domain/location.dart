@@ -1,6 +1,6 @@
-class Location{
+class Location {
   final double lat;
   final double lon;
-  
-  Location(this.lat,this.lon);
+
+  Location({required this.lat, required this.lon});
 }

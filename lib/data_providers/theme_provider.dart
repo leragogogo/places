@@ -5,12 +5,14 @@ class ThemeProvider extends ChangeNotifier {
   bool get isDarkTheme => _isDarkTheme;
   ThemeData get themeMode => _themeMode;
   bool _isDarkTheme = false;
-  
+
   var _themeMode = AppThemes.lightTheme;
 
   void changeTheme() {
     _isDarkTheme = !_isDarkTheme;
-    _themeMode = _themeMode == AppThemes.lightTheme ? AppThemes.darkTheme:AppThemes.lightTheme;
+    _themeMode = _themeMode == AppThemes.lightTheme
+        ? AppThemes.darkTheme
+        : AppThemes.lightTheme;
     notifyListeners();
   }
 }

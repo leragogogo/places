@@ -1,7 +1,16 @@
-enum Categories { hotel, restaurant, specialPlace, park, museum, cafe }
+enum Categories {
+  hotel('Отель'),
+  restaurant('Ресторан'),
+  specialPlace('Особое место'),
+  park('Парк'),
+  museum('Музей'),
+  cafe('Кафе');
 
-class Sight{
-  
+  const Categories(this.message);
+  final String message;
+}
+
+class Sight {
   final String name;
   final double lat;
   final double lon;
@@ -9,5 +18,12 @@ class Sight{
   final String details;
   final Categories type;
 
-  Sight(this.name,this.lat,this.lon,this.url,this.details,this.type);
+  Sight({
+    required this.name,
+    required this.lat,
+    required this.lon,
+    required this.url,
+    required this.details,
+    required this.type,
+  });
 }

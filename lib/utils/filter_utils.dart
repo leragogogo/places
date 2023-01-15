@@ -24,20 +24,10 @@ class FilterUtils {
     Map<Categories, bool> statesOfCategories,
     Categories category,
   ) {
-    var isCategoriesUnused = true;
-    for (final key in statesOfCategories.keys) {
-      if (statesOfCategories[key] == true) {
-        isCategoriesUnused = false;
-        break;
-      }
-    }
-
     final distance = calcDistance(center, point);
 
-    return isCategoriesUnused
-        ? distance >= minRadius && distance <= maxRadius
-        : distance >= minRadius &&
-            distance <= maxRadius &&
-            statesOfCategories[category]!;
+    return distance >= minRadius &&
+        distance <= maxRadius &&
+        statesOfCategories[category]!;
   }
 }

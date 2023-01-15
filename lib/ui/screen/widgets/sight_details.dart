@@ -122,7 +122,7 @@ class _TypeOfSight extends StatelessWidget {
       padding: const EdgeInsets.only(left: 16, top: 2),
       alignment: Alignment.topLeft,
       child: Text(
-        sight.type.toString(),
+        sight.type.message,
         style: theme.textTheme.bodySmall
             ?.copyWith(color: Theme.of(context).primaryColorDark),
       ),
