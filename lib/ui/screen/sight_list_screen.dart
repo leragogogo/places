@@ -17,8 +17,14 @@ class _SightListScreen extends State<SightListScreen> {
       appBar: _AppBar(),
       body: Column(
         children: [
-          SightCard(mocks[0]),
-          SightCard(mocks[1]),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SightCard(mocks[0]),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SightCard(mocks[1]),
+          ),
         ],
       ),
     );

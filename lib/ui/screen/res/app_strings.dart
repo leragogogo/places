@@ -1,30 +1,41 @@
 class AppStrings {
-  static String buildRouteButtonText = 'ПОСТРОИТЬ МАРШРУТ';
-  static String planButtomText = 'Запланировать';
-  static String favouriteButtonText = 'Избранное';
-  static String titleText = 'Список \nинтересных мест';
-  static String firstTabFavouriteScreenText = 'Хочу посетить';
-  static String secondTabFavouriteScreenText = 'Посетил';
-  static String hotelCategoryText = 'Отель';
-  static String restaurantCategoryText = 'Ресторан';
-  static String specialPlaceCategoryText = 'Особое место';
-  static String parkCategoryText = 'Парк';
-  static String museumCategoryText = 'Музей';
-  static String cafeCategoryText = 'Кафе';
-  static String cleanButtonText = 'Очистить';
-  static String categoryText = 'КАТЕГОРИИ';
-  static String chooseThemeText = 'Темная тема';
-  static String settingsText = 'Настройки';
-  static String watchTutorialText = 'Смотреть туториал';
-  static String label1 = 'Список мест';
-  static String label2 = 'Карта';
-  static String label3 = 'Избранное';
-  static String label4 = 'Настройки';
-  static String buttonShowText = 'ПОКАЗАТЬ';
-  static String distanceText = 'Расстояние';
-  static String emptyText = 'Пусто';
-  static String wantToVisetedEmptyText =
+  // SightDetailScreen
+  static const String buildRouteButtonText = 'ПОСТРОИТЬ МАРШРУТ';
+  static const String planButtomText = 'Запланировать';
+  static const String favouriteButtonText = 'Избранное';
+
+  // заголовок первого экрана
+  static const String titleText = 'Список \nинтересных мест';
+
+  // FilterScreen
+  static const String hotelCategoryText = 'Отель';
+  static const String restaurantCategoryText = 'Ресторан';
+  static const String specialPlaceCategoryText = 'Особое место';
+  static const String parkCategoryText = 'Парк';
+  static const String museumCategoryText = 'Музей';
+  static const String cafeCategoryText = 'Кафе';
+  static const String buttonShowText = 'ПОКАЗАТЬ';
+  static const String distanceText = 'Расстояние';
+  static const String cleanButtonText = 'Очистить';
+  static const String categoryText = 'КАТЕГОРИИ';
+
+  // SettingsScreen
+  static const String chooseThemeText = 'Темная тема';
+  static const String settingsText = 'Настройки';
+  static const String watchTutorialText = 'Смотреть туториал';
+
+  // лэйблы BottomNavigationBar
+  static const String label1 = 'Список мест';
+  static const String label2 = 'Карта';
+  static const String label3 = 'Избранное';
+  static const String label4 = 'Настройки';
+
+  // FavouriteScreen
+  static const String firstTabFavouriteScreenText = 'Хочу посетить';
+  static const String secondTabFavouriteScreenText = 'Посетил';
+  static const String emptyText = 'Пусто';
+  static const String wantToVisetedEmptyText =
       'Отмечайте понравивишиеся \nместа и они появиятся здесь';
-  static String visitedEmptyText =
+  static const String visitedEmptyText =
       'Завершите маршрут, \nчтобы место попало сюда';
 }

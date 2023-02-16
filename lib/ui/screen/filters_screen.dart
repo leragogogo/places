@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:places/data_providers/filter_provider.dart';
+import 'package:places/domain/categories.dart';
 import 'package:places/domain/location.dart';
-import 'package:places/domain/sight.dart';
 import 'package:places/mocks.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/utils/filter_utils.dart';
 import 'package:provider/provider.dart';
+
+// соответсвие между значениями слайдера и длиной радиуса поиска в метрах
+Map<int, double> _points = {
+  1: 100,
+  2: 500,
+  3: 1000,
+  4: 2000,
+  5: 3000,
+  6: 4000,
+  7: 5000,
+  8: 6000,
+  9: 7500,
+  10: 10000,
+};
 
 class FiltersScreen extends StatefulWidget {
   const FiltersScreen({Key? key}) : super(key: key);
@@ -18,6 +32,7 @@ class FiltersScreen extends StatefulWidget {
 class _FiltersScreenState extends State<FiltersScreen> {
   String distance = 'от 100 до 10000 м';
 
+  // состояние кажой категории(выбрана или нет)
   Map<Categories, bool> statesOfCategories = {
     Categories.hotel: false,
     Categories.restaurant: false,
@@ -27,35 +42,16 @@ class _FiltersScreenState extends State<FiltersScreen> {
     Categories.cafe: false,
   };
 
-  RangeValues curValues = const RangeValues(100, 10000);
+  // текущие значения слайдера
+  RangeValues curValues = const RangeValues(1, 10);
 
+  // количество подходящих под критерии мест
   int sightCount = 0;
 
+  // состояние кнопки "ПОКАЗАТЬ"
   bool isButtonDisabled = true;
 
   Location userLocation = Location(lat: 45, lon: 44);
-
-  Map<int, Categories> locationOfCategories = {
-    0: Categories.hotel,
-    1: Categories.restaurant,
-    2: Categories.specialPlace,
-    3: Categories.park,
-    4: Categories.museum,
-    5: Categories.cafe,
-  };
-
-  Map<int, int> points = {
-    100: 100,
-    1200: 500,
-    2300: 1000,
-    3399: 2000,
-    4500: 3000,
-    5600: 4000,
-    6699: 5000,
-    7800: 6000,
-    8900: 7500,
-    10000: 10000,
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +68,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
             color: theme.backgroundColor,
           ),
           onPressed: () {
-            // ignore: avoid_print
-            print('Кнопка назад нажата');
+            debugPrint('Кнопка назад нажата');
           },
         ),
         actions: [
@@ -85,7 +80,8 @@ class _FiltersScreenState extends State<FiltersScreen> {
                 }
                 sightCount = 0;
                 isButtonDisabled = true;
-                curValues = const RangeValues(100, 10000);
+                curValues = const RangeValues(1, 10);
+                distance = 'от 100 до 10000 м';
               });
               Provider.of<FiltersProvider>(context, listen: false).changeState(
                 newSightCount: sightCount,
@@ -116,13 +112,15 @@ class _FiltersScreenState extends State<FiltersScreen> {
           const SizedBox(
             height: 24,
           ),
-          SizedBox(
-            width: 368,
-            child: _Categories(
-              userLocation: userLocation,
-              curValues: curValues,
-              locationOfCategories: locationOfCategories,
-              statesOfCategories: statesOfCategories,
+          Padding(
+            padding: const EdgeInsets.only(left: 41, right: 41),
+            child: SizedBox(
+              width: double.infinity,
+              child: _Categories(
+                userLocation: userLocation,
+                curValues: curValues,
+                statesOfCategories: statesOfCategories,
+              ),
             ),
           ),
           const SizedBox(
@@ -159,15 +157,17 @@ class _FiltersScreenState extends State<FiltersScreen> {
                 setState(() {
                   curValues = values;
                   distance =
-                      'от ${points[values.start.toInt()]} до ${points[values.end.toInt()]} м';
+                      'от ${_points[curValues.start.round()]?.toInt()} до ${_points[curValues.end.round()]?.toInt()} м';
                   sightCount = mocks
                       .where((element) => FilterUtils.isPointInArea(
-                            userLocation,
-                            Location(lat: element.lat, lon: element.lon),
-                            curValues.start,
-                            curValues.end,
-                            statesOfCategories,
-                            element.type,
+                            point: userLocation,
+                            center:
+                                Location(lat: element.lat, lon: element.lon),
+                            radius: RangeValues(
+                              _points[curValues.start.round()]!,
+                              _points[curValues.end.round()]!,
+                            ),
+                            stateOfCategory: statesOfCategories[element.type]!,
                           ))
                       .length;
                   isButtonDisabled = sightCount == 0;
@@ -178,8 +178,8 @@ class _FiltersScreenState extends State<FiltersScreen> {
                   newIsButtonDisabled: isButtonDisabled,
                 );
               },
-              min: 100,
-              max: 10000,
+              min: 1,
+              max: 10,
               activeColor: AppColors.planButtonColor,
               inactiveColor: AppColors.ltTextColor,
               divisions: 9,
@@ -223,13 +223,11 @@ class _FiltersScreenState extends State<FiltersScreen> {
 class _Categories extends StatefulWidget {
   final Location userLocation;
   final RangeValues curValues;
-  final Map<int, Categories> locationOfCategories;
   final Map<Categories, bool> statesOfCategories;
 
   const _Categories({
     required this.userLocation,
     required this.curValues,
-    required this.locationOfCategories,
     required this.statesOfCategories,
     Key? key,
   }) : super(key: key);
@@ -244,35 +242,38 @@ class _CategoriesState extends State<_Categories> {
   @override
   Widget build(BuildContext context) {
     final row = <Widget>[];
-    for (var i = 0; i < 6; i++) {
-      final category = widget.locationOfCategories[i]!;
-      row.add(_CategoryButton(
-        name: category,
-        isChosen: widget.statesOfCategories[category]!,
-        onPressed: () {
-          setState(
-            () {
-              widget.statesOfCategories[category] =
-                  !widget.statesOfCategories[category]!;
-              sightCount = mocks
-                  .where((element) => FilterUtils.isPointInArea(
-                        widget.userLocation,
-                        Location(lat: element.lat, lon: element.lon),
-                        widget.curValues.start,
-                        widget.curValues.end,
-                        widget.statesOfCategories,
-                        element.type,
-                      ))
-                  .length;
-              isButtonDisabled = sightCount == 0;
-            },
-          );
-          Provider.of<FiltersProvider>(context, listen: false).changeState(
-            newSightCount: sightCount,
-            newIsButtonDisabled: isButtonDisabled,
-          );
-        },
-      ));
+    for (final category in Categories.values) {
+      row.add(
+        _CategoryButton(
+          name: category,
+          isChosen: widget.statesOfCategories[category]!,
+          onPressed: () {
+            setState(
+              () {
+                widget.statesOfCategories[category] =
+                    !widget.statesOfCategories[category]!;
+                sightCount = mocks
+                    .where((element) => FilterUtils.isPointInArea(
+                          point: widget.userLocation,
+                          center: Location(lat: element.lat, lon: element.lon),
+                          radius: RangeValues(
+                            _points[widget.curValues.start.round()]!,
+                            _points[widget.curValues.end.round()]!,
+                          ),
+                          stateOfCategory:
+                              widget.statesOfCategories[element.type]!,
+                        ))
+                    .length;
+                isButtonDisabled = sightCount == 0;
+              },
+            );
+            Provider.of<FiltersProvider>(context, listen: false).changeState(
+              newSightCount: sightCount,
+              newIsButtonDisabled: isButtonDisabled,
+            );
+          },
+        ),
+      );
     }
 
     return Wrap(
@@ -315,7 +316,7 @@ class _CategoryButton extends StatelessWidget {
                   child: IconButton(
                     icon: ImageIcon(
                       AssetImage(
-                        pathToImage(),
+                        name.pathToImage,
                       ),
                       color: AppColors.planButtonColor,
                     ),
@@ -344,7 +345,7 @@ class _CategoryButton extends StatelessWidget {
           width: 96,
           child: Center(
             child: Text(
-              title(),
+              name.name,
               style: theme.textTheme.bodySmall
                   ?.copyWith(color: theme.backgroundColor),
               maxLines: 1,
@@ -353,39 +354,5 @@ class _CategoryButton extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  String pathToImage() {
-    switch (name) {
-      case Categories.hotel:
-        return 'res/icons/hotels.png';
-      case Categories.restaurant:
-        return 'res/icons/restaurants.png';
-      case Categories.specialPlace:
-        return 'res/icons/special_places.png';
-      case Categories.park:
-        return 'res/icons/parks.png';
-      case Categories.museum:
-        return 'res/icons/museums.png';
-      case Categories.cafe:
-        return 'res/icons/cafes.png';
-    }
-  }
-
-  String title() {
-    switch (name) {
-      case Categories.hotel:
-        return AppStrings.hotelCategoryText;
-      case Categories.restaurant:
-        return AppStrings.restaurantCategoryText;
-      case Categories.specialPlace:
-        return AppStrings.specialPlaceCategoryText;
-      case Categories.park:
-        return AppStrings.parkCategoryText;
-      case Categories.museum:
-        return AppStrings.museumCategoryText;
-      case Categories.cafe:
-        return AppStrings.cafeCategoryText;
-    }
   }
 }

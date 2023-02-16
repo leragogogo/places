@@ -57,8 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: AppColors.planButtonColor,
               ),
               onPressed: () {
-                // ignore: avoid_print
-                print('Инфо кнопка нажата');
+                debugPrint('Инфо кнопка нажата');
               },
             ),
           ),

@@ -22,7 +22,7 @@ class _VisitingScreen extends State<StatefulWidget>
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Center(
+          title: const Center(
             child: Text(
               AppStrings.favouriteButtonText,
             ),
@@ -60,7 +60,7 @@ class _VisitingScreen extends State<StatefulWidget>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        child: Align(
+                        child: const Align(
                           child: Text(
                             AppStrings.firstTabFavouriteScreenText,
                           ),
@@ -72,7 +72,7 @@ class _VisitingScreen extends State<StatefulWidget>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        child: Align(
+                        child: const Align(
                           child: Text(
                             AppStrings.secondTabFavouriteScreenText,
                           ),

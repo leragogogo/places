@@ -1,9 +1,6 @@
-// ignore_for_file: avoid_print
-
 import 'dart:math';
-
+import 'package:flutter/material.dart';
 import 'package:places/domain/location.dart';
-import 'package:places/domain/sight.dart';
 
 class FilterUtils {
   static double calcDistance(Location point1, Location point2) {
@@ -15,19 +12,16 @@ class FilterUtils {
     return sqrt(dx * dx + dy * dy);
   }
 
-  // ignore: long-parameter-list
-  static bool isPointInArea(
-    Location point,
-    Location center,
-    double minRadius,
-    double maxRadius,
-    Map<Categories, bool> statesOfCategories,
-    Categories category,
-  ) {
+  static bool isPointInArea({
+    required Location point,
+    required Location center,
+    required RangeValues radius,
+    required bool stateOfCategory,
+  }) {
     final distance = calcDistance(center, point);
 
-    return distance >= minRadius &&
-        distance <= maxRadius &&
-        statesOfCategories[category]!;
+    return distance >= radius.start &&
+        distance <= radius.end &&
+        stateOfCategory;
   }
 }

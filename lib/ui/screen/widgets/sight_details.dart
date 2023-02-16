@@ -71,8 +71,7 @@ class _ImageDetails extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                // ignore: avoid_print
-                print('Кнопка вернуться назад нажата.');
+                debugPrint('Кнопка вернуться назад нажата.');
               },
               child: Icon(
                 Icons.arrow_back_ios,
@@ -122,7 +121,7 @@ class _TypeOfSight extends StatelessWidget {
       padding: const EdgeInsets.only(left: 16, top: 2),
       alignment: Alignment.topLeft,
       child: Text(
-        sight.type.message,
+        sight.type.name,
         style: theme.textTheme.bodySmall
             ?.copyWith(color: Theme.of(context).primaryColorDark),
       ),
@@ -171,8 +170,7 @@ class _BuildRouteButton extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            // ignore: avoid_print
-            print('Кнопка построить маршрут нажата.');
+            debugPrint('Кнопка построить маршрут нажата.');
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -207,8 +205,7 @@ class _RowOfLowerButtons extends StatelessWidget {
       children: [
         TextButton(
           onPressed: () {
-            // ignore: avoid_print
-            print('Кнопка запланировать нажата.');
+            debugPrint('Кнопка запланировать нажата.');
           },
           child: Row(
             children: [
@@ -229,8 +226,7 @@ class _RowOfLowerButtons extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            // ignore: avoid_print
-            print('Кнопка в избранное нажата.');
+            debugPrint('Кнопка в избранное нажата.');
           },
           child: Row(
             children: [

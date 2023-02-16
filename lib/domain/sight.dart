@@ -1,14 +1,4 @@
-enum Categories {
-  hotel('Отель'),
-  restaurant('Ресторан'),
-  specialPlace('Особое место'),
-  park('Парк'),
-  museum('Музей'),
-  cafe('Кафе');
-
-  const Categories(this.message);
-  final String message;
-}
+import 'package:places/domain/categories.dart';
 
 class Sight {
   final String name;

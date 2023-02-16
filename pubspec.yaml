@@ -25,18 +25,18 @@ flutter:
   uses-material-design: true
 
   assets:
-    - res/icons/hotels.png
-    - res/icons/restaurants.png
-    - res/icons/special_places.png
-    - res/icons/parks.png
-    - res/icons/museums.png
-    - res/icons/cafes.png
-    - res/icons/want_to_visited_empty.png
-    - res/icons/visited_empty.png
-    - res/icons/list_of_sights.png
-    - res/icons/map.png
-    - res/icons/heart.png
-    - res/icons/settings.png
+    - res/icons/hotels.svg
+    - res/icons/restaurants.svg
+    - res/icons/special_places.svg
+    - res/icons/parks.svg
+    - res/icons/museums.svg
+    - res/icons/cafes.svg
+    - res/icons/want_to_visited_empty.svg
+    - res/icons/visited_empty.svg
+    - res/icons/list_of_sights.svg
+    - res/icons/map.svg
+    - res/icons/heart.svg
+    - res/icons/settings.svg
 
   fonts:
     - family: Roboto

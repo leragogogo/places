@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:places/mocks.dart';
+import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/settings_screen.dart';
 import 'package:places/ui/screen/sight_list_screen.dart';
@@ -32,21 +33,21 @@ class _MainScreensState extends State<MainScreens> {
           );
         },
         type: BottomNavigationBarType.fixed,
-        items: [
+        items: const [
           BottomNavigationBarItem(
-            icon: const ImageIcon(AssetImage('res/icons/list_of_sights.png')),
+            icon: ImageIcon(AssetImage(AppAssets.tab1Asset)),
             label: AppStrings.label1,
           ),
           BottomNavigationBarItem(
-            icon: const ImageIcon(AssetImage('res/icons/map.png')),
+            icon: ImageIcon(AssetImage(AppAssets.tab2Asset)),
             label: AppStrings.label2,
           ),
           BottomNavigationBarItem(
-            icon: const ImageIcon(AssetImage('res/icons/heart.png')),
+            icon: ImageIcon(AssetImage(AppAssets.tab3Asset)),
             label: AppStrings.label3,
           ),
           BottomNavigationBarItem(
-            icon: const ImageIcon(AssetImage('res/icons/settings.png')),
+            icon: ImageIcon(AssetImage(AppAssets.tab4Asset)),
             label: AppStrings.label4,
           ),
         ],

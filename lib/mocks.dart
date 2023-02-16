@@ -1,3 +1,4 @@
+import 'package:places/domain/categories.dart';
 import 'package:places/domain/sight.dart';
 
 final List<Sight> mocks = [
