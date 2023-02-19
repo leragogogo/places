@@ -12,43 +12,45 @@ class SightListScreen extends StatefulWidget {
 
 class _SightListScreen extends State<SightListScreen> {
   @override
-  Widget build(Object context) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          AppStrings.titleText,
-        ),
-        elevation: 0,
-      ),
+      appBar: _AppBar(),
       body: Column(
         children: [
-          SightCard(mocks[0]),
-          SightCard(mocks[1]),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: '1',
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SightCard(mocks[0]),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: '2',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: '3',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '4',
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SightCard(mocks[1]),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Size get preferredSize => const Size(double.infinity, 136);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return AppBar(
+      toolbarHeight: 136,
+      title: Container(
+        alignment: Alignment.bottomLeft,
+        child: Text(
+          AppStrings.titleText,
+          maxLines: 2,
+          style:
+              theme.textTheme.bodyLarge?.copyWith(color: theme.backgroundColor),
+        ),
+      ),
+      elevation: 0,
     );
   }
 }

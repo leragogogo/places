@@ -41,6 +41,8 @@ class _ImageDetails extends StatelessWidget {
   const _ImageDetails(this.sight, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Stack(
       children: [
         SizedBox(
@@ -58,10 +60,24 @@ class _ImageDetails extends StatelessWidget {
         Positioned(
           top: 36,
           left: 16,
-          child: Container(
-            width: 32,
-            height: 32,
-            color: Colors.white,
+          child: SizedBox(
+            width: 36,
+            height: 36,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: theme.primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+              ),
+              onPressed: () {
+                debugPrint('Кнопка вернуться назад нажата.');
+              },
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: theme.backgroundColor,
+              ),
+            ),
           ),
         ),
       ],
@@ -105,7 +121,7 @@ class _TypeOfSight extends StatelessWidget {
       padding: const EdgeInsets.only(left: 16, top: 2),
       alignment: Alignment.topLeft,
       child: Text(
-        sight.type,
+        sight.type.name,
         style: theme.textTheme.bodySmall
             ?.copyWith(color: Theme.of(context).primaryColorDark),
       ),
@@ -134,7 +150,7 @@ class _DetailsOfSight extends StatelessWidget {
   }
 }
 
-// верстка кнопки(пока заглушка) построить маршрут
+// верстка кнопки построить маршрут
 class _BuildRouteButton extends StatelessWidget {
   final Sight sight;
 
@@ -143,40 +159,39 @@ class _BuildRouteButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, top: 24, right: 16),
-      child: Container(
-        padding: const EdgeInsets.only(
-          left: 16,
-          top: 15,
-          right: 16,
-          bottom: 15,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: AppColors.planButtonColor,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 20,
-              height: 20,
-              color: Colors.white,
+      child: SizedBox(
+        width: double.infinity,
+        height: 48,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: AppColors.planButtonColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5),
-              child: Text(
-                AppStrings.buildRouteButtonText,
-                style: AppTypography.buildRouteButtonTextStyle,
+          ),
+          onPressed: () {
+            debugPrint('Кнопка построить маршрут нажата.');
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.play_arrow),
+              Padding(
+                padding: const EdgeInsets.only(left: 5),
+                child: Text(
+                  AppStrings.buildRouteButtonText,
+                  style: AppTypography.buildRouteButtonTextStyle,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// верстка кнопок(пока заглушки) в избранное и запланировать
+// верстка кнопок в избранное и запланировать
 class _RowOfLowerButtons extends StatelessWidget {
   final Sight sight;
 
@@ -188,15 +203,47 @@ class _RowOfLowerButtons extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Text(
-          AppStrings.planButtomText,
-          style: theme.textTheme.bodySmall
-              ?.copyWith(color: theme.primaryColorDark),
+        TextButton(
+          onPressed: () {
+            debugPrint('Кнопка запланировать нажата.');
+          },
+          child: Row(
+            children: [
+              Icon(
+                Icons.calendar_month,
+                color: theme.primaryColorDark,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                AppStrings.planButtomText,
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(color: theme.primaryColorDark),
+              ),
+            ],
+          ),
         ),
-        Text(
-          AppStrings.favouriteButtonText,
-          style: theme.textTheme.bodySmall
-              ?.copyWith(color: theme.backgroundColor),
+        TextButton(
+          onPressed: () {
+            debugPrint('Кнопка в избранное нажата.');
+          },
+          child: Row(
+            children: [
+              Icon(
+                Icons.favorite,
+                color: theme.backgroundColor,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                AppStrings.favouriteButtonText,
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(color: theme.backgroundColor),
+              ),
+            ],
+          ),
         ),
       ],
     );

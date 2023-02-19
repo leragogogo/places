@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:places/mocks.dart';
+import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/sight_card_visited.dart';
 import 'package:places/ui/screen/widgets/sight_card_want_to_visited.dart';
@@ -21,8 +22,10 @@ class _VisitingScreen extends State<StatefulWidget>
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            AppStrings.favouriteButtonText,
+          title: const Center(
+            child: Text(
+              AppStrings.favouriteButtonText,
+            ),
           ),
           elevation: 0,
           bottom: PreferredSize(
@@ -41,6 +44,9 @@ class _VisitingScreen extends State<StatefulWidget>
                   ),
                 ),
                 TabBar(
+                  overlayColor: MaterialStateProperty.all(
+                    theme.bottomNavigationBarTheme.backgroundColor,
+                  ),
                   unselectedLabelColor: theme.primaryColorDark,
                   labelColor: theme.primaryColorLight,
                   indicatorSize: TabBarIndicatorSize.label,
@@ -54,7 +60,7 @@ class _VisitingScreen extends State<StatefulWidget>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        child: Align(
+                        child: const Align(
                           child: Text(
                             AppStrings.firstTabFavouriteScreenText,
                           ),
@@ -66,7 +72,7 @@ class _VisitingScreen extends State<StatefulWidget>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        child: Align(
+                        child: const Align(
                           child: Text(
                             AppStrings.secondTabFavouriteScreenText,
                           ),
@@ -79,42 +85,78 @@ class _VisitingScreen extends State<StatefulWidget>
             ),
           ),
         ),
-        body: TabBarView(
+        body:
+            // пустые экраны
+            /*TabBarView(
+          children: [
+            _EmptyScreen(AppAssets.wantToVisitedEmpty,AppStrings.wantToVisetedEmptyText),
+            _EmptyScreen(AppAssets.visitedEmpty,AppStrings.visitedEmptyText),
+          ],
+        ),*/
+            TabBarView(
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
-              child: SightCardWantToVisited(mocks[0]),
+              child: Column(
+                children: [
+                  SightCardWantToVisited(mocks[0]),
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(16),
-              child: SightCardVisited(mocks[1]),
+              child: Column(
+                children: [
+                  SightCardVisited(mocks[1]),
+                ],
+              ),
             ),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          currentIndex: 2,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.list),
-              label: '1',
+      ),
+    );
+  }
+}
+
+class _EmptyScreen extends StatelessWidget {
+  final String path;
+  final String text;
+
+  const _EmptyScreen(this.path, this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            path,
+            height: 64,
+            width: 64,
+            color: theme.primaryColorDark,
+          ),
+          const SizedBox(height: 32),
+          Text(
+            AppStrings.emptyText,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.primaryColorDark,
+              fontWeight: FontWeight.bold,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              label: '2',
+          ),
+          const SizedBox(height: 8),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.primaryColorDark,
+              fontWeight: FontWeight.bold,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              label: '3',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: '4',
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

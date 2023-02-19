@@ -1,7 +1,7 @@
 name: places
 description: A new Flutter project.
 
-publish_to: 'none' 
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
@@ -14,23 +14,31 @@ dependencies:
   cupertino_icons: ^1.0.2
   dart_code_metrics: ^4.17.1
   flutter_svg: ^1.1.4
+  provider: ^6.0.4
   surf_lint_rules: ^1.5.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
-
-
 flutter:
   uses-material-design: true
-  
+
   assets:
-    - res/
-  
+    - res/icons/hotels.svg
+    - res/icons/restaurants.svg
+    - res/icons/special_places.svg
+    - res/icons/parks.svg
+    - res/icons/museums.svg
+    - res/icons/cafes.svg
+    - res/icons/want_to_visited_empty.svg
+    - res/icons/visited_empty.svg
+    - res/icons/list_of_sights.svg
+    - res/icons/map.svg
+    - res/icons/heart.svg
+    - res/icons/settings.svg
+
   fonts:
-    - family: Roboto     
+    - family: Roboto
       fonts:
         - asset: res/fonts/Roboto-Regular.ttf
-

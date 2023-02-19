@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-class AppColors{
+class AppColors {
   static Color ltBackgroundColor = const Color.fromRGBO(255, 255, 255, 1);
   static Color ltTitleColor = const Color.fromRGBO(37, 40, 73, 1);
   static Color ltTextColor = const Color.fromRGBO(124, 126, 146, 1);
@@ -11,4 +11,5 @@ class AppColors{
   static Color dtUnselectedLabelColor = const Color.fromRGBO(124, 126, 146, 1);
   static Color dtLabelColor = const Color.fromRGBO(59, 62, 91, 1);
   static Color planButtonColor = const Color.fromRGBO(76, 175, 80, 1);
+  static Color categoriesColor = const Color.fromRGBO(76, 175, 80, 0.2);
 }
