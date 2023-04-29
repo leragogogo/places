@@ -24,7 +24,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Text(
             AppStrings.settingsText,
             style: theme.textTheme.bodyMedium
-                ?.copyWith(color: theme.backgroundColor),
+                ?.copyWith(color: theme.canvasColor),
           ),
         ),
       ),
@@ -34,22 +34,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: Text(
               AppStrings.chooseThemeText,
               style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: theme.backgroundColor),
+                  ?.copyWith(color: theme.canvasColor),
             ),
             trailing: CupertinoSwitch(
               value: context.watch<ThemeProvider>().isDarkTheme,
               activeColor: AppColors.planButtonColor,
               // ignore: unnecessary_parenthesis
-              onChanged: ((value) {
+              onChanged: (value) {
                 context.read<ThemeProvider>().changeTheme();
-              }),
+              },
             ),
           ),
           ListTile(
             leading: Text(
               AppStrings.watchTutorialText,
               style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: theme.backgroundColor),
+                  ?.copyWith(color: theme.canvasColor),
             ),
             trailing: IconButton(
               icon: Icon(

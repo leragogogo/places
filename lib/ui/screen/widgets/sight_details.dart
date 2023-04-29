@@ -65,17 +65,17 @@ class _ImageDetails extends StatelessWidget {
             height: 36,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: theme.primaryColor,
+                backgroundColor: theme.primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
               ),
               onPressed: () {
-                debugPrint('Кнопка вернуться назад нажата.');
+                Navigator.pop(context);
               },
               child: Icon(
                 Icons.arrow_back_ios,
-                color: theme.backgroundColor,
+                color: theme.canvasColor,
               ),
             ),
           ),
@@ -100,7 +100,7 @@ class _NameOfSight extends StatelessWidget {
       child: Text(
         sight.name,
         style: theme.textTheme.bodyLarge?.copyWith(
-          color: theme.backgroundColor,
+          color: theme.canvasColor,
           fontSize: 24,
         ),
       ),
@@ -144,7 +144,7 @@ class _DetailsOfSight extends StatelessWidget {
       child: Text(
         sight.details,
         style: theme.textTheme.bodySmall
-            ?.copyWith(color: Theme.of(context).backgroundColor),
+            ?.copyWith(color: Theme.of(context).canvasColor),
       ),
     );
   }
@@ -164,7 +164,7 @@ class _BuildRouteButton extends StatelessWidget {
         height: 48,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            primary: AppColors.planButtonColor,
+            backgroundColor: AppColors.planButtonColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.0),
             ),
@@ -232,7 +232,7 @@ class _RowOfLowerButtons extends StatelessWidget {
             children: [
               Icon(
                 Icons.favorite,
-                color: theme.backgroundColor,
+                color: theme.canvasColor,
               ),
               const SizedBox(
                 width: 10,
@@ -240,7 +240,7 @@ class _RowOfLowerButtons extends StatelessWidget {
               Text(
                 AppStrings.favouriteButtonText,
                 style: theme.textTheme.bodySmall
-                    ?.copyWith(color: theme.backgroundColor),
+                    ?.copyWith(color: theme.canvasColor),
               ),
             ],
           ),

@@ -12,4 +12,5 @@ class AppColors {
   static Color dtLabelColor = const Color.fromRGBO(59, 62, 91, 1);
   static Color planButtonColor = const Color.fromRGBO(76, 175, 80, 1);
   static Color categoriesColor = const Color.fromRGBO(76, 175, 80, 0.2);
+  static Color gradientStartColor = const Color.fromRGBO(252, 221, 61, 1);
 }

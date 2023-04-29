@@ -63,7 +63,7 @@ class LowerPart extends StatelessWidget {
             child: Text(
               sight.name,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).backgroundColor,
+                color: Theme.of(context).canvasColor,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

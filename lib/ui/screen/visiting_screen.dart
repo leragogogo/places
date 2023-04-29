@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:places/mocks.dart';
-import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/sight_card_visited.dart';
 import 'package:places/ui/screen/widgets/sight_card_want_to_visited.dart';
@@ -52,7 +51,7 @@ class _VisitingScreen extends State<StatefulWidget>
                   indicatorSize: TabBarIndicatorSize.label,
                   indicator: BoxDecoration(
                     borderRadius: BorderRadius.circular(40),
-                    color: theme.backgroundColor,
+                    color: theme.canvasColor,
                   ),
                   tabs: [
                     Tab(

@@ -7,7 +7,7 @@ class AppThemes {
     primaryColor: AppColors.ltUnselectedTabColor,
     primaryColorLight: AppColors.ltBackgroundColor,
     primaryColorDark: AppColors.ltTextColor,
-    backgroundColor: AppColors.ltTitleColor,
+    canvasColor: AppColors.ltTitleColor,
     textTheme: TextTheme(
       bodyLarge: AppTypography.titleTextStyle,
       bodyMedium: AppTypography.nameTextStyle,
@@ -31,7 +31,7 @@ class AppThemes {
     primaryColor: AppColors.dtUnselectedTabColor,
     primaryColorLight: AppColors.dtLabelColor,
     primaryColorDark: AppColors.dtUnselectedLabelColor,
-    backgroundColor: AppColors.ltBackgroundColor,
+    canvasColor: AppColors.ltBackgroundColor,
     textTheme: TextTheme(
       bodyLarge: AppTypography.titleTextStyle,
       bodyMedium: AppTypography.nameTextStyle,

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:places/data_providers/add_sight_provider.dart';
+import 'package:places/data_providers/button_create_provider.dart';
+import 'package:places/data_providers/button_save_provider.dart';
+import 'package:places/data_providers/choosing_category_provider.dart';
+import 'package:places/data_providers/field_empty_provider.dart';
 import 'package:places/data_providers/filter_provider.dart';
+import 'package:places/data_providers/history_provider.dart';
+import 'package:places/data_providers/search_provider.dart';
 import 'package:places/data_providers/theme_provider.dart';
 import 'package:places/main_screens.dart';
-import 'package:places/ui/screen/filters_screen.dart';
-import 'package:places/ui/screen/res/app_themes.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -16,6 +21,27 @@ void main() {
         ChangeNotifierProvider(
           create: (context) => ThemeProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ChoosingCategoryProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AddSightProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ButtonSaveProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ButtonCreateProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SearchProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => HistoryProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => FieldEmptyProvider(),
+        ),
       ],
       child: const App(),
     ),
@@ -27,12 +53,9 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: AppThemes.lightTheme,
-      home: const FiltersScreen(),
-      // временное переключение до прохождения соответствующего урока
-      //theme: context.watch<ThemeProvider>().themeMode,
-      //home: const MainScreens(),
+      title: 'Places',
+      theme: context.watch<ThemeProvider>().themeMode,
+      home: const MainScreens(),
     );
   }
 }
