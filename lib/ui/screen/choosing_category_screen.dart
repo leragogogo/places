@@ -113,38 +113,43 @@ class _CategoryTilesState extends State<_CategoryTiles> {
 
   @override
   Widget build(BuildContext context) {
-    final column = <Widget>[];
-    for (final category in Categories.values) {
-      column.add(_Category(
-        category: category,
-        isChosen: widget.statesOfCategories[category]!,
-        onTap: () {
-          setState(() {
-            widget.statesOfCategories.forEach((key, value) {
-              if (key != category) {
-                widget.statesOfCategories.update(key, (value) => false);
-              }
-            });
-
-            widget.statesOfCategories[category] =
-                !widget.statesOfCategories[category]!;
-            var count = 0;
-            for (final category in widget.statesOfCategories.keys) {
-              if (widget.statesOfCategories[category]!) {
-                count += 1;
-              }
-            }
-            isButtonDisabled = count == 0;
-          });
-
-          Provider.of<ButtonSaveProvider>(context, listen: false).changeState(
-            newIsButtonDisabled: isButtonDisabled,
+    return Column(
+      children: Categories.values.map(
+        (category) {
+          return _Category(
+            category: category,
+            isChosen: widget.statesOfCategories[category]!,
+            onTap: () {
+              _onCategoryTap(category);
+            },
           );
         },
-      ));
-    }
+      ).toList(),
+    );
+  }
 
-    return Column(children: column);
+  void _onCategoryTap(Categories category) {
+    setState(() {
+      widget.statesOfCategories.forEach((key, value) {
+        if (key != category) {
+          widget.statesOfCategories.update(key, (value) => false);
+        }
+      });
+
+      widget.statesOfCategories[category] =
+          !widget.statesOfCategories[category]!;
+      var count = 0;
+      for (final category in widget.statesOfCategories.keys) {
+        if (widget.statesOfCategories[category]!) {
+          count += 1;
+        }
+      }
+      isButtonDisabled = count == 0;
+    });
+
+    Provider.of<ButtonSaveProvider>(context, listen: false).changeState(
+      newIsButtonDisabled: isButtonDisabled,
+    );
   }
 }
 

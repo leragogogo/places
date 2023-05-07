@@ -5,6 +5,7 @@ import 'package:places/mocks.dart';
 import 'package:places/ui/screen/add_sight_screen.dart';
 import 'package:places/ui/screen/filters_screen.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
+import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/sight_search_screen.dart';
 import 'package:places/ui/screen/widgets/search_bar.dart';
 import 'package:places/ui/screen/widgets/sight_appbar.dart';
@@ -19,7 +20,7 @@ class SightListScreen extends StatefulWidget {
 
 class _SightListScreen extends State<SightListScreen> {
   List<Sight>? mocksWithFilters = mocks;
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,18 +58,21 @@ class _SightListScreen extends State<SightListScreen> {
       ),
       floatingActionButton: _AddNewSightButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SightCard(mocks[0]),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SightCard(mocks[1]),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SightCard(mocks[0]),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SightCard(mocks[1]),
+            ),
+          ],
+        ),
       ),
+      resizeToAvoidBottomInset: true,
     );
   }
 }
@@ -106,7 +110,7 @@ class _AddNewSightButton extends StatelessWidget {
             children: const [
               Icon(Icons.add),
               Text(
-                'НОВОЕ МЕСТО',
+                AppStrings.newSightText,
               ),
             ],
           ),

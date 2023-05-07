@@ -13,22 +13,24 @@ class SightDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          _ImageDetails(sight),
-          _NameOfSight(sight),
-          _TypeOfSight(sight),
-          _DetailsOfSight(sight),
-          _BuildRouteButton(sight),
-          Divider(
-            height: 39,
-            color: AppColors.ltTextColor,
-            indent: 16,
-            endIndent: 16,
-            thickness: 0.8,
-          ),
-          _RowOfLowerButtons(sight),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _ImageDetails(sight),
+            _NameOfSight(sight),
+            _TypeOfSight(sight),
+            _DetailsOfSight(sight),
+            _BuildRouteButton(sight),
+            Divider(
+              height: 39,
+              color: AppColors.ltTextColor,
+              indent: 16,
+              endIndent: 16,
+              thickness: 0.8,
+            ),
+            _RowOfLowerButtons(sight),
+          ],
+        ),
       ),
     );
   }

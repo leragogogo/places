@@ -18,6 +18,7 @@ class AppStrings {
   static const String distanceText = 'Расстояние';
   static const String cleanButtonText = 'Очистить';
   static const String categoryText = 'КАТЕГОРИИ';
+  static const String showButtonText = 'ПОКАЗАТЬ';
 
   // SettingsScreen
   static const String chooseThemeText = 'Темная тема';
@@ -57,6 +58,7 @@ class AppStrings {
 
 
   static const String hintText = 'Поиск';
+  static const String newSightText = 'НОВОЕ МЕСТО';
 
   // SightSearchScreen
   static const emptySearch = 'Ничего не найдено';

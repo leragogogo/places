@@ -9,7 +9,7 @@ class BottomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.bottomLeft,
+      alignment: Alignment.bottomCenter,
       child: Padding(
         padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16),
         child: SizedBox(

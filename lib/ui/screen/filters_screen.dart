@@ -176,7 +176,8 @@ class _FiltersScreenState extends State<FiltersScreen> {
                               _points[curValues.end.round()]!,
                             ),
                             stateOfCategory: statesOfCategories[element.type]!,
-                          )).toList();
+                          ))
+                      .toList();
                   sightCount = mocksWithFilters.length;
                   isButtonDisabled = sightCount == 0;
                 });
@@ -196,10 +197,12 @@ class _FiltersScreenState extends State<FiltersScreen> {
           ),
           Expanded(
             child: BottomButton(
-              text: 'ПОКАЗАТЬ ($sightCount)',
-              onPressed: isButtonDisabled ? null : () {
-                Navigator.pop(context, mocksWithFilters);
-              },
+              text: '${AppStrings.showButtonText} ($sightCount)',
+              onPressed: isButtonDisabled
+                  ? null
+                  : () {
+                      Navigator.pop(context, mocksWithFilters);
+                    },
             ),
           ),
         ],
@@ -231,47 +234,45 @@ class _CategoriesState extends State<_Categories> {
   List<Sight> mocksWithFilters = mocks;
   @override
   Widget build(BuildContext context) {
-    final row = <Widget>[];
-    for (final category in Categories.values) {
-      row.add(
-        _CategoryButton(
-          name: category,
-          isChosen: widget.statesOfCategories[category]!,
-          onPressed: () {
-            setState(
-              () {
-                widget.statesOfCategories[category] =
-                    !widget.statesOfCategories[category]!;
-                mocksWithFilters = mocks
-                    .where((element) => FilterUtils.isPointInArea(
-                          point: widget.userLocation,
-                          center: Location(lat: element.lat, lon: element.lon),
-                          radius: RangeValues(
-                            _points[widget.curValues.start.round()]!,
-                            _points[widget.curValues.end.round()]!,
-                          ),
-                          stateOfCategory:
-                              widget.statesOfCategories[element.type]!,
-                        ))
-                    .toList();
-                sightCount = mocksWithFilters.length;
-                isButtonDisabled = sightCount == 0;
-              },
-            );
-            Provider.of<FiltersProvider>(context, listen: false).changeState(
-              newSightCount: sightCount,
-              newIsButtonDisabled: isButtonDisabled,
-              newMocksWithFilters: mocksWithFilters,
-            );
-          },
-        ),
-      );
-    }
-
     return Wrap(
       runSpacing: 40,
       alignment: WrapAlignment.spaceBetween,
-      children: row,
+      children: Categories.values.map((category) {
+        return _CategoryButton(
+          name: category,
+          isChosen: widget.statesOfCategories[category]!,
+          onPressed: () {
+            _onCategoryButtonPressed(category);
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  void _onCategoryButtonPressed(Categories category) {
+    setState(
+      () {
+        widget.statesOfCategories[category] =
+            !widget.statesOfCategories[category]!;
+        mocksWithFilters = mocks
+            .where((element) => FilterUtils.isPointInArea(
+                  point: widget.userLocation,
+                  center: Location(lat: element.lat, lon: element.lon),
+                  radius: RangeValues(
+                    _points[widget.curValues.start.round()]!,
+                    _points[widget.curValues.end.round()]!,
+                  ),
+                  stateOfCategory: widget.statesOfCategories[element.type]!,
+                ))
+            .toList();
+        sightCount = mocksWithFilters.length;
+        isButtonDisabled = sightCount == 0;
+      },
+    );
+    Provider.of<FiltersProvider>(context, listen: false).changeState(
+      newSightCount: sightCount,
+      newIsButtonDisabled: isButtonDisabled,
+      newMocksWithFilters: mocksWithFilters,
     );
   }
 }

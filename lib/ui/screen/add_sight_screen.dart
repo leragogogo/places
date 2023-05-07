@@ -28,13 +28,7 @@ class _AddSightScreenState extends State<AddSightScreen> {
   double? lon;
   String? details;
 
-  Map<String, bool> statesOfFields = {
-    'name': false,
-    'lat': false,
-    'lon': false,
-    'details': false,
-    'category': false,
-  };
+  bool stateOfCategory = false;
 
   FocusNode nameFocus = FocusNode();
   FocusNode latFocus = FocusNode();
@@ -50,6 +44,13 @@ class _AddSightScreenState extends State<AddSightScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final controllers = [
+      nameController,
+      latController,
+      lonController,
+      detailsController,
+    ];
+
     final theme = Theme.of(context);
     isButtonDisabled =
         Provider.of<ButtonCreateProvider>(context).isButtonDisabled;
@@ -63,266 +64,267 @@ class _AddSightScreenState extends State<AddSightScreen> {
             Icons.arrow_back_ios,
             color: theme.canvasColor,
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: resetState,
         ),
         elevation: 0,
+        automaticallyImplyLeading: false,
       ),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 24,
-          ),
-          const Padding(
-            padding: EdgeInsets.only(left: 16),
-            child: _Label(text: AppStrings.categoryOfNewSightText),
-          ),
-          ListTile(
-            leading: Text(
-              replaceNull(category),
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: theme.canvasColor),
-            ),
-            trailing: IconButton(
-              onPressed: () async {
-                category = await Navigator.push(
-                  context,
-                  MaterialPageRoute<Categories>(
-                    builder: (context) => ChoosingCategoryScreen(
-                      lastChosenCategory: category,
+      body: CustomScrollView(
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 24,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 16),
+                  child: _Label(text: AppStrings.categoryOfNewSightText),
+                ),
+                ListTile(
+                  leading: Text(
+                    replaceNull(category),
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(color: theme.canvasColor),
+                  ),
+                  trailing: IconButton(
+                    onPressed: () async {
+                      await openChoosingCategoryScreen(controllers);
+                    },
+                    icon: const Icon(Icons.arrow_forward_ios),
+                    color: theme.canvasColor,
+                  ),
+                ),
+                const Divider(
+                  height: 28,
+                  indent: 16,
+                  endIndent: 16,
+                  thickness: 1,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 16),
+                  child: _Label(text: AppStrings.nameFieldText),
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  child: _SightTextField(
+                    focusNode: nameFocus,
+                    onSubmitted: (value) {
+                      name = value;
+                      changeButtonState(controllers);
+                      FocusScope.of(context).requestFocus(latFocus);
+                    },
+                    onTapOutside: (p) {
+                      name = controllers[0].text;
+                      changeButtonState(controllers);
+                      nameFocus.unfocus();
+                    },
+                    controller: nameController,
+                    keyboardType: TextInputType.text,
+                  ),
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: Column(
+                        children: [
+                          const _Label(text: AppStrings.latFieldText),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          SizedBox(
+                            width: 156,
+                            child: _SightTextField(
+                              focusNode: latFocus,
+                              onSubmitted: (value) {
+                                lat = double.tryParse(value);
+                                changeButtonState(controllers);
+                                FocusScope.of(context).requestFocus(lonFocus);
+                              },
+                              onTapOutside: (p) {
+                                lat = double.tryParse(controllers[1].text);
+                                changeButtonState(controllers);
+                                latFocus.unfocus();
+                              },
+                              controller: latController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                decimal: true,
+                              ),
+                            ),
+                          ),
+                        ],
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: Column(
+                        children: [
+                          const _Label(text: AppStrings.lonFieldText),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          SizedBox(
+                            width: 156,
+                            child: _SightTextField(
+                              focusNode: lonFocus,
+                              onSubmitted: (value) {
+                                lon = double.tryParse(value);
+                                changeButtonState(controllers);
+                                FocusScope.of(context)
+                                    .requestFocus(detailsFocus);
+                              },
+                              onTapOutside: (p) {
+                                lon = double.tryParse(controllers[2].text);
+                                changeButtonState(controllers);
+                                lonFocus.unfocus();
+                              },
+                              controller: lonController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                decimal: true,
+                              ),
+                            ),
+                          ),
+                        ],
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                    ),
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      AppStrings.pointOnMapText,
+                      style: TextStyle(
+                        color: AppColors.planButtonColor,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
-                );
-                if (!mounted) return;
-                if (category != null) {
-                  statesOfFields['category'] = true;
-                } else {
-                  statesOfFields['category'] = false;
-                }
-                var c = 0;
-                for (final field in statesOfFields.keys) {
-                  if (statesOfFields[field]!) {
-                    c += 1;
-                  }
-                }
-                isButtonDisabled = c != 5;
-                Provider.of<ButtonCreateProvider>(context, listen: false)
-                    .changeState(
-                  newIsButtonDisabled: isButtonDisabled,
-                );
-
-                Provider.of<AddSightProvider>(context, listen: false)
-                    .changeState(
-                  newCategory: category,
-                );
-              },
-              icon: const Icon(Icons.arrow_forward_ios),
-              color: theme.canvasColor,
-            ),
-          ),
-          const Divider(
-            height: 28,
-            indent: 16,
-            endIndent: 16,
-            thickness: 1,
-          ),
-          const Padding(
-            padding: EdgeInsets.only(left: 16),
-            child: _Label(text: AppStrings.nameFieldText),
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16),
-            child: _SightTextField(
-              focusNode: nameFocus,
-              onSubmitted: (value) {
-                name = value;
-                if (name != '') {
-                  statesOfFields['name'] = true;
-                } else {
-                  statesOfFields['name'] = false;
-                }
-                var c = 0;
-                for (final field in statesOfFields.keys) {
-                  if (statesOfFields[field]!) {
-                    c += 1;
-                  }
-                }
-                isButtonDisabled = c != 5;
-                Provider.of<ButtonCreateProvider>(context, listen: false)
-                    .changeState(
-                  newIsButtonDisabled: isButtonDisabled,
-                );
-                FocusScope.of(context).requestFocus(latFocus);
-              },
-              
-            ),
-          ),
-          const SizedBox(
-            height: 24,
-          ),
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: Column(
-                  children: [
-                    const _Label(text: AppStrings.latFieldText),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    SizedBox(
-                      width: 156,
-                      child: _SightTextField(
-                        focusNode: latFocus,
-                        onSubmitted: (value) {
-                          lat = double.tryParse(value);
-                          if (lat != null) {
-                            statesOfFields['lat'] = true;
-                          } else {
-                            statesOfFields['lat'] = false;
-                          }
-                          var c = 0;
-                          for (final field in statesOfFields.keys) {
-                            if (statesOfFields[field]!) {
-                              c += 1;
-                            }
-                          }
-                          isButtonDisabled = c != 5;
-                          Provider.of<ButtonCreateProvider>(
-                            context,
-                            listen: false,
-                          ).changeState(
-                            newIsButtonDisabled: isButtonDisabled,
-                          );
-                          FocusScope.of(context).requestFocus(lonFocus);
-                        },
-                        
-                      ),
-                    ),
-                  ],
-                  crossAxisAlignment: CrossAxisAlignment.start,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Column(
-                  children: [
-                    const _Label(text: AppStrings.lonFieldText),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    SizedBox(
-                      width: 156,
-                      child: _SightTextField(
-                        focusNode: lonFocus,
-                        onSubmitted: (value) {
-                          lon = double.tryParse(value);
-                          if (lon != null) {
-                            statesOfFields['lon'] = true;
-                          } else {
-                            statesOfFields['lon'] = false;
-                          }
-                          var c = 0;
-                          for (final field in statesOfFields.keys) {
-                            if (statesOfFields[field]!) {
-                              c += 1;
-                            }
-                          }
-                          isButtonDisabled = c != 5;
-                          Provider.of<ButtonCreateProvider>(
-                            context,
-                            listen: false,
-                          ).changeState(
-                            newIsButtonDisabled: isButtonDisabled,
-                          );
-                          FocusScope.of(context).requestFocus(detailsFocus);
-                        },
-                        
-                      ),
-                    ),
-                  ],
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(
+                  height: 37,
                 ),
-              ),
-            ],
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: TextButton(
-              onPressed: () {},
-              child: Text(
-                AppStrings.pointOnMapText,
-                style: TextStyle(
-                  color: AppColors.planButtonColor,
-                  fontSize: 16,
+                const Padding(
+                  padding: EdgeInsets.only(left: 16),
+                  child: _Label(text: AppStrings.detailsFieldText),
                 ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 37,
-          ),
-          const Padding(
-            padding: EdgeInsets.only(left: 16),
-            child: _Label(text: AppStrings.detailsFieldText),
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16),
-            child: _SightTextField(
-              focusNode: detailsFocus,
-              onSubmitted: (value) {
-                details = value;
-                if (details != '') {
-                  statesOfFields['details'] = true;
-                } else {
-                  statesOfFields['details'] = false;
-                }
-                var c = 0;
-                for (final field in statesOfFields.keys) {
-                  if (statesOfFields[field]!) {
-                    c += 1;
-                  }
-                }
-                isButtonDisabled = c != 5;
-                Provider.of<ButtonCreateProvider>(context, listen: false)
-                    .changeState(
-                  newIsButtonDisabled: isButtonDisabled,
-                );
-              },
-            ),
-          ),
-          Expanded(
-            child: BottomButton(
-              text: AppStrings.createSightButtonText,
-              onPressed: isButtonDisabled
-                  ? null
-                  : () {
-                      mocks.add(
-                        Sight(
-                          name: name!,
-                          lat: lat!,
-                          lon: lon!,
-                          url:
-                              'https://avatars.mds.yandex.net/get-altay/5235198/2a0000017afdeefb6009b7fd234b65744604/XXXL',
-                          details: details!,
-                          type: category!,
-                        ),
-                      );
-                      Navigator.pop(context);
+                const SizedBox(
+                  height: 12,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  child: _SightTextField(
+                    focusNode: detailsFocus,
+                    onSubmitted: (value) {
+                      details = value;
+                      changeButtonState(controllers);
                     },
+                    onTapOutside: (p) {
+                      details = controllers[3].text;
+                      changeButtonState(controllers);
+                      detailsFocus.unfocus();
+                    },
+                    controller: detailsController,
+                    keyboardType: TextInputType.text,
+                  ),
+                ),
+                Expanded(
+                  child: BottomButton(
+                    text: AppStrings.createSightButtonText,
+                    onPressed: isButtonDisabled
+                        ? null
+                        : () {
+                            mocks.add(
+                              Sight(
+                                name: name!,
+                                lat: lat!,
+                                lon: lon!,
+                                url:
+                                    'https://avatars.mds.yandex.net/get-altay/5235198/2a0000017afdeefb6009b7fd234b65744604/XXXL',
+                                details: details!,
+                                type: category!,
+                              ),
+                            );
+                            resetState();
+                          },
+                  ),
+                ),
+              ],
+              crossAxisAlignment: CrossAxisAlignment.start,
             ),
           ),
         ],
-        crossAxisAlignment: CrossAxisAlignment.start,
       ),
+      resizeToAvoidBottomInset: true,
+    );
+  }
+
+  Future<void> openChoosingCategoryScreen(
+    List<TextEditingController> controllers,
+  ) async {
+    category = await Navigator.push(
+      context,
+      MaterialPageRoute<Categories>(
+        builder: (context) => ChoosingCategoryScreen(
+          lastChosenCategory: category,
+        ),
+      ),
+    );
+    if (!mounted) return;
+    stateOfCategory = category != null;
+    changeButtonState(controllers);
+
+    Provider.of<AddSightProvider>(context, listen: false).changeState(
+      newCategory: category,
+    );
+  }
+
+  void resetState() {
+    category = null;
+    isButtonDisabled = true;
+    Provider.of<AddSightProvider>(context, listen: false).changeState(
+      newCategory: category,
+    );
+    Provider.of<ButtonCreateProvider>(
+      context,
+      listen: false,
+    ).changeState(
+      newIsButtonDisabled: isButtonDisabled,
+    );
+    Navigator.pop(context);
+  }
+
+  void changeButtonState(List<TextEditingController> controllers) {
+    var c = 0;
+    if (stateOfCategory) {
+      c = 1;
+    }
+
+    for (final controller in controllers) {
+      if (controller.text != '') {
+        c += 1;
+      }
+    }
+    isButtonDisabled = c != 5;
+    Provider.of<ButtonCreateProvider>(
+      context,
+      listen: false,
+    ).changeState(
+      newIsButtonDisabled: isButtonDisabled,
     );
   }
 }
@@ -330,10 +332,16 @@ class _AddSightScreenState extends State<AddSightScreen> {
 class _SightTextField extends StatelessWidget {
   final FocusNode focusNode;
   final void Function(String) onSubmitted;
+  final Function(PointerDownEvent) onTapOutside;
+  final TextEditingController controller;
+  final TextInputType keyboardType;
 
   const _SightTextField({
     required this.focusNode,
     required this.onSubmitted,
+    required this.onTapOutside,
+    required this.controller,
+    required this.keyboardType,
     Key? key,
   }) : super(key: key);
   @override
@@ -356,6 +364,9 @@ class _SightTextField extends StatelessWidget {
         ),
       ),
       onSubmitted: onSubmitted,
+      onTapOutside: onTapOutside,
+      controller: controller,
+      keyboardType: keyboardType,
     );
   }
 }

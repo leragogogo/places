@@ -133,7 +133,8 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
             )
           : searchList.isEmpty
               ? _EmptyScreen()
-              : Column(children: searchList),
+              : SingleChildScrollView(child: Column(children: searchList)),
+      resizeToAvoidBottomInset: true,
     );
   }
 
@@ -173,43 +174,45 @@ class _HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final widgets = <Widget>[];
-    // ignore: cascade_invocations
-    widgets
-      ..add(const SizedBox(
-        height: 38,
-      ))
-      ..add(Padding(
-        padding: const EdgeInsets.only(left: 16),
-        child: Text(
-          AppStrings.historyText,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.primaryColorDark,
-            fontSize: 12,
-          ),
-        ),
-      ))
-      ..addAll(history);
+
     if (history.isNotEmpty) {
-      widgets.add(
-        Padding(
+      widgets
+        ..add(const SizedBox(
+          height: 38,
+        ))
+        ..add(Padding(
           padding: const EdgeInsets.only(left: 16),
-          child: TextButton(
-            onPressed: onPressed,
-            child: Text(
-              AppStrings.clearHistoryText,
-              style: TextStyle(
-                color: AppColors.planButtonColor,
-                fontSize: 16,
+          child: Text(
+            AppStrings.historyText,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.primaryColorDark,
+              fontSize: 12,
+            ),
+          ),
+        ))
+        ..addAll(history)
+        ..add(
+          Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: TextButton(
+              onPressed: onPressed,
+              child: Text(
+                AppStrings.clearHistoryText,
+                style: TextStyle(
+                  color: AppColors.planButtonColor,
+                  fontSize: 16,
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
     }
 
-    return Column(
-      children: widgets,
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      child: Column(
+        children: widgets,
+        crossAxisAlignment: CrossAxisAlignment.start,
+      ),
     );
   }
 }
