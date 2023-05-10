@@ -5,7 +5,7 @@ class AppStrings {
   static const String favouriteButtonText = 'Избранное';
 
   // заголовок первого экрана
-  static const String titleText = 'Список \nинтересных мест';
+  static const String titleText = 'Список интересных мест';
 
   // FilterScreen
   static const String hotelCategoryText = 'Отель';
@@ -18,6 +18,7 @@ class AppStrings {
   static const String distanceText = 'Расстояние';
   static const String cleanButtonText = 'Очистить';
   static const String categoryText = 'КАТЕГОРИИ';
+  static const String showButtonText = 'ПОКАЗАТЬ';
 
   // SettingsScreen
   static const String chooseThemeText = 'Темная тема';
@@ -38,4 +39,30 @@ class AppStrings {
       'Отмечайте понравивишиеся \nместа и они появиятся здесь';
   static const String visitedEmptyText =
       'Завершите маршрут, \nчтобы место попало сюда';
+
+  // AddSightScreen
+  static const String addSightScreenTitle = 'Новое место';
+  static const String unchosenCategoryText = 'Не выбрано';
+  static const String categoryOfNewSightText = 'КАТЕГОРИЯ';
+  static const String nameFieldText = 'НАЗВАНИЕ';
+  static const String latFieldText = 'ШИРОТА';
+  static const String lonFieldText = 'ДОЛГОТА';
+  static const String pointOnMapText = 'Указать на карте';
+  static const String detailsFieldText = 'ОПИСАНИЕ';
+  static const String createSightButtonText = 'СОЗДАТЬ';
+  static const String cancelButtonText = 'Отменa';
+
+  // ChoosingCategoryScreen
+  static const String choosingCategoryScreenTitle = 'Категория';
+  static const String saveButtonText = 'СОХРАНИТЬ';
+
+
+  static const String hintText = 'Поиск';
+  static const String newSightText = 'НОВОЕ МЕСТО';
+
+  // SightSearchScreen
+  static const emptySearch = 'Ничего не найдено';
+  static const emptySearch2 = 'Попробуйте изменить параметры\nпоиска';
+  static const historyText = 'ВЫ ИСКАЛИ';
+  static const clearHistoryText = 'Очистить историю';
 }

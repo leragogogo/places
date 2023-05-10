@@ -11,4 +11,6 @@ class AppAssets {
   static const String tab2Asset = 'res/icons/map.svg';
   static const String tab3Asset = 'res/icons/heart.svg';
   static const String tab4Asset = 'res/icons/settings.svg';
+  static const String searchAsset = 'res/icons/search.svg';
+  static const String filterAsset = 'res/icons/filter.svg';
 }

@@ -1,6 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:places/domain/sight.dart';
 import 'package:places/mocks.dart';
+import 'package:places/ui/screen/add_sight_screen.dart';
+import 'package:places/ui/screen/filters_screen.dart';
+import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
+import 'package:places/ui/screen/sight_search_screen.dart';
+import 'package:places/ui/screen/widgets/search_bar.dart';
+import 'package:places/ui/screen/widgets/sight_appbar.dart';
 import 'package:places/ui/screen/widgets/sight_card.dart';
 
 class SightListScreen extends StatefulWidget {
@@ -11,46 +19,103 @@ class SightListScreen extends StatefulWidget {
 }
 
 class _SightListScreen extends State<SightListScreen> {
+  List<Sight>? mocksWithFilters = mocks;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _AppBar(),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SightCard(mocks[0]),
+      appBar: SightAppBar(
+        leading: null,
+        bottom: SearchBar(
+          readOnly: true,
+          onChanged: (value) {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute<SightSearchScreen>(
+                builder: (context) => SightSearchScreen(
+                  mocksWithFilters: mocksWithFilters!,
+                ),
+              ),
+            );
+          },
+          suffixIcon: IconButton(
+            icon: Icon(
+              CupertinoIcons.slider_horizontal_3,
+              color: AppColors.planButtonColor,
+            ),
+            onPressed: () async {
+              mocksWithFilters = await Navigator.push(
+                context,
+                MaterialPageRoute<List<Sight>>(
+                  builder: (context) => const FiltersScreen(),
+                ),
+              );
+            },
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SightCard(mocks[1]),
-          ),
-        ],
+          controller: null,
+        ),
       ),
+      floatingActionButton: _AddNewSightButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SightCard(mocks[0]),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SightCard(mocks[1]),
+            ),
+          ],
+        ),
+      ),
+      resizeToAvoidBottomInset: true,
     );
   }
 }
 
-class _AppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  Size get preferredSize => const Size(double.infinity, 136);
-
+class _AddNewSightButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return AppBar(
-      toolbarHeight: 136,
-      title: Container(
-        alignment: Alignment.bottomLeft,
-        child: Text(
-          AppStrings.titleText,
-          maxLines: 2,
-          style:
-              theme.textTheme.bodyLarge?.copyWith(color: theme.backgroundColor),
+    return Container(
+      height: 48,
+      width: 177,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: <Color>[
+            AppColors.gradientStartColor,
+            AppColors.planButtonColor,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute<AddSightScreen>(
+              builder: (context) => const AddSightScreen(),
+            ),
+          );
+        },
+        child: Center(
+          child: Row(
+            children: const [
+              Icon(Icons.add),
+              Text(
+                AppStrings.newSightText,
+              ),
+            ],
+          ),
         ),
       ),
-      elevation: 0,
     );
   }
 }

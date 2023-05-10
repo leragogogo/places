@@ -1,7 +1,7 @@
 import 'package:places/domain/categories.dart';
 import 'package:places/domain/sight.dart';
 
-final List<Sight> mocks = [
+List<Sight> mocks = [
   Sight(
     name: 'Мамаев Курган',
     lat: 48.742,
@@ -22,12 +22,21 @@ final List<Sight> mocks = [
     type: Categories.park,
   ),
   Sight(
-    name: 'Парк ЦПКиО',
+    name: 'Кофе',
     lat: 70.986,
     lon: 40.592,
     url:
         'https://avatars.mds.yandex.net/get-altay/5235198/2a0000017afdeefb6009b7fd234b65744604/XXXL',
-    details: 'Хорошее место для прогулок.',
-    type: Categories.park,
+    details: 'Кофе',
+    type: Categories.cafe,
+  ),
+  Sight(
+    name: 'Кофейня у Леры',
+    lat: 23,
+    lon: 40.592,
+    url:
+        'https://avatars.mds.yandex.net/get-altay/5235198/2a0000017afdeefb6009b7fd234b65744604/XXXL',
+    details: 'Вкусный кофе',
+    type: Categories.cafe,
   ),
 ];
