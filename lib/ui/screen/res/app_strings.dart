@@ -56,7 +56,6 @@ class AppStrings {
   static const String choosingCategoryScreenTitle = 'Категория';
   static const String saveButtonText = 'СОХРАНИТЬ';
 
-
   static const String hintText = 'Поиск';
   static const String newSightText = 'НОВОЕ МЕСТО';
 
@@ -65,4 +64,11 @@ class AppStrings {
   static const emptySearch2 = 'Попробуйте изменить параметры\nпоиска';
   static const historyText = 'ВЫ ИСКАЛИ';
   static const clearHistoryText = 'Очистить историю';
+
+  // DeletingBackground
+  static const deleteText = 'Удалить';
+
+  // VisitingScreen
+  static const wantToVisitText = 'Запланировано на 12 октября.';
+  static const visitedText = 'Цель достигнута 12 октября.';
 }

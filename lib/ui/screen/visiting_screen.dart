@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:places/mocks.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
-import 'package:places/ui/screen/widgets/sight_card_visited.dart';
-import 'package:places/ui/screen/widgets/sight_card_want_to_visited.dart';
+import 'package:places/ui/screen/widgets/visited_tab.dart';
+import 'package:places/ui/screen/widgets/want_to_visit_tab.dart';
 
-class VisitingScreen extends StatefulWidget {
+class VisitingScreen extends StatelessWidget {
   const VisitingScreen({Key? key}) : super(key: key);
 
-  @override
-  State<StatefulWidget> createState() => _VisitingScreen();
-}
-
-class _VisitingScreen extends State<StatefulWidget>
-    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -53,30 +46,12 @@ class _VisitingScreen extends State<StatefulWidget>
                     borderRadius: BorderRadius.circular(40),
                     color: theme.canvasColor,
                   ),
-                  tabs: [
-                    Tab(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                        child: const Align(
-                          child: Text(
-                            AppStrings.firstTabFavouriteScreenText,
-                          ),
-                        ),
-                      ),
+                  tabs: const [
+                    _VisitingTab(
+                      text: AppStrings.firstTabFavouriteScreenText,
                     ),
-                    Tab(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                        child: const Align(
-                          child: Text(
-                            AppStrings.secondTabFavouriteScreenText,
-                          ),
-                        ),
-                      ),
+                    _VisitingTab(
+                      text: AppStrings.secondTabFavouriteScreenText,
                     ),
                   ],
                 ),
@@ -84,32 +59,10 @@ class _VisitingScreen extends State<StatefulWidget>
             ),
           ),
         ),
-        body:
-            // пустые экраны
-            /*TabBarView(
+        body: const TabBarView(
           children: [
-            _EmptyScreen(AppAssets.wantToVisitedEmpty,AppStrings.wantToVisetedEmptyText),
-            _EmptyScreen(AppAssets.visitedEmpty,AppStrings.visitedEmptyText),
-          ],
-        ),*/
-            TabBarView(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  SightCardWantToVisited(mocks[0]),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  SightCardVisited(mocks[1]),
-                ],
-              ),
-            ),
+            WantToVisitTab(),
+            VisitedTab(),
           ],
         ),
       ),
@@ -117,45 +70,22 @@ class _VisitingScreen extends State<StatefulWidget>
   }
 }
 
-class _EmptyScreen extends StatelessWidget {
-  final String path;
+class _VisitingTab extends StatelessWidget {
   final String text;
 
-  const _EmptyScreen(this.path, this.text);
-
+  const _VisitingTab({required this.text, Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            path,
-            height: 64,
-            width: 64,
-            color: theme.primaryColorDark,
-          ),
-          const SizedBox(height: 32),
-          Text(
-            AppStrings.emptyText,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.primaryColorDark,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
+    return Tab(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(40),
+        ),
+        child: Align(
+          child: Text(
             text,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.primaryColorDark,
-              fontWeight: FontWeight.bold,
-            ),
           ),
-        ],
+        ),
       ),
     );
   }

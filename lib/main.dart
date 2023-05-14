@@ -8,6 +8,8 @@ import 'package:places/data_providers/filter_provider.dart';
 import 'package:places/data_providers/history_provider.dart';
 import 'package:places/data_providers/search_provider.dart';
 import 'package:places/data_providers/theme_provider.dart';
+import 'package:places/data_providers/visited_provider.dart';
+import 'package:places/data_providers/want_to_visit_provider.dart';
 import 'package:places/main_screens.dart';
 import 'package:provider/provider.dart';
 
@@ -41,6 +43,12 @@ void main() {
         ),
         ChangeNotifierProvider(
           create: (context) => FieldEmptyProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => WantToVisitProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => VisitedProvider(),
         ),
       ],
       child: const App(),
