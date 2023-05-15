@@ -54,27 +54,25 @@ class LowerPart extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return SizedBox(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Text(
-              sight.name,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).canvasColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Text(
+            sight.name,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).canvasColor,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: text,
-          ),
-        ],
-      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: text,
+        ),
+      ],
     );
   }
 }
