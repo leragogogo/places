@@ -22,7 +22,7 @@ class VisitingSightCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Dismissible(
-        key: ObjectKey(sight),
+        key: key!,
         onDismissed: (direction) {
           deleteFromList();
         },

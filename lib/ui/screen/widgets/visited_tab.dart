@@ -32,16 +32,20 @@ class _VisitedTabState extends State<VisitedTab> {
           )
         : Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
-            child: Column(
+            child: ReorderableListView(
+              proxyDecorator: (child, index, animation) => Material(
+                type: MaterialType.transparency,
+                child: child,
+              ),
+              onReorder: _updateVisitedList,
               children: visited
                   .asMap()
                   .entries
                   .map((i) => VisitingSightCard(
+                        key: ObjectKey(i.value),
                         sight: i.value,
                         deleteFromList: () {
-                          setState(() {
-                            deleteVisitedSight(i.value);
-                          });
+                          _deleteVisitedSight(i.value);
                         },
                         lowerText: Text(
                           AppStrings.visitedText,
@@ -56,18 +60,28 @@ class _VisitedTabState extends State<VisitedTab> {
           );
   }
 
-  void deleteVisitedSight(Sight sight) {
-    var ind = 0;
-    for (var i = 0; i < visited.length; i++) {
-      if (visited[i] == sight) {
-        ind = i;
+  void _updateVisitedList(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) newIndex -= 1;
+      final item = visited.removeAt(oldIndex);
+      visited.insert(newIndex, item);
+    });
+  }
+
+  void _deleteVisitedSight(Sight sight) {
+    setState(() {
+      var ind = 0;
+      for (var i = 0; i < visited.length; i++) {
+        if (visited[i] == sight) {
+          ind = i;
+        }
       }
-    }
-    visited.removeAt(ind);
-    isVisitedEmpty = visited.isEmpty;
-    Provider.of<VisitedProvider>(context, listen: false).changeState(
-      newIsVisitedEmpty: isVisitedEmpty,
-      newVisited: visited,
-    );
+      visited.removeAt(ind);
+      isVisitedEmpty = visited.isEmpty;
+      Provider.of<VisitedProvider>(context, listen: false).changeState(
+        newIsVisitedEmpty: isVisitedEmpty,
+        newVisited: visited,
+      );
+    });
   }
 }

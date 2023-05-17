@@ -34,16 +34,20 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
           )
         : Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
-            child: Column(
+            child: ReorderableListView(
+              proxyDecorator: (child, index, animation) => Material(
+                type: MaterialType.transparency,
+                child: child,
+              ),
+              onReorder: _updateWantToVisitList,
               children: wantToVisit
                   .asMap()
                   .entries
                   .map((i) => VisitingSightCard(
+                        key: ObjectKey(i.value),
                         sight: i.value,
                         deleteFromList: () {
-                          setState(() {
-                            deleteWantToVisitedSight(i.value);
-                          });
+                          _deleteWantToVisitedSight(i.value);
                         },
                         lowerText: Text(
                           AppStrings.wantToVisitText,
@@ -58,18 +62,28 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
           );
   }
 
-  void deleteWantToVisitedSight(Sight sight) {
-    var ind = 0;
-    for (var i = 0; i < wantToVisit.length; i++) {
-      if (wantToVisit[i] == sight) {
-        ind = i;
+  void _updateWantToVisitList(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) newIndex -= 1;
+      final item = wantToVisit.removeAt(oldIndex);
+      wantToVisit.insert(newIndex, item);
+    });
+  }
+
+  void _deleteWantToVisitedSight(Sight sight) {
+    setState(() {
+      var ind = 0;
+      for (var i = 0; i < wantToVisit.length; i++) {
+        if (wantToVisit[i] == sight) {
+          ind = i;
+        }
       }
-    }
-    wantToVisit.removeAt(ind);
-    isWantToVisitEmpty = wantToVisit.isEmpty;
-    Provider.of<WantToVisitProvider>(context, listen: false).changeState(
-      newWantToVisit: wantToVisit,
-      newIsWantToVisitEmpty: isWantToVisitEmpty,
-    );
+      wantToVisit.removeAt(ind);
+      isWantToVisitEmpty = wantToVisit.isEmpty;
+      Provider.of<WantToVisitProvider>(context, listen: false).changeState(
+        newWantToVisit: wantToVisit,
+        newIsWantToVisitEmpty: isWantToVisitEmpty,
+      );
+    });
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/data_providers/add_sight_provider.dart';
 import 'package:places/data_providers/button_create_provider.dart';
@@ -42,6 +43,7 @@ class _AddSightScreenState extends State<AddSightScreen> {
   TextEditingController lonController = TextEditingController();
   TextEditingController detailsController = TextEditingController();
 
+  List<int> images = [];
   @override
   Widget build(BuildContext context) {
     final controllers = [
@@ -64,7 +66,7 @@ class _AddSightScreenState extends State<AddSightScreen> {
             Icons.arrow_back_ios,
             color: theme.canvasColor,
           ),
-          onPressed: resetState,
+          onPressed: _resetState,
         ),
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -75,6 +77,49 @@ class _AddSightScreenState extends State<AddSightScreen> {
             hasScrollBody: false,
             child: Column(
               children: [
+                const SizedBox(
+                  height: 24,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _AddImageWidget(
+                          onTap: () {
+                            setState(() {
+                              var t = 0;
+                              if (images.isNotEmpty) {
+                                t = images[images.length - 1] + 1;
+                              }
+                              images.add(t);
+                            });
+                            debugPrint(images.toString());
+                          },
+                        ),
+                        Row(
+                          children: images.asMap().entries.map((item) {
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: _ImageWidget(
+                                key: ValueKey(item.value),
+                                delete: () {
+                                  debugPrint(images.toString());
+                                  debugPrint(item.key.toString());
+                                  setState(() {
+                                    images.remove(item.value);
+                                  });
+                                  debugPrint(images.toString());
+                                },
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   height: 24,
                 ),
@@ -90,7 +135,7 @@ class _AddSightScreenState extends State<AddSightScreen> {
                   ),
                   trailing: IconButton(
                     onPressed: () async {
-                      await openChoosingCategoryScreen(controllers);
+                      await _openChoosingCategoryScreen(controllers);
                     },
                     icon: const Icon(Icons.arrow_forward_ios),
                     color: theme.canvasColor,
@@ -115,12 +160,12 @@ class _AddSightScreenState extends State<AddSightScreen> {
                     focusNode: nameFocus,
                     onSubmitted: (value) {
                       name = value;
-                      changeButtonState(controllers);
+                      _changeButtonState(controllers);
                       FocusScope.of(context).requestFocus(latFocus);
                     },
                     onTapOutside: (p) {
                       name = controllers[0].text;
-                      changeButtonState(controllers);
+                      _changeButtonState(controllers);
                       nameFocus.unfocus();
                     },
                     controller: nameController,
@@ -146,12 +191,12 @@ class _AddSightScreenState extends State<AddSightScreen> {
                               focusNode: latFocus,
                               onSubmitted: (value) {
                                 lat = double.tryParse(value);
-                                changeButtonState(controllers);
+                                _changeButtonState(controllers);
                                 FocusScope.of(context).requestFocus(lonFocus);
                               },
                               onTapOutside: (p) {
                                 lat = double.tryParse(controllers[1].text);
-                                changeButtonState(controllers);
+                                _changeButtonState(controllers);
                                 latFocus.unfocus();
                               },
                               controller: latController,
@@ -179,13 +224,13 @@ class _AddSightScreenState extends State<AddSightScreen> {
                               focusNode: lonFocus,
                               onSubmitted: (value) {
                                 lon = double.tryParse(value);
-                                changeButtonState(controllers);
+                                _changeButtonState(controllers);
                                 FocusScope.of(context)
                                     .requestFocus(detailsFocus);
                               },
                               onTapOutside: (p) {
                                 lon = double.tryParse(controllers[2].text);
-                                changeButtonState(controllers);
+                                _changeButtonState(controllers);
                                 lonFocus.unfocus();
                               },
                               controller: lonController,
@@ -231,11 +276,11 @@ class _AddSightScreenState extends State<AddSightScreen> {
                     focusNode: detailsFocus,
                     onSubmitted: (value) {
                       details = value;
-                      changeButtonState(controllers);
+                      _changeButtonState(controllers);
                     },
                     onTapOutside: (p) {
                       details = controllers[3].text;
-                      changeButtonState(controllers);
+                      _changeButtonState(controllers);
                       detailsFocus.unfocus();
                     },
                     controller: detailsController,
@@ -259,7 +304,7 @@ class _AddSightScreenState extends State<AddSightScreen> {
                                 type: category!,
                               ),
                             );
-                            resetState();
+                            _resetState();
                           },
                   ),
                 ),
@@ -273,7 +318,7 @@ class _AddSightScreenState extends State<AddSightScreen> {
     );
   }
 
-  Future<void> openChoosingCategoryScreen(
+  Future<void> _openChoosingCategoryScreen(
     List<TextEditingController> controllers,
   ) async {
     category = await Navigator.push(
@@ -286,14 +331,14 @@ class _AddSightScreenState extends State<AddSightScreen> {
     );
     if (!mounted) return;
     stateOfCategory = category != null;
-    changeButtonState(controllers);
+    _changeButtonState(controllers);
 
     Provider.of<AddSightProvider>(context, listen: false).changeState(
       newCategory: category,
     );
   }
 
-  void resetState() {
+  void _resetState() {
     category = null;
     isButtonDisabled = true;
     Provider.of<AddSightProvider>(context, listen: false).changeState(
@@ -308,7 +353,7 @@ class _AddSightScreenState extends State<AddSightScreen> {
     Navigator.pop(context);
   }
 
-  void changeButtonState(List<TextEditingController> controllers) {
+  void _changeButtonState(List<TextEditingController> controllers) {
     var c = 0;
     if (stateOfCategory) {
       c = 1;
@@ -387,6 +432,85 @@ class _Label extends StatelessWidget {
         textAlign: TextAlign.left,
         style: theme.textTheme.bodyMedium
             ?.copyWith(color: theme.primaryColorDark, fontSize: 12),
+      ),
+    );
+  }
+}
+
+class _AddImageWidget extends StatelessWidget {
+  final VoidCallback onTap;
+  const _AddImageWidget({required this.onTap, Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 72,
+        height: 72,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: AppColors.planButtonColor,
+          ),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(12),
+          ),
+        ),
+        child: Center(
+          child: Icon(
+            CupertinoIcons.plus,
+            color: AppColors.planButtonColor,
+            size: 24,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ImageWidget extends StatelessWidget {
+  final VoidCallback delete;
+  const _ImageWidget({
+    required this.delete,
+    required Key key,
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: key!,
+      onDismissed: (direction) {
+        delete();
+      },
+      direction: DismissDirection.vertical,
+      child: Stack(
+        children: [
+          SizedBox(
+            width: 72,
+            height: 72,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(12),
+              ),
+              child: Image.network(
+                'https://b1.vpoxod.ru/ckeditor/1d/8f/28/149695.jpg',
+                loadingBuilder: (context, child, loadingProgress) =>
+                    loadingProgress == null
+                        ? child
+                        : const CupertinoActivityIndicator(),
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+          ),
+          Positioned(
+            top: -6,
+            right: -6,
+            child: IconButton(
+              icon: const Icon(
+                CupertinoIcons.clear_circled_solid,
+              ),
+              onPressed: delete,
+            ),
+          ),
+        ],
       ),
     );
   }
