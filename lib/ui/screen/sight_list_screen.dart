@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/domain/sight.dart';
@@ -58,19 +60,17 @@ class _SightListScreen extends State<SightListScreen> {
       ),
       floatingActionButton: _AddNewSightButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: SightCard(mocks[0]),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: SightCard(mocks[1]),
-            ),
-          ],
-        ),
+      body: ListView.builder(
+        physics: Platform.isAndroid
+            ? const ClampingScrollPhysics()
+            : const BouncingScrollPhysics(),
+        itemCount: mocks.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: SightCard(mocks[index]),
+          );
+        },
       ),
       resizeToAvoidBottomInset: true,
     );
