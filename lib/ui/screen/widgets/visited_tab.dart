@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:places/data_providers/visited_provider.dart';
 import 'package:places/domain/sight.dart';
@@ -33,6 +35,9 @@ class _VisitedTabState extends State<VisitedTab> {
         : Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
             child: ReorderableListView(
+              physics: Platform.isAndroid
+                  ? const ClampingScrollPhysics()
+                  : const BouncingScrollPhysics(),
               proxyDecorator: (child, index, animation) => Material(
                 type: MaterialType.transparency,
                 child: child,

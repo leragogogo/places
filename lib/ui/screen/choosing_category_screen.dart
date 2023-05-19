@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:places/data_providers/button_save_provider.dart';
 import 'package:places/data_providers/choosing_category_provider.dart';
@@ -66,81 +68,65 @@ class _ChoosingCategoryScreenState extends State<ChoosingCategoryScreen> {
           const SizedBox(
             height: 24,
           ),
-          _CategoryTiles(
-            statesOfCategories: statesOfCategories,
+          Expanded(
+            flex: 2,
+            child: ListView(
+              physics: Platform.isAndroid
+                  ? const ClampingScrollPhysics()
+                  : const BouncingScrollPhysics(),
+              children: Categories.values.map(
+                (category) {
+                  return _Category(
+                    category: category,
+                    isChosen: statesOfCategories[category]!,
+                    onTap: () {
+                      _onCategoryTap(category);
+                    },
+                  );
+                },
+              ).toList(),
+            ),
           ),
           Expanded(
             child: BottomButton(
               text: AppStrings.saveButtonText,
-              onPressed: isButtonDisabled
-                  ? null
-                  : () {
-                      setState(() {
-                        for (final category in statesOfCategories.keys) {
-                          if (statesOfCategories[category]!) {
-                            chosenCategory =
-                                statesOfCategories[category]! ? category : null;
-                          }
-                        }
-                      });
-                      Provider.of<ChoosingCategoryProvider>(
-                        context,
-                        listen: false,
-                      ).changeState(
-                        newChosenCategory: chosenCategory,
-                      );
-                      Navigator.pop(context, chosenCategory);
-                    },
+              onPressed: isButtonDisabled ? null : _bottomButtonOnPressed,
             ),
           ),
         ],
       ),
     );
   }
-}
 
-class _CategoryTiles extends StatefulWidget {
-  final Map<Categories, bool> statesOfCategories;
-  const _CategoryTiles({required this.statesOfCategories, Key? key})
-      : super(key: key);
-
-  @override
-  State<_CategoryTiles> createState() => _CategoryTilesState();
-}
-
-class _CategoryTilesState extends State<_CategoryTiles> {
-  bool isButtonDisabled = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: Categories.values.map(
-        (category) {
-          return _Category(
-            category: category,
-            isChosen: widget.statesOfCategories[category]!,
-            onTap: () {
-              _onCategoryTap(category);
-            },
-          );
-        },
-      ).toList(),
+  void _bottomButtonOnPressed() {
+    setState(() {
+      for (final category in statesOfCategories.keys) {
+        if (statesOfCategories[category]!) {
+          chosenCategory = statesOfCategories[category]! ? category : null;
+        }
+      }
+    });
+    Provider.of<ChoosingCategoryProvider>(
+      context,
+      listen: false,
+    ).changeState(
+      newChosenCategory: chosenCategory,
     );
+    Navigator.pop(context, chosenCategory);
   }
 
   void _onCategoryTap(Categories category) {
     setState(() {
-      widget.statesOfCategories.forEach((key, value) {
+      statesOfCategories.forEach((key, value) {
         if (key != category) {
-          widget.statesOfCategories.update(key, (value) => false);
+          statesOfCategories.update(key, (value) => false);
         }
       });
 
-      widget.statesOfCategories[category] =
-          !widget.statesOfCategories[category]!;
+      statesOfCategories[category] = !statesOfCategories[category]!;
       var count = 0;
-      for (final category in widget.statesOfCategories.keys) {
-        if (widget.statesOfCategories[category]!) {
+      for (final category in statesOfCategories.keys) {
+        if (statesOfCategories[category]!) {
           count += 1;
         }
       }

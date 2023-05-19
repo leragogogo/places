@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/data_providers/add_sight_provider.dart';
@@ -95,7 +97,6 @@ class _AddSightScreenState extends State<AddSightScreen> {
                               }
                               images.add(t);
                             });
-                            debugPrint(images.toString());
                           },
                         ),
                         Row(
@@ -105,12 +106,9 @@ class _AddSightScreenState extends State<AddSightScreen> {
                               child: _ImageWidget(
                                 key: ValueKey(item.value),
                                 delete: () {
-                                  debugPrint(images.toString());
-                                  debugPrint(item.key.toString());
                                   setState(() {
                                     images.remove(item.value);
                                   });
-                                  debugPrint(images.toString());
                                 },
                               ),
                             );
