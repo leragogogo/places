@@ -20,7 +20,7 @@ class UpperPart extends StatelessWidget {
               topRight: Radius.circular(12),
             ),
             child: Image.network(
-              sight.url,
+              sight.images[0],
               loadingBuilder: (context, child, loadingProgress) =>
                   loadingProgress == null
                       ? child

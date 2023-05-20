@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/data_providers/add_sight_provider.dart';
@@ -296,8 +294,9 @@ class _AddSightScreenState extends State<AddSightScreen> {
                                 name: name!,
                                 lat: lat!,
                                 lon: lon!,
-                                url:
-                                    'https://avatars.mds.yandex.net/get-altay/5235198/2a0000017afdeefb6009b7fd234b65744604/XXXL',
+                                images: [
+                                  'https://avatars.mds.yandex.net/get-altay/5235198/2a0000017afdeefb6009b7fd234b65744604/XXXL',
+                                ],
                                 details: details!,
                                 type: category!,
                               ),

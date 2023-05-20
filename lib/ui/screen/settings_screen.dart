@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/data_providers/theme_provider.dart';
+import 'package:places/ui/screen/on_boarding_screen.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:provider/provider.dart';
@@ -23,8 +24,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: Center(
           child: Text(
             AppStrings.settingsText,
-            style: theme.textTheme.bodyMedium
-                ?.copyWith(color: theme.canvasColor),
+            style:
+                theme.textTheme.bodyMedium?.copyWith(color: theme.canvasColor),
           ),
         ),
       ),
@@ -57,7 +58,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: AppColors.planButtonColor,
               ),
               onPressed: () {
-                debugPrint('Инфо кнопка нажата');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<OnBoardingScreen>(
+                    builder: (context) => const OnBoardingScreen(),
+                  ),
+                );
               },
             ),
           ),

@@ -37,6 +37,13 @@ flutter:
     - res/icons/map.svg
     - res/icons/heart.svg
     - res/icons/settings.svg
+    - res/icons/page1.png
+    - res/icons/page2.png
+    - res/icons/page3.png
+    - res/icons/search.png
+    - res/icons/filter.png
+
+
 
   fonts:
     - family: Roboto

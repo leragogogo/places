@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 
 class SearchBar extends StatelessWidget {
@@ -30,8 +31,8 @@ class SearchBar extends StatelessWidget {
         fontSize: 16,
       ),
       decoration: InputDecoration(
-        prefixIcon: Icon(
-          CupertinoIcons.search,
+        prefixIcon: ImageIcon(
+          const AssetImage(AppAssets.searchAsset),
           color: theme.primaryColorDark,
         ),
         suffixIcon: suffixIcon,

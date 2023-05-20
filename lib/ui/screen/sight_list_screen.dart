@@ -6,6 +6,7 @@ import 'package:places/domain/sight.dart';
 import 'package:places/mocks.dart';
 import 'package:places/ui/screen/add_sight_screen.dart';
 import 'package:places/ui/screen/filters_screen.dart';
+import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/sight_search_screen.dart';
@@ -42,8 +43,8 @@ class _SightListScreen extends State<SightListScreen> {
             );
           },
           suffixIcon: IconButton(
-            icon: Icon(
-              CupertinoIcons.slider_horizontal_3,
+            icon: ImageIcon(
+              const AssetImage(AppAssets.filterAsset),
               color: AppColors.planButtonColor,
             ),
             onPressed: () async {
