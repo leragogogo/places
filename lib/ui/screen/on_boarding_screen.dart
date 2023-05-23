@@ -14,6 +14,7 @@ class OnBoardingScreen extends StatefulWidget {
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final _controller = PageController();
   int _currentPage = 0;
+  double _buttonOpacity = 0;
 
   @override
   void initState() {
@@ -21,6 +22,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     _controller.addListener(() {
       setState(() {
         _currentPage = _controller.page!.toInt();
+        _buttonOpacity = _currentPage == 2 ? 1 : 0;
       });
     });
   }
@@ -57,35 +59,43 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       body: Column(
         children: [
           Expanded(
-            flex: 3,
-            child: PageView(
-              controller: _controller,
-              children: const [
-                _Page(
-                  icon: AppAssets.page1Asset,
-                  boldText: AppStrings.page1BoldText,
-                  text: AppStrings.page1Text,
+            flex: 2,
+            child: Stack(
+              children: [
+                PageView(
+                  controller: _controller,
+                  children: const [
+                    _Page(
+                      icon: AppAssets.page1Asset,
+                      boldText: AppStrings.page1BoldText,
+                      text: AppStrings.page1Text,
+                    ),
+                    _Page(
+                      icon: AppAssets.page2Asset,
+                      boldText: AppStrings.page2BoldText,
+                      text: AppStrings.page2Text,
+                    ),
+                    _Page(
+                      icon: AppAssets.page3Asset,
+                      boldText: AppStrings.page3BoldText,
+                      text: AppStrings.page3Text,
+                    ),
+                  ],
                 ),
-                _Page(
-                  icon: AppAssets.page2Asset,
-                  boldText: AppStrings.page2BoldText,
-                  text: AppStrings.page2Text,
-                ),
-                _Page(
-                  icon: AppAssets.page3Asset,
-                  boldText: AppStrings.page3BoldText,
-                  text: AppStrings.page3Text,
+                Positioned(
+                  bottom: 0,
+                  left: MediaQuery.of(context).size.width / 2 - 32,
+                  child: _Indicators(
+                    selectedindex: _currentPage,
+                  ),
                 ),
               ],
             ),
           ),
           Expanded(
-            child: _Indicators(
-              selectedindex: _currentPage,
-            ),
-          ),
-          if (_currentPage == 2)
-            Expanded(
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 100),
+              opacity: _buttonOpacity,
               child: BottomButton(
                 text: AppStrings.onStartText,
                 onPressed: () {
@@ -94,9 +104,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   );
                 },
               ),
-            )
-          else
-            const SizedBox.shrink(),
+            ),
+          ),
         ],
       ),
     );

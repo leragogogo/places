@@ -189,25 +189,23 @@ class _ImageDetails extends StatelessWidget {
         Positioned(
           top: 36,
           left: 16,
-          child: SizedBox(
-            width: 36,
-            height: 36,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
+          width: 36,
+          height: 36,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.primaryColor,
+              alignment: Alignment.center,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
               ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Center(
-                child: Icon(
-                  Icons.arrow_back_ios,
-                  color: theme.canvasColor,
-                ),
-              ),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: theme.canvasColor,
+              size: 20,
             ),
           ),
         ),
