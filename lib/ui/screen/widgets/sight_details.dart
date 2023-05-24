@@ -5,22 +5,52 @@ import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/res/app_styles.dart';
 
-class SightDetailsScreen extends StatelessWidget {
+class SightDetailsScreen extends StatefulWidget {
   final Sight sight;
 
   const SightDetailsScreen(this.sight, {Key? key}) : super(key: key);
 
   @override
+  State<SightDetailsScreen> createState() => _SightDetailsScreenState();
+}
+
+class _SightDetailsScreenState extends State<SightDetailsScreen> {
+  final _controller = PageController();
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      setState(() {
+        _currentPage = _controller.page!.toInt();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    debugPrint(_currentPage.toString());
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _ImageDetails(sight),
-            _NameOfSight(sight),
-            _TypeOfSight(sight),
-            _DetailsOfSight(sight),
-            _BuildRouteButton(sight),
+            _ImageDetails(
+              sight: widget.sight,
+              selectedindex: _currentPage,
+              controller: _controller,
+            ),
+            _NameOfSight(widget.sight),
+            _TypeOfSight(widget.sight),
+            _DetailsOfSight(widget.sight),
+            _BuildRouteButton(widget.sight),
             Divider(
               height: 39,
               color: AppColors.ltTextColor,
@@ -28,7 +58,7 @@ class SightDetailsScreen extends StatelessWidget {
               endIndent: 16,
               thickness: 0.8,
             ),
-            _RowOfLowerButtons(sight),
+            _RowOfLowerButtons(widget.sight),
           ],
         ),
       ),
@@ -36,11 +66,111 @@ class SightDetailsScreen extends StatelessWidget {
   }
 }
 
+class _SightPageView extends StatelessWidget {
+  final Sight sight;
+  final int selectedindex;
+  final PageController controller;
+
+  const _SightPageView({
+    required this.sight,
+    required this.selectedindex,
+    required this.controller,
+    Key? key,
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        PageView(
+          controller: controller,
+          children: sight.images
+              .map(
+                (image) => Image.network(
+                  image,
+                  loadingBuilder: (context, child, loadingProgress) =>
+                      loadingProgress == null
+                          ? child
+                          : const CupertinoActivityIndicator(),
+                  fit: BoxFit.fitHeight,
+                ),
+              )
+              .toList(),
+        ),
+        Positioned(
+          bottom: 0,
+          left: selectedindex *
+              (MediaQuery.of(context).size.width / sight.images.length),
+          child: _Indicators(
+            selectedindex: selectedindex,
+            sight: sight,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Indicators extends StatelessWidget {
+  final int selectedindex;
+  final Sight sight;
+  const _Indicators({
+    required this.selectedindex,
+    required this.sight,
+    Key? key,
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    final list = <Widget>[];
+    for (var i = 0; i < sight.images.length; i++) {
+      list.add(
+        i == selectedindex
+            ? _Indicator(sight: sight, isActive: true)
+            : _Indicator(sight: sight, isActive: false),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: list,
+    );
+  }
+}
+
+class _Indicator extends StatelessWidget {
+  final Sight sight;
+  final bool isActive;
+  const _Indicator({required this.sight, required this.isActive, Key? key})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return isActive
+        ? AnimatedContainer(
+            duration: const Duration(milliseconds: 100),
+            height: 8,
+            width: MediaQuery.of(context).size.width / sight.images.length,
+            decoration: BoxDecoration(
+              color: theme.canvasColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+          )
+        : const SizedBox.shrink();
+  }
+}
+
 // верстка изображений объекта
 class _ImageDetails extends StatelessWidget {
   final Sight sight;
+  final int selectedindex;
+  final PageController controller;
 
-  const _ImageDetails(this.sight, {Key? key}) : super(key: key);
+  const _ImageDetails({
+    required this.sight,
+    required this.selectedindex,
+    required this.controller,
+    Key? key,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -50,35 +180,32 @@ class _ImageDetails extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           height: 360,
-          child: Image.network(
-            sight.url,
-            loadingBuilder: (context, child, loadingProgress) =>
-                loadingProgress == null
-                    ? child
-                    : const CupertinoActivityIndicator(),
-            fit: BoxFit.fitHeight,
+          child: _SightPageView(
+            sight: sight,
+            selectedindex: selectedindex,
+            controller: controller,
           ),
         ),
         Positioned(
           top: 36,
           left: 16,
-          child: SizedBox(
-            width: 36,
-            height: 36,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
+          width: 36,
+          height: 36,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.primaryColor,
+              alignment: Alignment.center,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
               ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: theme.canvasColor,
-              ),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: theme.canvasColor,
+              size: 20,
             ),
           ),
         ),

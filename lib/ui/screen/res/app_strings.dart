@@ -71,4 +71,14 @@ class AppStrings {
   // VisitingScreen
   static const wantToVisitText = 'Запланировано на 12 октября.';
   static const visitedText = 'Цель достигнута 12 октября.';
+
+  //OnBoardingScreen
+  static const page1BoldText = 'Добро пожаловать\n в Путеводитель';
+  static const page1Text = 'Ищи новые локации и сохраняй\n самые любимые';
+  static const page2BoldText = 'Построй маршрут\n и отправляйся в путь';
+  static const page2Text = 'Достигай цели максимально\n быстро и комфортно';
+  static const page3BoldText = 'Добавляй места,\n которые нашел сам';
+  static const page3Text = 'Делись самыми интересными\n и помоги нам стать лучше!';
+  static const onStartText = 'НА СТАРТ';
+  static const skipText = 'Пропустить';
 }
