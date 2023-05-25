@@ -6,6 +6,7 @@ class AppStrings {
 
   // заголовок первого экрана
   static const String titleText = 'Список интересных мест';
+  static const String titleText2 = 'Список\nинтересных мест';
 
   // FilterScreen
   static const String hotelCategoryText = 'Отель';

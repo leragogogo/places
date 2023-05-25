@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/domain/sight.dart';
 import 'package:places/mocks.dart';
@@ -11,7 +8,6 @@ import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/sight_search_screen.dart';
 import 'package:places/ui/screen/widgets/search_bar.dart';
-import 'package:places/ui/screen/widgets/sight_appbar.dart';
 import 'package:places/ui/screen/widgets/sight_card.dart';
 
 class SightListScreen extends StatefulWidget {
@@ -27,51 +23,63 @@ class _SightListScreen extends State<SightListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SightAppBar(
-        leading: null,
-        bottom: SearchBar(
-          readOnly: true,
-          onChanged: (value) {},
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute<SightSearchScreen>(
-                builder: (context) => SightSearchScreen(
-                  mocksWithFilters: mocksWithFilters!,
-                ),
-              ),
-            );
-          },
-          suffixIcon: IconButton(
-            icon: ImageIcon(
-              const AssetImage(AppAssets.filterAsset),
-              color: AppColors.planButtonColor,
-            ),
-            onPressed: () async {
-              mocksWithFilters = await Navigator.push(
-                context,
-                MaterialPageRoute<List<Sight>>(
-                  builder: (context) => const FiltersScreen(),
-                ),
-              );
-            },
-          ),
-          controller: null,
-        ),
-      ),
       floatingActionButton: _AddNewSightButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: ListView.builder(
-        physics: Platform.isAndroid
-            ? const ClampingScrollPhysics()
-            : const BouncingScrollPhysics(),
-        itemCount: mocks.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(16),
-            child: SightCard(mocks[index]),
-          );
-        },
+      body: CustomScrollView(
+        slivers: [
+          // AppBar
+          SliverPersistentHeader(
+            delegate: _SliverSightAppBar(),
+            pinned: true,
+          ),
+          // Поисковая строка
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: SearchBar(
+                readOnly: true,
+                onChanged: (value) {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<SightSearchScreen>(
+                      builder: (context) => SightSearchScreen(
+                        mocksWithFilters: mocksWithFilters!,
+                      ),
+                    ),
+                  );
+                },
+                suffixIcon: IconButton(
+                  icon: ImageIcon(
+                    const AssetImage(AppAssets.filterAsset),
+                    color: AppColors.planButtonColor,
+                  ),
+                  onPressed: () async {
+                    mocksWithFilters = await Navigator.push(
+                      context,
+                      MaterialPageRoute<List<Sight>>(
+                        builder: (context) => const FiltersScreen(),
+                      ),
+                    );
+                  },
+                ),
+                controller: null,
+              ),
+            ),
+          ),
+          // Основной список
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: SightCard(mocks[index]),
+                );
+              },
+              childCount: mocks.length,
+            ),
+          ),
+        ],
       ),
       resizeToAvoidBottomInset: true,
     );
@@ -119,4 +127,48 @@ class _AddNewSightButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class _SliverSightAppBar extends SliverPersistentHeaderDelegate {
+  @override
+  double get maxExtent => 150;
+
+  @override
+  double get minExtent => 100;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final theme = Theme.of(context);
+    final progress = shrinkOffset / maxExtent;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 100),
+      color: theme.appBarTheme.backgroundColor,
+      padding: const EdgeInsets.all(16),
+      alignment: Alignment.lerp(
+        Alignment.bottomLeft,
+        Alignment.bottomCenter,
+        progress,
+      ),
+      child: Text(
+        progress == 0 ? AppStrings.titleText2 : AppStrings.titleText,
+        style: TextStyle.lerp(
+          theme.textTheme.bodyLarge?.copyWith(color: theme.canvasColor),
+          theme.textTheme.bodyLarge?.copyWith(
+            color: theme.canvasColor,
+            fontSize: 18,
+          ),
+          progress,
+        ),
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
 }

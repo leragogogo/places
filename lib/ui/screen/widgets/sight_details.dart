@@ -39,28 +39,36 @@ class _SightDetailsScreenState extends State<SightDetailsScreen> {
     debugPrint(_currentPage.toString());
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _ImageDetails(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 360,
+            automaticallyImplyLeading: false,
+            flexibleSpace: _ImageDetails(
               sight: widget.sight,
               selectedindex: _currentPage,
               controller: _controller,
             ),
-            _NameOfSight(widget.sight),
-            _TypeOfSight(widget.sight),
-            _DetailsOfSight(widget.sight),
-            _BuildRouteButton(widget.sight),
-            Divider(
-              height: 39,
-              color: AppColors.ltTextColor,
-              indent: 16,
-              endIndent: 16,
-              thickness: 0.8,
+          ),
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                _NameOfSight(widget.sight),
+                _TypeOfSight(widget.sight),
+                _DetailsOfSight(widget.sight),
+                _BuildRouteButton(widget.sight),
+                Divider(
+                  height: 39,
+                  color: AppColors.ltTextColor,
+                  indent: 16,
+                  endIndent: 16,
+                  thickness: 0.8,
+                ),
+                _RowOfLowerButtons(widget.sight),
+              ],
             ),
-            _RowOfLowerButtons(widget.sight),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -91,7 +99,7 @@ class _SightPageView extends StatelessWidget {
                       loadingProgress == null
                           ? child
                           : const CupertinoActivityIndicator(),
-                  fit: BoxFit.fitHeight,
+                  fit: BoxFit.cover,
                 ),
               )
               .toList(),
