@@ -42,6 +42,7 @@ flutter:
     - res/icons/page3.png
     - res/icons/search.png
     - res/icons/filter.png
+    - res/icons/splash.png
 
 
 
