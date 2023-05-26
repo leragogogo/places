@@ -10,11 +10,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  Future<bool> initialized = Future(() async {
-    await Future<void>.delayed(const Duration(seconds: 2));
-
-    return true;
-  });
+  final intialized = Future.delayed(const Duration(seconds: 2), () => true);
 
   @override
   void initState() {
@@ -48,8 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateToNext() async {
-    await Future<void>.delayed(const Duration(seconds: 2));
-    if (await initialized) {
+    if (await intialized) {
       debugPrint('Переход на следующий экран');
     }
   }
