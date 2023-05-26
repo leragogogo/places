@@ -17,4 +17,5 @@ class AppAssets {
   static const String page1Asset = 'res/icons/page1.png';
   static const String page2Asset = 'res/icons/page2.png';
   static const String page3Asset = 'res/icons/page3.png';
+  static const String splashAsset = 'res/icons/splash.png';
 }
