@@ -1,14 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 
-class SearchBar extends StatelessWidget {
+class SearchBar extends StatelessWidget implements PreferredSizeWidget {
   final Function(String) onChanged;
   final Function() onTap;
   final bool readOnly;
   final Widget suffixIcon;
   final TextEditingController? controller;
+
+  @override
+  Size get preferredSize => const Size(double.infinity, 40);
 
   const SearchBar({
     required this.readOnly,
