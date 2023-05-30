@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:places/domain/sight.dart';
 import 'package:places/ui/screen/widgets/deleting_background.dart';
 import 'package:places/ui/screen/widgets/parts_of_card.dart';
+import 'package:places/ui/screen/widgets/sight_details.dart';
 
 class VisitingSightCard extends StatelessWidget {
   final Sight sight;
@@ -56,7 +57,11 @@ class VisitingSightCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       onTap: () {
-                        debugPrint('Клик по фото');
+                        Navigator.of(context).push(
+                          MaterialPageRoute<SightDetailsScreen>(
+                            builder: (context) => SightDetailsScreen(sight),
+                          ),
+                        );
                       },
                     ),
                   ),

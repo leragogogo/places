@@ -1,6 +1,7 @@
 import 'dart:isolate';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:places/main_screens.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 
@@ -81,7 +82,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _navigateToNext() async {
     if (await intialized) {
-      debugPrint('Переход на следующий экран');
+      if (context.mounted) {
+        await Navigator.of(context)
+            .pushReplacement(MaterialPageRoute<MainScreens>(
+          builder: (context) => const MainScreens(),
+        ));
+      }
     }
   }
 

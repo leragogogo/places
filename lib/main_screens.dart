@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:places/mocks.dart';
+import 'package:places/ui/screen/map_screen.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/settings_screen.dart';
 import 'package:places/ui/screen/sight_list_screen.dart';
 import 'package:places/ui/screen/visiting_screen.dart';
-import 'package:places/ui/screen/widgets/sight_details.dart';
 
 class MainScreens extends StatefulWidget {
   const MainScreens({Key? key}) : super(key: key);
@@ -59,12 +58,11 @@ class _MainScreensState extends State<MainScreens> {
             _currentPage = page;
           });
         },
-        children: [
-          const Center(child: SightListScreen()),
-          // временно
-          Center(child: SightDetailsScreen(mocks[0])),
-          const Center(child: VisitingScreen()),
-          const Center(child: SettingsScreen()),
+        children: const [
+          SightListScreen(),
+          MapScreen(),
+          VisitingScreen(),
+          SettingsScreen(),
         ],
       ),
     );
