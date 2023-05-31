@@ -9,6 +9,7 @@ import 'package:places/ui/screen/choosing_category_screen.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/bottom_button.dart';
+import 'package:places/ui/screen/widgets/image_dialog.dart';
 import 'package:provider/provider.dart';
 
 class AddSightScreen extends StatefulWidget {
@@ -88,13 +89,10 @@ class _AddSightScreenState extends State<AddSightScreen> {
                       children: [
                         _AddImageWidget(
                           onTap: () {
-                            setState(() {
-                              var t = 0;
-                              if (images.isNotEmpty) {
-                                t = images[images.length - 1] + 1;
-                              }
-                              images.add(t);
-                            });
+                            showDialog<void>(
+                              context: context,
+                              builder: (_) => const ImageDialog(),
+                            );
                           },
                         ),
                         Row(
@@ -182,7 +180,7 @@ class _AddSightScreenState extends State<AddSightScreen> {
                             height: 12,
                           ),
                           SizedBox(
-                            width: 156,
+                            width: (MediaQuery.of(context).size.width - 48) / 2,
                             child: _SightTextField(
                               focusNode: latFocus,
                               onSubmitted: (value) {
@@ -215,7 +213,7 @@ class _AddSightScreenState extends State<AddSightScreen> {
                             height: 12,
                           ),
                           SizedBox(
-                            width: 156,
+                            width: (MediaQuery.of(context).size.width - 48) / 2,
                             child: _SightTextField(
                               focusNode: lonFocus,
                               onSubmitted: (value) {

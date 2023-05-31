@@ -25,6 +25,9 @@ class AppThemes {
       color: AppColors.ltBackgroundColor,
       titleTextStyle: AppTypography.ltTitleFavouriteTextStyle,
     ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: Colors.transparent,
+    ),
   );
 
   static final darkTheme = ThemeData(
@@ -48,6 +51,9 @@ class AppThemes {
     appBarTheme: AppBarTheme(
       color: AppColors.dtBackgroundColor,
       titleTextStyle: AppTypography.dtTitleFavouriteTextStyle,
+    ),
+     bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: Colors.transparent,
     ),
   );
 }
