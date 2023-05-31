@@ -10,7 +10,7 @@ import 'package:places/data_providers/search_provider.dart';
 import 'package:places/data_providers/theme_provider.dart';
 import 'package:places/data_providers/visited_provider.dart';
 import 'package:places/data_providers/want_to_visit_provider.dart';
-import 'package:places/main_screens.dart';
+import 'package:places/ui/screen/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -63,7 +63,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Places',
       theme: context.watch<ThemeProvider>().themeMode,
-      home: const MainScreens(),
+      home: const SplashScreen(),
     );
   }
 }
