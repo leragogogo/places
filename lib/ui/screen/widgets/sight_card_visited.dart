@@ -8,11 +8,15 @@ class VisitingSightCard extends StatelessWidget {
   final Sight sight;
   final VoidCallback deleteFromList;
   final Text lowerText;
+  final Widget leftIcon;
+  final VoidCallback leftIconOnPressed;
 
   const VisitingSightCard({
     required this.sight,
     required this.deleteFromList,
     required this.lowerText,
+    required this.leftIcon,
+    required this.leftIconOnPressed,
     Key? key,
   }) : super(key: key);
 
@@ -74,13 +78,8 @@ class VisitingSightCard extends StatelessWidget {
                         style: TextButton.styleFrom(
                           shape: const CircleBorder(),
                         ),
-                        onPressed: () {
-                          debugPrint('Кнопка поделиться нажата.');
-                        },
-                        child: const Icon(
-                          Icons.share,
-                          color: Colors.white,
-                        ),
+                        onPressed: leftIconOnPressed,
+                        child: leftIcon,
                       ),
                       TextButton(
                         style: TextButton.styleFrom(

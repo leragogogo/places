@@ -46,6 +46,7 @@ flutter:
     - res/icons/file.png
     - res/icons/photo.png
     - res/icons/camera.png
+    - res/icons/calendar.png
 
 
 

@@ -61,6 +61,18 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        leftIcon: const ImageIcon(
+                          AssetImage(AppAssets.calendarAsset),
+                          color: Colors.white,
+                        ),
+                        leftIconOnPressed: () {
+                          showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2023),
+                            lastDate: DateTime(2026),
+                          );
+                        },
                       ))
                   .toList(),
             ),
