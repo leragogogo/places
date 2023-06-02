@@ -36,12 +36,21 @@ class _SightDetailsScreenState extends State<SightDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(_currentPage.toString());
+    final theme = Theme.of(context);
 
-    return Scaffold(
-      body: CustomScrollView(
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.9,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
+        ),
+        color: theme.appBarTheme.backgroundColor,
+      ),
+      child: CustomScrollView(
         slivers: [
           SliverAppBar(
+            backgroundColor: Colors.transparent,
             expandedHeight: 360,
             automaticallyImplyLeading: false,
             flexibleSpace: _ImageDetails(
@@ -93,13 +102,19 @@ class _SightPageView extends StatelessWidget {
           controller: controller,
           children: sight.images
               .map(
-                (image) => Image.network(
-                  image,
-                  loadingBuilder: (context, child, loadingProgress) =>
-                      loadingProgress == null
-                          ? child
-                          : const CupertinoActivityIndicator(),
-                  fit: BoxFit.cover,
+                (image) => ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                  child: Image.network(
+                    image,
+                    loadingBuilder: (context, child, loadingProgress) =>
+                        loadingProgress == null
+                            ? child
+                            : const CupertinoActivityIndicator(),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               )
               .toList(),
@@ -195,25 +210,30 @@ class _ImageDetails extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 36,
-          left: 16,
-          width: 36,
-          height: 36,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: theme.primaryColor,
-              alignment: Alignment.center,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-            ),
+          top: 16,
+          right: 16,
+          child: IconButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: theme.canvasColor,
-              size: 20,
+            icon: Icon(
+              Icons.cancel_rounded,
+              color: theme.appBarTheme.backgroundColor,
+              size: 40,
+            ),
+          ),
+        ),
+        Positioned(
+          top: 12,
+          right: MediaQuery.of(context).size.width / 2 - 20,
+          child: Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(12),
+              ),
+              color: theme.appBarTheme.backgroundColor,
             ),
           ),
         ),

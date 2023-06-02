@@ -43,6 +43,9 @@ flutter:
     - res/icons/search.png
     - res/icons/filter.png
     - res/icons/splash.png
+    - res/icons/file.png
+    - res/icons/photo.png
+    - res/icons/camera.png
 
 
 

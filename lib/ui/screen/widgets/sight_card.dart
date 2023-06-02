@@ -49,10 +49,10 @@ class SightCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<SightDetailsScreen>(
-                        builder: (context) => SightDetailsScreen(sight),
-                      ),
+                    showModalBottomSheet<void>(
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (_) => SightDetailsScreen(sight),
                     );
                   },
                 ),

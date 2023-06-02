@@ -73,7 +73,7 @@ class AppStrings {
   static const wantToVisitText = 'Запланировано на 12 октября.';
   static const visitedText = 'Цель достигнута 12 октября.';
 
-  //OnBoardingScreen
+  // OnBoardingScreen
   static const page1BoldText = 'Добро пожаловать\n в Путеводитель';
   static const page1Text = 'Ищи новые локации и сохраняй\n самые любимые';
   static const page2BoldText = 'Построй маршрут\n и отправляйся в путь';
@@ -82,4 +82,9 @@ class AppStrings {
   static const page3Text = 'Делись самыми интересными\n и помоги нам стать лучше!';
   static const onStartText = 'НА СТАРТ';
   static const skipText = 'Пропустить';
+
+  // ImageDialog
+  static const fileText = 'Файл';
+  static const photoText = 'Фотография';
+  static const cameraText = 'Камера';
 }
