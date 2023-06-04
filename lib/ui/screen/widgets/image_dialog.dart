@@ -10,20 +10,22 @@ class ImageDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 55),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            AlertDialog(
-              backgroundColor: theme.appBarTheme.backgroundColor,
-              insetPadding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.5,
-              ),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-              ),
-              content: Column(
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          AlertDialog(
+            backgroundColor: theme.appBarTheme.backgroundColor,
+            insetPadding: EdgeInsets.only(
+              top: MediaQuery.of(context).size.height * 0.5,
+              left: 16,
+              right: 16,
+            ),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
@@ -82,10 +84,13 @@ class ImageDialog extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(
-              height: 8,
-            ),
-            SizedBox(
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16),
+            child: SizedBox(
               height: 48,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -99,15 +104,15 @@ class ImageDialog extends StatelessWidget {
                 },
                 child: Center(
                   child: Text(
-                    'ОТМЕНА',
+                    AppStrings.cancelButtonText.toUpperCase(),
                     style: theme.textTheme.bodySmall
                         ?.copyWith(color: AppColors.planButtonColor),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

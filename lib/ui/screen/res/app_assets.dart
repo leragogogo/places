@@ -21,4 +21,5 @@ class AppAssets {
   static const String fileAsset = 'res/icons/file.png';
   static const String photoAsset = 'res/icons/photo.png';
   static const String cameraAsset = 'res/icons/camera.png';
+  static const String calendarAsset = 'res/icons/calendar.png';
 }

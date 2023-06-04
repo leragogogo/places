@@ -59,6 +59,11 @@ class _VisitedTabState extends State<VisitedTab> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        leftIcon: const Icon(
+                          Icons.share,
+                          color: Colors.white,
+                        ),
+                        leftIconOnPressed: () {},
                       ))
                   .toList(),
             ),
