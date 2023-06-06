@@ -104,108 +104,122 @@ class _FiltersScreenState extends State<FiltersScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16, top: 32),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                AppStrings.categoryText,
-                style: theme.textTheme.bodyMedium
-                    ?.copyWith(color: theme.primaryColorDark, fontSize: 12),
+      body: LayoutBuilder(
+        builder: (context, constraint) => SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraint.maxHeight),
+            child: IntrinsicHeight(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, top: 32),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        AppStrings.categoryText,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.primaryColorDark,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 41, right: 41),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: _Categories(
+                        userLocation: userLocation,
+                        curValues: curValues,
+                        statesOfCategories: statesOfCategories,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 60,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 16),
+                    child: Row(
+                      children: [
+                        Text(
+                          AppStrings.distanceText,
+                          style: theme.textTheme.bodyMedium
+                              ?.copyWith(color: theme.canvasColor),
+                        ),
+                        Text(
+                          distance,
+                          style: theme.textTheme.bodyMedium
+                              ?.copyWith(color: theme.primaryColorDark),
+                        ),
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 32,
+                  ),
+                  SliderTheme(
+                    data: const SliderThemeData(
+                      trackHeight: 1,
+                    ),
+                    child: RangeSlider(
+                      values: curValues,
+                      onChanged: (values) {
+                        setState(() {
+                          curValues = values;
+                          distance =
+                              'от ${_points[curValues.start.round()]?.toInt()} до ${_points[curValues.end.round()]?.toInt()} м';
+                          mocksWithFilters = mocks
+                              .where((element) => FilterUtils.isPointInArea(
+                                    point: userLocation,
+                                    center: Location(
+                                      lat: element.lat,
+                                      lon: element.lon,
+                                    ),
+                                    radius: RangeValues(
+                                      _points[curValues.start.round()]!,
+                                      _points[curValues.end.round()]!,
+                                    ),
+                                    stateOfCategory:
+                                        statesOfCategories[element.type]!,
+                                  ))
+                              .toList();
+                          sightCount = mocksWithFilters.length;
+                          isButtonDisabled = sightCount == 0;
+                        });
+                        Provider.of<FiltersProvider>(context, listen: false)
+                            .changeState(
+                          newSightCount: sightCount,
+                          newIsButtonDisabled: isButtonDisabled,
+                          newMocksWithFilters: mocksWithFilters,
+                        );
+                      },
+                      min: 1,
+                      max: 10,
+                      activeColor: AppColors.planButtonColor,
+                      inactiveColor: AppColors.ltTextColor,
+                      divisions: 9,
+                    ),
+                  ),
+                  Expanded(
+                    child: BottomButton(
+                      text: '${AppStrings.showButtonText} ($sightCount)',
+                      onPressed: isButtonDisabled
+                          ? null
+                          : () {
+                              Navigator.pop(context, mocksWithFilters);
+                            },
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(
-            height: 24,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 41, right: 41),
-            child: SizedBox(
-              width: double.infinity,
-              child: _Categories(
-                userLocation: userLocation,
-                curValues: curValues,
-                statesOfCategories: statesOfCategories,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 60,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16),
-            child: Row(
-              children: [
-                Text(
-                  AppStrings.distanceText,
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: theme.canvasColor),
-                ),
-                Text(
-                  distance,
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: theme.primaryColorDark),
-                ),
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            ),
-          ),
-          const SizedBox(
-            height: 32,
-          ),
-          SliderTheme(
-            data: const SliderThemeData(
-              trackHeight: 1,
-            ),
-            child: RangeSlider(
-              values: curValues,
-              onChanged: (values) {
-                setState(() {
-                  curValues = values;
-                  distance =
-                      'от ${_points[curValues.start.round()]?.toInt()} до ${_points[curValues.end.round()]?.toInt()} м';
-                  mocksWithFilters = mocks
-                      .where((element) => FilterUtils.isPointInArea(
-                            point: userLocation,
-                            center:
-                                Location(lat: element.lat, lon: element.lon),
-                            radius: RangeValues(
-                              _points[curValues.start.round()]!,
-                              _points[curValues.end.round()]!,
-                            ),
-                            stateOfCategory: statesOfCategories[element.type]!,
-                          ))
-                      .toList();
-                  sightCount = mocksWithFilters.length;
-                  isButtonDisabled = sightCount == 0;
-                });
-                Provider.of<FiltersProvider>(context, listen: false)
-                    .changeState(
-                  newSightCount: sightCount,
-                  newIsButtonDisabled: isButtonDisabled,
-                  newMocksWithFilters: mocksWithFilters,
-                );
-              },
-              min: 1,
-              max: 10,
-              activeColor: AppColors.planButtonColor,
-              inactiveColor: AppColors.ltTextColor,
-              divisions: 9,
-            ),
-          ),
-          Expanded(
-            child: BottomButton(
-              text: '${AppStrings.showButtonText} ($sightCount)',
-              onPressed: isButtonDisabled
-                  ? null
-                  : () {
-                      Navigator.pop(context, mocksWithFilters);
-                    },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -32,71 +32,69 @@ class VisitingSightCard extends StatelessWidget {
           deleteFromList();
         },
         background: const DeletingBackgroud(),
-        child: AspectRatio(
-          aspectRatio: 2,
-          child: Ink(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(12),
+        child: Container(
+          width: double.infinity,
+          height: 192,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(12),
+            ),
+            color: theme.primaryColor,
+          ),
+          child: Stack(
+            children: [
+              UpperPart(sight),
+              Positioned(
+                top: 96,
+                left: 16,
+                child: LowerPart(
+                  sight,
+                  lowerText,
+                ),
               ),
-              color: theme.primaryColor,
-            ),
-            child: Stack(
-              children: [
-                UpperPart(sight),
-                Positioned(
-                  top: 96,
-                  left: 16,
-                  child: LowerPart(
-                    sight,
-                    lowerText,
-                  ),
-                ),
-                Positioned.fill(
-                  child: Material(
-                    type: MaterialType.transparency,
-                    child: InkWell(
-                      customBorder: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      onTap: () {
-                        showModalBottomSheet<void>(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (_) => SightDetailsScreen(sight),
-                        );
-                      },
+              Positioned.fill(
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: InkWell(
+                    customBorder: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    onTap: () {
+                      showModalBottomSheet<void>(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (_) => SightDetailsScreen(sight),
+                      );
+                    },
                   ),
                 ),
-                Positioned(
-                  right: 0,
-                  child: Row(
-                    children: [
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          shape: const CircleBorder(),
-                        ),
-                        onPressed: leftIconOnPressed,
-                        child: leftIcon,
+              ),
+              Positioned(
+                right: 0,
+                child: Row(
+                  children: [
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        shape: const CircleBorder(),
                       ),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          shape: const CircleBorder(),
-                        ),
-                        onPressed: deleteFromList,
-                        child: const Icon(
-                          Icons.close,
-                          color: Colors.white,
-                        ),
+                      onPressed: leftIconOnPressed,
+                      child: leftIcon,
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        shape: const CircleBorder(),
                       ),
-                    ],
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  ),
+                      onPressed: deleteFromList,
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

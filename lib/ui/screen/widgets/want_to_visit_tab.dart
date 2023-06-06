@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/data_providers/want_to_visit_provider.dart';
 import 'package:places/domain/sight.dart';
@@ -18,18 +19,19 @@ class WantToVisitTab extends StatefulWidget {
 }
 
 class _WantToVisitTabState extends State<WantToVisitTab> {
-  bool isWantToVisitEmpty = false;
+  bool _isWantToVisitEmpty = false;
+  DateTime? _chosenDateTime;
 
-  List<Sight> wantToVisit = [];
+  List<Sight> _wantToVisit = [];
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    wantToVisit = Provider.of<WantToVisitProvider>(context).wantToVisit;
-    isWantToVisitEmpty =
+    _wantToVisit = Provider.of<WantToVisitProvider>(context).wantToVisit;
+    _isWantToVisitEmpty =
         Provider.of<WantToVisitProvider>(context).isWantToVisitEmpty;
 
-    return isWantToVisitEmpty
+    return _isWantToVisitEmpty
         ? const EmptyScreen(
             path: AppAssets.wantToVisitedEmpty,
             text: AppStrings.wantToVisetedEmptyText,
@@ -45,7 +47,7 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                 child: child,
               ),
               onReorder: _updateWantToVisitList,
-              children: wantToVisit
+              children: _wantToVisit
                   .asMap()
                   .entries
                   .map((i) => VisitingSightCard(
@@ -66,12 +68,9 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                           color: Colors.white,
                         ),
                         leftIconOnPressed: () {
-                          showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2023),
-                            lastDate: DateTime(2026),
-                          );
+                          Platform.isAndroid
+                              ? _showAndroidPicker()
+                              : _showIOSPicker();
                         },
                       ))
                   .toList(),
@@ -79,27 +78,98 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
           );
   }
 
+  void _showAndroidPicker() {
+    final theme = Theme.of(context);
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2023),
+      lastDate: DateTime(2026),
+      builder: (context, child) {
+        return Theme(
+          data: theme.copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.planButtonColor,
+              onSurface: theme.canvasColor,
+            ),
+            dialogBackgroundColor: theme.appBarTheme.backgroundColor,
+          ),
+          child: child!,
+        );
+      },
+    );
+  }
+
+  void _showIOSPicker() {
+    final theme = Theme.of(context);
+    showCupertinoModalPopup<DateTime>(
+      context: context,
+      builder: (_) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.5,
+          color: theme.appBarTheme.backgroundColor,
+          child: Column(
+            children: [
+              Expanded(
+                flex: 4,
+                child: CupertinoTheme(
+                  data: CupertinoThemeData(
+                    textTheme: CupertinoTextThemeData(
+                      dateTimePickerTextStyle:
+                          theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.canvasColor,
+                      ),
+                    ),
+                  ),
+                  child: CupertinoDatePicker(
+                    initialDateTime: DateTime.now(),
+                    onDateTimeChanged: (val) {
+                      setState(() {
+                        _chosenDateTime = val;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              Expanded(
+                child: CupertinoButton(
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                      color: AppColors.planButtonColor,
+                    ),
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _updateWantToVisitList(int oldIndex, int newIndex) {
     setState(() {
       if (newIndex > oldIndex) newIndex -= 1;
-      final item = wantToVisit.removeAt(oldIndex);
-      wantToVisit.insert(newIndex, item);
+      final item = _wantToVisit.removeAt(oldIndex);
+      _wantToVisit.insert(newIndex, item);
     });
   }
 
   void _deleteWantToVisitedSight(Sight sight) {
     setState(() {
       var ind = 0;
-      for (var i = 0; i < wantToVisit.length; i++) {
-        if (wantToVisit[i] == sight) {
+      for (var i = 0; i < _wantToVisit.length; i++) {
+        if (_wantToVisit[i] == sight) {
           ind = i;
         }
       }
-      wantToVisit.removeAt(ind);
-      isWantToVisitEmpty = wantToVisit.isEmpty;
+      _wantToVisit.removeAt(ind);
+      _isWantToVisitEmpty = _wantToVisit.isEmpty;
       Provider.of<WantToVisitProvider>(context, listen: false).changeState(
-        newWantToVisit: wantToVisit,
-        newIsWantToVisitEmpty: isWantToVisitEmpty,
+        newWantToVisit: _wantToVisit,
+        newIsWantToVisitEmpty: _isWantToVisitEmpty,
       );
     });
   }

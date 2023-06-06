@@ -68,20 +68,56 @@ class _SightListScreen extends State<SightListScreen> {
             ),
           ),
           // Основной список
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: SightCard(mocks[index]),
-                );
-              },
-              childCount: mocks.length,
-            ),
-          ),
+          if (MediaQuery.of(context).orientation == Orientation.portrait)
+            _SightListPortrait()
+          else
+            _SightListLandscape(),
         ],
       ),
       resizeToAvoidBottomInset: true,
+    );
+  }
+}
+
+class _SightListPortrait extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: SightCard(mocks[index]),
+          );
+        },
+        childCount: mocks.length,
+      ),
+    );
+  }
+}
+
+class _SightListLandscape extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SliverGrid(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(
+                height: 16,
+              ),
+              SightCard(mocks[index]),
+            ],
+          );
+        },
+        childCount: mocks.length,
+      ),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        mainAxisExtent: 210,
+        crossAxisCount: 2,
+      ),
     );
   }
 }
