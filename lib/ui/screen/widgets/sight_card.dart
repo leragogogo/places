@@ -12,10 +12,14 @@ class SightCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return AspectRatio(
-      aspectRatio: 2,
-      child: Ink(
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 16,
+        right: 16,
+      ),
+      child: Container(
         width: double.infinity,
+        height: 192,
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(
             Radius.circular(12),
@@ -28,6 +32,7 @@ class SightCard extends StatelessWidget {
             Positioned(
               top: 96,
               left: 16,
+              right: 16,
               child: LowerPart(
                 sight,
                 Text(
