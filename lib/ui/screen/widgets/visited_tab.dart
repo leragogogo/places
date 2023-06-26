@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:places/data/model/place.dart';
 import 'package:places/data_providers/visited_provider.dart';
-import 'package:places/domain/sight.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/empty_screen.dart';
@@ -17,9 +17,9 @@ class VisitedTab extends StatefulWidget {
 }
 
 class _VisitedTabState extends State<VisitedTab> {
-  bool isVisitedEmpty = false;
+  bool isVisitedEmpty = true;
 
-  List<Sight> visited = [];
+  List<Place> visited = [];
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +78,7 @@ class _VisitedTabState extends State<VisitedTab> {
     });
   }
 
-  void _deleteVisitedSight(Sight sight) {
+  void _deleteVisitedSight(Place sight) {
     setState(() {
       var ind = 0;
       for (var i = 0; i < visited.length; i++) {

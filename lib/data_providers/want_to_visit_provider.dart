@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:places/domain/sight.dart';
-import 'package:places/mocks.dart';
+import 'package:places/data/model/place.dart';
 
 class WantToVisitProvider extends ChangeNotifier {
-  List<Sight> wantToVisit = [mocks[0], mocks[3]];
-  bool isWantToVisitEmpty = false;
+  List<Place> wantToVisit = [];
+  bool isWantToVisitEmpty = true;
   void changeState({
-    required List<Sight> newWantToVisit,
+    required List<Place> newWantToVisit,
     required bool newIsWantToVisitEmpty,
   }) {
     wantToVisit = newWantToVisit;

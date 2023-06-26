@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:places/data/interactor/place_interactor.dart';
+import 'package:places/data/model/place.dart';
 import 'package:places/data_providers/add_sight_provider.dart';
 import 'package:places/data_providers/button_create_provider.dart';
 import 'package:places/domain/categories.dart';
-import 'package:places/domain/sight.dart';
-import 'package:places/mocks.dart';
 import 'package:places/ui/screen/choosing_category_screen.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
@@ -287,16 +287,18 @@ class _AddSightScreenState extends State<AddSightScreen> {
                     onPressed: isButtonDisabled
                         ? null
                         : () {
-                            mocks.add(
-                              Sight(
-                                name: name!,
+                            Provider.of<PlaceInteractor>(context, listen: false)
+                                .addNewPlace(
+                              newPlace: Place(
+                                id: '1',
                                 lat: lat!,
                                 lon: lon!,
-                                images: [
+                                name: name!,
+                                urls: [
                                   'https://avatars.mds.yandex.net/get-altay/5235198/2a0000017afdeefb6009b7fd234b65744604/XXXL',
                                 ],
-                                details: details!,
-                                type: category!,
+                                placeType: category!.name,
+                                description: details!,
                               ),
                             );
                             _resetState();

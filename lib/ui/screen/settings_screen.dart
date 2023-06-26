@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:places/data_providers/theme_provider.dart';
+import 'package:places/data/interactor/settings_interactor.dart';
 import 'package:places/ui/screen/on_boarding_screen.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
@@ -38,11 +38,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ?.copyWith(color: theme.canvasColor),
             ),
             trailing: CupertinoSwitch(
-              value: context.watch<ThemeProvider>().isDarkTheme,
+              value: context.watch<SettingsInteractor>().isDarkThemeOn,
               activeColor: AppColors.planButtonColor,
-              // ignore: unnecessary_parenthesis
               onChanged: (value) {
-                context.read<ThemeProvider>().changeTheme();
+                context.read<SettingsInteractor>().changeTheme();
               },
             ),
           ),
