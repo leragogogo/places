@@ -25,43 +25,43 @@ void main() {
           create: (_) => FiltersProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => SettingsInteractor(),
+          create: (_) => SettingsInteractor(),
         ),
         ChangeNotifierProvider(
-          create: (context) => ChoosingCategoryProvider(),
+          create: (_) => ChoosingCategoryProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => AddSightProvider(),
+          create: (_) => AddSightProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => ButtonSaveProvider(),
+          create: (_) => ButtonSaveProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => ButtonCreateProvider(),
+          create: (_) => ButtonCreateProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => SearchProvider(),
+          create: (_) => SearchProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => HistoryProvider(),
+          create: (_) => HistoryProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => FieldEmptyProvider(),
+          create: (_) => FieldEmptyProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => WantToVisitProvider(),
+          create: (_) => WantToVisitProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => VisitedProvider(),
+          create: (_) => VisitedProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => PlaceInteractor(),
+          create: (_) => PlaceInteractor(),
         ),
         ChangeNotifierProvider(
-          create: (context) => SearchInteractor(),
+          create: (_) => SearchInteractor(),
         ),
         ChangeNotifierProvider(
-          create: (context) => FilterInteractor(),
+          create: (_) => FilterInteractor(),
         ),
       ],
       child: const App(),
@@ -75,9 +75,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Places',
-      theme: context.watch<SettingsInteractor>().isDarkThemeOn
+      theme: context.watch<SettingsInteractor>().themeMode,/*context.watch<SettingsInteractor>().isDarkThemeOn
           ? AppThemes.darkTheme
-          : AppThemes.lightTheme,
+          : AppThemes.lightTheme,*/
       home: const SplashScreen(),
     );
   }

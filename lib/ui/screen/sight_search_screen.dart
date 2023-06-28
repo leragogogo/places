@@ -64,11 +64,13 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
             Provider.of<FieldEmptyProvider>(context, listen: false).changeState(
               newIsFieldEmpty: isFieldEmpty,
             );
-            searchList = [];
+            
             final searchPlaces = Provider.of<SearchInteractor>(
               context,
               listen: false,
             ).searchPlaces(value);
+            
+            searchList = [];
             for (final place in searchPlaces) {
               searchList
                 ..add(_MiniSightCard(
@@ -106,6 +108,7 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
                   indent: 88,
                 ));
             }
+            
             Provider.of<SearchProvider>(context, listen: false).changeState(
               newSearchList: searchList,
             );

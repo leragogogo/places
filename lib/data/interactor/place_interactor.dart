@@ -18,10 +18,12 @@ class PlaceInteractor with ChangeNotifier {
     _instance = this;
     placeRepository = PlaceRepository();
     initPlaces();
+    
   }
 
   Future<void> initPlaces() async {
-    allPlaces = await placeRepository.loadPlaces();
+    await placeRepository.initPlaces();
+    allPlaces = placeRepository.places;
     notifyListeners();
   }
 

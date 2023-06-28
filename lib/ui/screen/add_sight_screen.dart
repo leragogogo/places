@@ -291,14 +291,14 @@ class _AddSightScreenState extends State<AddSightScreen> {
                                 .addNewPlace(
                               newPlace: Place(
                                 id: '1',
-                                lat: lat!,
-                                lon: lon!,
-                                name: name!,
+                                lat: lat ?? 0,
+                                lon: lon ?? 0,
+                                name: name ?? 'name',
                                 urls: [
                                   'https://avatars.mds.yandex.net/get-altay/5235198/2a0000017afdeefb6009b7fd234b65744604/XXXL',
                                 ],
-                                placeType: category!.name,
-                                description: details!,
+                                placeType: category == null ? Categories.specialPlace.name : category!.name,//category!.name,
+                                description: details ?? '',
                               ),
                             );
                             _resetState();
