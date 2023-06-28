@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:places/data/interactor/search_interactor.dart';
+import 'package:places/data/model/place.dart';
 import 'package:places/data_providers/field_empty_provider.dart';
 import 'package:places/data_providers/history_provider.dart';
 import 'package:places/data_providers/search_provider.dart';
-import 'package:places/domain/sight.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/search_bar.dart';
@@ -12,9 +14,8 @@ import 'package:places/ui/screen/widgets/sight_details.dart';
 import 'package:provider/provider.dart';
 
 class SightSearchScreen extends StatefulWidget {
-  final List<Sight> mocksWithFilters;
   final searchField = TextEditingController();
-  SightSearchScreen({required this.mocksWithFilters, super.key});
+  SightSearchScreen({super.key});
 
   @override
   State<SightSearchScreen> createState() => _SightSearchScreenState();
@@ -22,6 +23,7 @@ class SightSearchScreen extends StatefulWidget {
 
 class _SightSearchScreenState extends State<SightSearchScreen> {
   List<Widget> searchList = [];
+
   List<Widget> history = [];
   bool isFieldEmpty = true;
 
@@ -62,49 +64,51 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
             Provider.of<FieldEmptyProvider>(context, listen: false).changeState(
               newIsFieldEmpty: isFieldEmpty,
             );
+            
+            final searchPlaces = Provider.of<SearchInteractor>(
+              context,
+              listen: false,
+            ).searchPlaces(value);
+            
             searchList = [];
-            for (final mock in widget.mocksWithFilters) {
-              if (mock.name.toLowerCase().contains(value.toLowerCase())) {
-                searchList
-                  ..add(_MiniSightCard(
-                    mock,
-                    () {
-                      history
-                        ..add(_HistoryTile(mock.name, () {
-                          final index = findWidget(mock.name);
-                          history
-                            ..removeAt(index)
-                            ..removeAt(index);
-                          Provider.of<HistoryProvider>(context, listen: false)
-                              .changeState(
-                            newHistory: history,
-                          );
-                        }))
-                        ..add(const Divider(
-                          thickness: 1,
-                          indent: 16,
-                          endIndent: 16,
-                        ));
-                      Provider.of<HistoryProvider>(context, listen: false)
-                          .changeState(
-                        newHistory: history,
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<SightDetailsScreen>(
-                          builder: (context) => SightDetailsScreen(
-                            mock,
-                          ),
-                        ),
-                      );
-                    },
-                  ))
-                  ..add(const Divider(
-                    thickness: 1,
-                    indent: 88,
-                  ));
-              }
+            for (final place in searchPlaces) {
+              searchList
+                ..add(_MiniSightCard(
+                  place,
+                  () {
+                    history
+                      ..add(_HistoryTile(place.name, () {
+                        final index = findWidget(place.name);
+                        history
+                          ..removeAt(index)
+                          ..removeAt(index);
+                        Provider.of<HistoryProvider>(context, listen: false)
+                            .changeState(
+                          newHistory: history,
+                        );
+                      }))
+                      ..add(const Divider(
+                        thickness: 1,
+                        indent: 16,
+                        endIndent: 16,
+                      ));
+                    Provider.of<HistoryProvider>(context, listen: false)
+                        .changeState(
+                      newHistory: history,
+                    );
+                    showModalBottomSheet<void>(
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (_) => SightDetailsScreen(place),
+                    );
+                  },
+                ))
+                ..add(const Divider(
+                  thickness: 1,
+                  indent: 88,
+                ));
             }
+            
             Provider.of<SearchProvider>(context, listen: false).changeState(
               newSearchList: searchList,
             );
@@ -251,9 +255,9 @@ class _HistoryTile extends StatelessWidget {
 }
 
 class _MiniSightCard extends StatelessWidget {
-  final Sight sight;
+  final Place place;
   final VoidCallback onTap;
-  const _MiniSightCard(this.sight, this.onTap, {Key? key}) : super(key: key);
+  const _MiniSightCard(this.place, this.onTap, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -264,25 +268,31 @@ class _MiniSightCard extends StatelessWidget {
         height: 56,
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(12)),
-          child: Image.network(
-            sight.images[0],
-            loadingBuilder: (context, child, loadingProgress) =>
-                loadingProgress == null
-                    ? child
-                    : const CupertinoActivityIndicator(),
-            fit: BoxFit.fill,
-          ),
+          child: CachedNetworkImage(
+            imageUrl:
+                place.urls.isEmpty ? 'https://aa.aa.ru/1.jpg' : place.urls[0],
+            placeholder: (context, url) => const CupertinoActivityIndicator(),
+            errorWidget: (context, url, dynamic error) => Container(
+              color: AppColors.planButtonColor,
+              alignment: Alignment.center,
+              child: const Text(
+                'Whoops!',
+                style: TextStyle(fontSize: 30),
+              ),
+            ),
+            fit: BoxFit.cover,
+          ), 
         ),
       ),
       title: Text(
-        sight.name,
+        place.name,
         style: theme.textTheme.bodyLarge?.copyWith(
           color: theme.canvasColor,
           fontSize: 16,
         ),
       ),
       subtitle: Text(
-        sight.type.name,
+        place.beatifulType,
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.primaryColorDark,
           fontSize: 14,

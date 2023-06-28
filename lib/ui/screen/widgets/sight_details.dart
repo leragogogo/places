@@ -1,14 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:places/domain/sight.dart';
+import 'package:places/data/model/place.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/res/app_styles.dart';
 
 class SightDetailsScreen extends StatefulWidget {
-  final Sight sight;
+  final Place place;
 
-  const SightDetailsScreen(this.sight, {Key? key}) : super(key: key);
+  const SightDetailsScreen(this.place, {Key? key}) : super(key: key);
 
   @override
   State<SightDetailsScreen> createState() => _SightDetailsScreenState();
@@ -54,7 +55,7 @@ class _SightDetailsScreenState extends State<SightDetailsScreen> {
             expandedHeight: 360,
             automaticallyImplyLeading: false,
             flexibleSpace: _ImageDetails(
-              sight: widget.sight,
+              place: widget.place,
               selectedindex: _currentPage,
               controller: _controller,
             ),
@@ -62,10 +63,10 @@ class _SightDetailsScreenState extends State<SightDetailsScreen> {
           SliverToBoxAdapter(
             child: Column(
               children: [
-                _NameOfSight(widget.sight),
-                _TypeOfSight(widget.sight),
-                _DetailsOfSight(widget.sight),
-                _BuildRouteButton(widget.sight),
+                _NameOfSight(widget.place),
+                _TypeOfSight(widget.place),
+                _DetailsOfSight(widget.place),
+                _BuildRouteButton(widget.place),
                 Divider(
                   height: 39,
                   color: AppColors.ltTextColor,
@@ -73,7 +74,7 @@ class _SightDetailsScreenState extends State<SightDetailsScreen> {
                   endIndent: 16,
                   thickness: 0.8,
                 ),
-                _RowOfLowerButtons(widget.sight),
+                _RowOfLowerButtons(widget.place),
               ],
             ),
           ),
@@ -84,12 +85,12 @@ class _SightDetailsScreenState extends State<SightDetailsScreen> {
 }
 
 class _SightPageView extends StatelessWidget {
-  final Sight sight;
+  final Place place;
   final int selectedindex;
   final PageController controller;
 
   const _SightPageView({
-    required this.sight,
+    required this.place,
     required this.selectedindex,
     required this.controller,
     Key? key,
@@ -100,19 +101,25 @@ class _SightPageView extends StatelessWidget {
       children: [
         PageView(
           controller: controller,
-          children: sight.images
+          children: place.urls
               .map(
                 (image) => ClipRRect(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),
                   ),
-                  child: Image.network(
-                    image,
-                    loadingBuilder: (context, child, loadingProgress) =>
-                        loadingProgress == null
-                            ? child
-                            : const CupertinoActivityIndicator(),
+                  child: CachedNetworkImage(
+                    imageUrl: image,
+                    placeholder: (context, url) =>
+                        const CupertinoActivityIndicator(),
+                    errorWidget: (context, url, dynamic error) => Container(
+                      color: AppColors.planButtonColor,
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Whoops!',
+                        style: TextStyle(fontSize: 30),
+                      ),
+                    ),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -122,10 +129,10 @@ class _SightPageView extends StatelessWidget {
         Positioned(
           bottom: 0,
           left: selectedindex *
-              (MediaQuery.of(context).size.width / sight.images.length),
+              (MediaQuery.of(context).size.width / place.urls.length),
           child: _Indicators(
             selectedindex: selectedindex,
-            sight: sight,
+            place: place,
           ),
         ),
       ],
@@ -135,20 +142,20 @@ class _SightPageView extends StatelessWidget {
 
 class _Indicators extends StatelessWidget {
   final int selectedindex;
-  final Sight sight;
+  final Place place;
   const _Indicators({
     required this.selectedindex,
-    required this.sight,
+    required this.place,
     Key? key,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final list = <Widget>[];
-    for (var i = 0; i < sight.images.length; i++) {
+    for (var i = 0; i < place.urls.length; i++) {
       list.add(
         i == selectedindex
-            ? _Indicator(sight: sight, isActive: true)
-            : _Indicator(sight: sight, isActive: false),
+            ? _Indicator(place: place, isActive: true)
+            : _Indicator(place: place, isActive: false),
       );
     }
 
@@ -160,9 +167,9 @@ class _Indicators extends StatelessWidget {
 }
 
 class _Indicator extends StatelessWidget {
-  final Sight sight;
+  final Place place;
   final bool isActive;
-  const _Indicator({required this.sight, required this.isActive, Key? key})
+  const _Indicator({required this.place, required this.isActive, Key? key})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -172,7 +179,7 @@ class _Indicator extends StatelessWidget {
         ? AnimatedContainer(
             duration: const Duration(milliseconds: 100),
             height: 8,
-            width: MediaQuery.of(context).size.width / sight.images.length,
+            width: MediaQuery.of(context).size.width / place.urls.length,
             decoration: BoxDecoration(
               color: theme.canvasColor,
               borderRadius: BorderRadius.circular(8),
@@ -184,12 +191,12 @@ class _Indicator extends StatelessWidget {
 
 // верстка изображений объекта
 class _ImageDetails extends StatelessWidget {
-  final Sight sight;
+  final Place place;
   final int selectedindex;
   final PageController controller;
 
   const _ImageDetails({
-    required this.sight,
+    required this.place,
     required this.selectedindex,
     required this.controller,
     Key? key,
@@ -204,7 +211,7 @@ class _ImageDetails extends StatelessWidget {
           width: double.infinity,
           height: 360,
           child: _SightPageView(
-            sight: sight,
+            place: place,
             selectedindex: selectedindex,
             controller: controller,
           ),
@@ -244,9 +251,9 @@ class _ImageDetails extends StatelessWidget {
 
 // верстка имени объекта
 class _NameOfSight extends StatelessWidget {
-  final Sight sight;
+  final Place place;
 
-  const _NameOfSight(this.sight, {Key? key}) : super(key: key);
+  const _NameOfSight(this.place, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -255,7 +262,7 @@ class _NameOfSight extends StatelessWidget {
       padding: const EdgeInsets.only(left: 16, top: 24),
       alignment: Alignment.topLeft,
       child: Text(
-        sight.name,
+        place.name,
         style: theme.textTheme.bodyLarge?.copyWith(
           color: theme.canvasColor,
           fontSize: 24,
@@ -267,9 +274,9 @@ class _NameOfSight extends StatelessWidget {
 
 // верстка типа объекта
 class _TypeOfSight extends StatelessWidget {
-  final Sight sight;
+  final Place place;
 
-  const _TypeOfSight(this.sight, {Key? key}) : super(key: key);
+  const _TypeOfSight(this.place, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -278,7 +285,7 @@ class _TypeOfSight extends StatelessWidget {
       padding: const EdgeInsets.only(left: 16, top: 2),
       alignment: Alignment.topLeft,
       child: Text(
-        sight.type.name,
+        place.placeType,
         style: theme.textTheme.bodySmall
             ?.copyWith(color: Theme.of(context).primaryColorDark),
       ),
@@ -288,9 +295,9 @@ class _TypeOfSight extends StatelessWidget {
 
 // верстка описания объекта
 class _DetailsOfSight extends StatelessWidget {
-  final Sight sight;
+  final Place place;
 
-  const _DetailsOfSight(this.sight, {Key? key}) : super(key: key);
+  const _DetailsOfSight(this.place, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -299,7 +306,7 @@ class _DetailsOfSight extends StatelessWidget {
       padding: const EdgeInsets.only(left: 16, top: 24, right: 16),
       alignment: Alignment.topLeft,
       child: Text(
-        sight.details,
+        place.description,
         style: theme.textTheme.bodySmall
             ?.copyWith(color: Theme.of(context).canvasColor),
       ),
@@ -309,9 +316,9 @@ class _DetailsOfSight extends StatelessWidget {
 
 // верстка кнопки построить маршрут
 class _BuildRouteButton extends StatelessWidget {
-  final Sight sight;
+  final Place place;
 
-  const _BuildRouteButton(this.sight, {Key? key}) : super(key: key);
+  const _BuildRouteButton(this.place, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -350,9 +357,9 @@ class _BuildRouteButton extends StatelessWidget {
 
 // верстка кнопок в избранное и запланировать
 class _RowOfLowerButtons extends StatelessWidget {
-  final Sight sight;
+  final Place place;
 
-  const _RowOfLowerButtons(this.sight, {Key? key}) : super(key: key);
+  const _RowOfLowerButtons(this.place, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

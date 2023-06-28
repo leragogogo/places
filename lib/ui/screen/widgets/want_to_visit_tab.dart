@@ -1,9 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:places/data/interactor/place_interactor.dart';
+import 'package:places/data/model/place.dart';
 import 'package:places/data_providers/want_to_visit_provider.dart';
-import 'package:places/domain/sight.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
@@ -19,14 +19,17 @@ class WantToVisitTab extends StatefulWidget {
 }
 
 class _WantToVisitTabState extends State<WantToVisitTab> {
-  bool _isWantToVisitEmpty = false;
+  bool _isWantToVisitEmpty = true;
   DateTime? _chosenDateTime;
 
-  List<Sight> _wantToVisit = [];
+  List<Place> _wantToVisit = [];
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    //_wantToVisit = context
+    //    .watch<PlaceInteractor>().getFavoritesPlaces();
+
     _wantToVisit = Provider.of<WantToVisitProvider>(context).wantToVisit;
     _isWantToVisitEmpty =
         Provider.of<WantToVisitProvider>(context).isWantToVisitEmpty;
@@ -54,7 +57,28 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                         key: ObjectKey(i.value),
                         sight: i.value,
                         deleteFromList: () {
-                          _deleteWantToVisitedSight(i.value);
+                          //_deleteWantToVisitedSight(i.value);
+                          Provider.of<PlaceInteractor>(
+                            context,
+                            listen: false,
+                          ).removeFromFavorites(place: i.value);
+                          final favouritePlaces = Provider.of<PlaceInteractor>(
+                            context,
+                            listen: false,
+                          ).getFavoritesPlaces();
+                          Provider.of<WantToVisitProvider>(
+                            context,
+                            listen: false,
+                          ).changeState(
+                            newWantToVisit: favouritePlaces,
+                            newIsWantToVisitEmpty: favouritePlaces.isEmpty,
+                          );
+                          /*Provider.of<FavouriteButtonProvider>(
+                            context,
+                            listen: false,
+                          ).changeState(
+                            newIsFavouriteButtonClicked: false,
+                          );*/
                         },
                         lowerText: Text(
                           AppStrings.wantToVisitText,
@@ -157,20 +181,4 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
     });
   }
 
-  void _deleteWantToVisitedSight(Sight sight) {
-    setState(() {
-      var ind = 0;
-      for (var i = 0; i < _wantToVisit.length; i++) {
-        if (_wantToVisit[i] == sight) {
-          ind = i;
-        }
-      }
-      _wantToVisit.removeAt(ind);
-      _isWantToVisitEmpty = _wantToVisit.isEmpty;
-      Provider.of<WantToVisitProvider>(context, listen: false).changeState(
-        newWantToVisit: _wantToVisit,
-        newIsWantToVisitEmpty: _isWantToVisitEmpty,
-      );
-    });
-  }
 }

@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:places/domain/sight.dart';
+import 'package:places/data/interactor/place_interactor.dart';
+import 'package:places/data/model/place.dart';
+import 'package:places/data_providers/want_to_visit_provider.dart';
 import 'package:places/ui/screen/widgets/parts_of_card.dart';
 import 'package:places/ui/screen/widgets/sight_details.dart';
+import 'package:provider/provider.dart';
 
-class SightCard extends StatelessWidget {
-  final Sight sight;
+class SightCard extends StatefulWidget {
+  final Place place;
 
-  const SightCard(this.sight, {Key? key}) : super(key: key);
+  const SightCard(this.place, {Key? key}) : super(key: key);
+
+  @override
+  State<SightCard> createState() => _SightCardState();
+}
+
+class _SightCardState extends State<SightCard> {
+  bool isFavouriteButtonClicked = false;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    isFavouriteButtonClicked = widget.place.wished;
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -28,15 +39,15 @@ class SightCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            UpperPart(sight),
+            UpperPart(widget.place),
             Positioned(
               top: 96,
               left: 16,
               right: 16,
               child: LowerPart(
-                sight,
+                widget.place,
                 Text(
-                  sight.details,
+                  widget.place.description,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -57,7 +68,7 @@ class SightCard extends StatelessWidget {
                     showModalBottomSheet<void>(
                       isScrollControlled: true,
                       context: context,
-                      builder: (_) => SightDetailsScreen(sight),
+                      builder: (_) => SightDetailsScreen(widget.place),
                     );
                   },
                 ),
@@ -70,12 +81,37 @@ class SightCard extends StatelessWidget {
                   shape: const CircleBorder(),
                 ),
                 onPressed: () {
-                  debugPrint('Кнопка добавить в избранное нажата.');
+                  setState(() {
+                    isFavouriteButtonClicked = !isFavouriteButtonClicked;
+                  });
+                  isFavouriteButtonClicked
+                      ? Provider.of<PlaceInteractor>(
+                          context,
+                          listen: false,
+                        ).addToFavorites(place: widget.place)
+                      : Provider.of<PlaceInteractor>(
+                          context,
+                          listen: false,
+                        ).removeFromFavorites(place: widget.place);
+                  final favouritePlaces = Provider.of<PlaceInteractor>(
+                    context,
+                    listen: false,
+                  ).getFavoritesPlaces();
+                  Provider.of<WantToVisitProvider>(context, listen: false)
+                      .changeState(
+                    newWantToVisit: favouritePlaces,
+                    newIsWantToVisitEmpty: favouritePlaces.isEmpty,
+                  );
                 },
-                child: const Icon(
-                  Icons.favorite_outline,
-                  color: Colors.white,
-                ),
+                child: isFavouriteButtonClicked
+                    ? const Icon(
+                        Icons.favorite_sharp,
+                        color: Colors.red,
+                      )
+                    : const Icon(
+                        Icons.favorite_outline,
+                        color: Colors.white,
+                      ),
               ),
             ),
           ],

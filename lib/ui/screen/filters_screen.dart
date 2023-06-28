@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:places/data/interactor/filter_interactor.dart';
+import 'package:places/data/interactor/place_interactor.dart';
+import 'package:places/data/model/filter_item.dart';
+import 'package:places/data/model/place.dart';
 import 'package:places/data_providers/filter_provider.dart';
-import 'package:places/domain/categories.dart';
 import 'package:places/domain/location.dart';
-import 'package:places/domain/sight.dart';
-import 'package:places/mocks.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/bottom_button.dart';
-import 'package:places/utils/filter_utils.dart';
 import 'package:provider/provider.dart';
 
 // соответсвие между значениями слайдера и длиной радиуса поиска в метрах
@@ -24,8 +24,23 @@ Map<int, double> _points = {
   10: 10000,
 };
 
+Map<double, double> _fromRepository = {
+  100: 1,
+  500: 2,
+  1000: 3,
+  2000: 4,
+  3000: 5,
+  4000: 6,
+  5000: 7,
+  6000: 8,
+  7500: 9,
+  10000: 10,
+};
+
 class FiltersScreen extends StatefulWidget {
-  const FiltersScreen({Key? key}) : super(key: key);
+  const FiltersScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<FiltersScreen> createState() => _FiltersScreenState();
@@ -34,24 +49,8 @@ class FiltersScreen extends StatefulWidget {
 class _FiltersScreenState extends State<FiltersScreen> {
   String distance = 'от 100 до 10000 м';
 
-  // состояние каждой категории(выбрана или нет)
-  Map<Categories, bool> statesOfCategories = {
-    Categories.hotel: false,
-    Categories.restaurant: false,
-    Categories.specialPlace: false,
-    Categories.park: false,
-    Categories.museum: false,
-    Categories.cafe: false,
-  };
-
-  // текущие значения слайдера
-  RangeValues curValues = const RangeValues(1, 10);
-
   // количество подходящих под критерии мест
   int sightCount = 0;
-
-  // места подходящие под критерии
-  List<Sight> mocksWithFilters = mocks;
 
   // состояние кнопки "ПОКАЗАТЬ"
   bool isButtonDisabled = true;
@@ -63,7 +62,6 @@ class _FiltersScreenState extends State<FiltersScreen> {
     final theme = Theme.of(context);
     sightCount = Provider.of<FiltersProvider>(context).sightCount;
     isButtonDisabled = Provider.of<FiltersProvider>(context).isButtonDisabled;
-    mocksWithFilters = Provider.of<FiltersProvider>(context).mocksWithFilters;
 
     return Scaffold(
       appBar: AppBar(
@@ -74,26 +72,28 @@ class _FiltersScreenState extends State<FiltersScreen> {
             color: theme.canvasColor,
           ),
           onPressed: () {
-            Navigator.pop(context, mocks);
+            Navigator.pop(context, <dynamic>[]);
           },
         ),
         actions: [
           TextButton(
             onPressed: () {
               setState(() {
-                for (final key in statesOfCategories.keys) {
-                  statesOfCategories[key] = false;
-                }
+                Provider.of<FilterInteractor>(
+                  context,
+                  listen: false,
+                ).clearActiveCategories();
                 sightCount = 0;
                 isButtonDisabled = true;
-                curValues = const RangeValues(1, 10);
+                Provider.of<FilterInteractor>(
+                  context,
+                  listen: false,
+                ).candidateCurRadius = const RangeValues(100, 10000);
                 distance = 'от 100 до 10000 м';
-                mocksWithFilters = mocks;
               });
               Provider.of<FiltersProvider>(context, listen: false).changeState(
                 newSightCount: sightCount,
                 newIsButtonDisabled: isButtonDisabled,
-                newMocksWithFilters: mocksWithFilters,
               );
             },
             child: Text(
@@ -132,9 +132,21 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     child: SizedBox(
                       width: double.infinity,
                       child: _Categories(
+                        radius: RangeValues(
+                          Provider.of<FilterInteractor>(
+                            context,
+                            listen: false,
+                          ).candidateCurRadius.start,
+                          Provider.of<FilterInteractor>(
+                            context,
+                            listen: false,
+                          ).candidateCurRadius.end,
+                        ),
                         userLocation: userLocation,
-                        curValues: curValues,
-                        statesOfCategories: statesOfCategories,
+                        filterItems: Provider.of<FilterInteractor>(
+                          context,
+                          listen: false,
+                        ).candidateFilterItems,
                       ),
                     ),
                   ),
@@ -167,35 +179,60 @@ class _FiltersScreenState extends State<FiltersScreen> {
                       trackHeight: 1,
                     ),
                     child: RangeSlider(
-                      values: curValues,
+                      values: RangeValues(
+                        _fromRepository[Provider.of<FilterInteractor>(
+                          context,
+                          listen: false,
+                        ).candidateCurRadius.start]!,
+                        _fromRepository[Provider.of<FilterInteractor>(
+                          context,
+                          listen: false,
+                        ).candidateCurRadius.end]!,
+                      ),
                       onChanged: (values) {
                         setState(() {
-                          curValues = values;
-                          distance =
-                              'от ${_points[curValues.start.round()]?.toInt()} до ${_points[curValues.end.round()]?.toInt()} м';
-                          mocksWithFilters = mocks
-                              .where((element) => FilterUtils.isPointInArea(
-                                    point: userLocation,
-                                    center: Location(
-                                      lat: element.lat,
-                                      lon: element.lon,
-                                    ),
-                                    radius: RangeValues(
-                                      _points[curValues.start.round()]!,
-                                      _points[curValues.end.round()]!,
-                                    ),
-                                    stateOfCategory:
-                                        statesOfCategories[element.type]!,
-                                  ))
-                              .toList();
-                          sightCount = mocksWithFilters.length;
+                          Provider.of<FilterInteractor>(
+                            context,
+                            listen: false,
+                          ).candidateCurRadius = RangeValues(
+                            _points[values.start]!,
+                            _points[values.end]!,
+                          );
+                          distance = 'от ${Provider.of<FilterInteractor>(
+                            context,
+                            listen: false,
+                          ).candidateCurRadius.start.round().toInt()} до ${Provider.of<FilterInteractor>(
+                            context,
+                            listen: false,
+                          ).candidateCurRadius.end.round().toInt()} м';
+
+                          sightCount = Provider.of<PlaceInteractor>(
+                            context,
+                            listen: false,
+                          )
+                              .getPlaces(
+                                radius: RangeValues(
+                                  Provider.of<FilterInteractor>(
+                                    context,
+                                    listen: false,
+                                  ).candidateCurRadius.start,
+                                  Provider.of<FilterInteractor>(
+                                    context,
+                                    listen: false,
+                                  ).candidateCurRadius.end,
+                                ),
+                                categories: Provider.of<FilterInteractor>(
+                                  context,
+                                  listen: false,
+                                ).getSelectedCandidateCategories(),
+                              )
+                              .length;
                           isButtonDisabled = sightCount == 0;
                         });
                         Provider.of<FiltersProvider>(context, listen: false)
                             .changeState(
                           newSightCount: sightCount,
                           newIsButtonDisabled: isButtonDisabled,
-                          newMocksWithFilters: mocksWithFilters,
                         );
                       },
                       min: 1,
@@ -211,7 +248,12 @@ class _FiltersScreenState extends State<FiltersScreen> {
                       onPressed: isButtonDisabled
                           ? null
                           : () {
-                              Navigator.pop(context, mocksWithFilters);
+                              Provider.of<FilterInteractor>(
+                                context,
+                                listen: false,
+                              ).candidateToActive();
+
+                              Navigator.pop(context, <dynamic>[]);
                             },
                     ),
                   ),
@@ -227,14 +269,14 @@ class _FiltersScreenState extends State<FiltersScreen> {
 
 // отрисовка всех категорий
 class _Categories extends StatefulWidget {
+  final RangeValues radius;
   final Location userLocation;
-  final RangeValues curValues;
-  final Map<Categories, bool> statesOfCategories;
+  final List<FilterItem> filterItems;
 
   const _Categories({
     required this.userLocation,
-    required this.curValues,
-    required this.statesOfCategories,
+    required this.filterItems,
+    required this.radius,
     Key? key,
   }) : super(key: key);
 
@@ -245,54 +287,59 @@ class _Categories extends StatefulWidget {
 class _CategoriesState extends State<_Categories> {
   bool isButtonDisabled = true;
   int sightCount = 0;
-  List<Sight> mocksWithFilters = mocks;
+  List<Place> filteredPlaces = [];
+  List<String> selectedCategories = [];
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
       runSpacing: 40,
       alignment: WrapAlignment.spaceBetween,
-      children: Categories.values.map((category) {
+      children: Provider.of<FilterInteractor>(
+        context,
+        listen: false,
+      ).candidateFilterItems.map((e) {
         return _CategoryButton(
-          name: category,
-          isChosen: widget.statesOfCategories[category]!,
+          name: e,
+          isChosen: e.isSelected,
           onPressed: () {
-            _onCategoryButtonPressed(category);
+            _onCategoryButtonPressed(e.index);
           },
         );
       }).toList(),
     );
   }
 
-  void _onCategoryButtonPressed(Categories category) {
+  void _onCategoryButtonPressed(int index) {
     setState(
       () {
-        widget.statesOfCategories[category] =
-            !widget.statesOfCategories[category]!;
-        mocksWithFilters = mocks
-            .where((element) => FilterUtils.isPointInArea(
-                  point: widget.userLocation,
-                  center: Location(lat: element.lat, lon: element.lon),
-                  radius: RangeValues(
-                    _points[widget.curValues.start.round()]!,
-                    _points[widget.curValues.end.round()]!,
-                  ),
-                  stateOfCategory: widget.statesOfCategories[element.type]!,
-                ))
-            .toList();
-        sightCount = mocksWithFilters.length;
+        Provider.of<FilterInteractor>(
+          context,
+          listen: false,
+        ).changeStateOfCategory(index);
+
+        sightCount = Provider.of<PlaceInteractor>(context, listen: false)
+            .getPlaces(
+              radius: widget.radius,
+              categories: Provider.of<FilterInteractor>(
+                context,
+                listen: false,
+              ).getSelectedCandidateCategories(),
+            )
+            .length;
+        debugPrint(sightCount.toString());
         isButtonDisabled = sightCount == 0;
       },
     );
     Provider.of<FiltersProvider>(context, listen: false).changeState(
       newSightCount: sightCount,
       newIsButtonDisabled: isButtonDisabled,
-      newMocksWithFilters: mocksWithFilters,
     );
   }
 }
 
 class _CategoryButton extends StatelessWidget {
-  final Categories name;
+  final FilterItem name;
   final bool isChosen;
   final VoidCallback? onPressed;
 
@@ -323,7 +370,7 @@ class _CategoryButton extends StatelessWidget {
                   child: IconButton(
                     icon: ImageIcon(
                       AssetImage(
-                        name.pathToImage,
+                        name.assetPath,
                       ),
                       color: AppColors.planButtonColor,
                     ),

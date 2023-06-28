@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:places/domain/sight.dart';
-import 'package:places/mocks.dart';
+import 'package:places/data/interactor/filter_interactor.dart';
+import 'package:places/data/interactor/place_interactor.dart';
+import 'package:places/data/model/place.dart';
+import 'package:places/data_providers/filter_provider.dart';
 import 'package:places/ui/screen/add_sight_screen.dart';
 import 'package:places/ui/screen/filters_screen.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
@@ -9,6 +11,7 @@ import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/sight_search_screen.dart';
 import 'package:places/ui/screen/widgets/search_bar.dart';
 import 'package:places/ui/screen/widgets/sight_card.dart';
+import 'package:provider/provider.dart';
 
 class SightListScreen extends StatefulWidget {
   const SightListScreen({Key? key}) : super(key: key);
@@ -18,10 +21,21 @@ class SightListScreen extends StatefulWidget {
 }
 
 class _SightListScreen extends State<SightListScreen> {
-  List<Sight>? mocksWithFilters = mocks;
+  List<Place> places = [];
 
   @override
   Widget build(BuildContext context) {
+    places = context.watch<PlaceInteractor>().getPlaces(
+          radius: Provider.of<FilterInteractor>(
+            context,
+            listen: false,
+          ).activeCurRadius,
+          categories: Provider.of<FilterInteractor>(
+            context,
+            listen: false,
+          ).getSelectedActiveCategories(),
+        );
+
     return Scaffold(
       floatingActionButton: _AddNewSightButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -43,9 +57,7 @@ class _SightListScreen extends State<SightListScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute<SightSearchScreen>(
-                      builder: (context) => SightSearchScreen(
-                        mocksWithFilters: mocksWithFilters!,
-                      ),
+                      builder: (context) => SightSearchScreen(),
                     ),
                   );
                 },
@@ -55,12 +67,47 @@ class _SightListScreen extends State<SightListScreen> {
                     color: AppColors.planButtonColor,
                   ),
                   onPressed: () async {
-                    mocksWithFilters = await Navigator.push(
+                    Provider.of<FilterInteractor>(
                       context,
-                      MaterialPageRoute<List<Sight>>(
+                      listen: false,
+                    ).activeToCandidate();
+                    Provider.of<FiltersProvider>(context, listen: false)
+                        .changeState(
+                      newSightCount: Provider.of<FilterInteractor>(
+                        context,
+                        listen: false,
+                      ).isAtLeastOneCategorySelected()
+                          ? places.length
+                          : 0,
+                      newIsButtonDisabled: Provider.of<FilterInteractor>(
+                        context,
+                        listen: false,
+                      ).isAtLeastOneCategorySelected()
+                          ? places.isEmpty
+                          : true,
+                    );
+
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute<List<dynamic>>(
                         builder: (context) => const FiltersScreen(),
                       ),
                     );
+                    setState(() {
+                      places = Provider.of<PlaceInteractor>(
+                        context,
+                        listen: false,
+                      ).getPlaces(
+                        radius: Provider.of<FilterInteractor>(
+                          context,
+                          listen: false,
+                        ).activeCurRadius,
+                        categories: Provider.of<FilterInteractor>(
+                          context,
+                          listen: false,
+                        ).getSelectedActiveCategories(),
+                      );
+                    });
                   },
                 ),
                 controller: null,
@@ -69,9 +116,13 @@ class _SightListScreen extends State<SightListScreen> {
           ),
           // Основной список
           if (MediaQuery.of(context).orientation == Orientation.portrait)
-            _SightListPortrait()
+            _SightListPortrait(
+              filteredPlaces: places,
+            )
           else
-            _SightListLandscape(),
+            _SightListLandscape(
+              filteredPlaces: places,
+            ),
         ],
       ),
       resizeToAvoidBottomInset: true,
@@ -80,6 +131,9 @@ class _SightListScreen extends State<SightListScreen> {
 }
 
 class _SightListPortrait extends StatelessWidget {
+  final List<Place> filteredPlaces;
+
+  const _SightListPortrait({required this.filteredPlaces});
   @override
   Widget build(BuildContext context) {
     return SliverList(
@@ -87,16 +141,19 @@ class _SightListPortrait extends StatelessWidget {
         (context, index) {
           return Padding(
             padding: const EdgeInsets.only(top: 16.0),
-            child: SightCard(mocks[index]),
+            child: SightCard(filteredPlaces[index]),
           );
         },
-        childCount: mocks.length,
+        childCount: filteredPlaces.length,
       ),
     );
   }
 }
 
 class _SightListLandscape extends StatelessWidget {
+  final List<Place> filteredPlaces;
+
+  const _SightListLandscape({required this.filteredPlaces});
   @override
   Widget build(BuildContext context) {
     return SliverGrid(
@@ -108,11 +165,11 @@ class _SightListLandscape extends StatelessWidget {
               const SizedBox(
                 height: 16,
               ),
-              SightCard(mocks[index]),
+              SightCard(filteredPlaces[index]),
             ],
           );
         },
-        childCount: mocks.length,
+        childCount: filteredPlaces.length,
       ),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         mainAxisExtent: 210,
