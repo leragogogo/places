@@ -1,12 +1,10 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:places/data/model/filter_item.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data/repository/place_repository.dart';
 import 'package:places/domain/location.dart';
 
-// ignore: prefer_mixin
 class PlaceInteractor with ChangeNotifier {
   static PlaceInteractor? _instance;
   late final PlaceRepository placeRepository;
@@ -18,7 +16,6 @@ class PlaceInteractor with ChangeNotifier {
     _instance = this;
     placeRepository = PlaceRepository();
     initPlaces();
-    
   }
 
   Future<void> initPlaces() async {

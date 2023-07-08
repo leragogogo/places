@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:places/data/interactor/filter_interactor.dart';
 import 'package:places/data/interactor/place_interactor.dart';
@@ -21,11 +23,17 @@ class SightListScreen extends StatefulWidget {
 }
 
 class _SightListScreen extends State<SightListScreen> {
-  List<Place> places = [];
+  final _placesListController = StreamController<List<Place>>();
 
   @override
-  Widget build(BuildContext context) {
-    places = context.watch<PlaceInteractor>().getPlaces(
+  void dispose() {
+    super.dispose();
+    _placesListController.close();
+  }
+
+  @override
+  void didChangeDependencies() {
+    final places = context.watch<PlaceInteractor>().getPlaces(
           radius: Provider.of<FilterInteractor>(
             context,
             listen: false,
@@ -35,97 +43,133 @@ class _SightListScreen extends State<SightListScreen> {
             listen: false,
           ).getSelectedActiveCategories(),
         );
+    _placesListController.sink.add(places);
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var places = context.watch<PlaceInteractor>().getPlaces(
+          radius: Provider.of<FilterInteractor>(
+            context,
+            listen: false,
+          ).activeCurRadius,
+          categories: Provider.of<FilterInteractor>(
+            context,
+            listen: false,
+          ).getSelectedActiveCategories(),
+        );
+    _placesListController.sink.add(places);
 
     return Scaffold(
       floatingActionButton: _AddNewSightButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: CustomScrollView(
-        slivers: [
-          // AppBar
-          SliverPersistentHeader(
-            delegate: _SliverSightAppBar(),
-            pinned: true,
-          ),
-          // Поисковая строка
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16),
-              child: SearchBar(
-                readOnly: true,
-                onChanged: (value) {},
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<SightSearchScreen>(
-                      builder: (context) => SightSearchScreen(),
-                    ),
-                  );
-                },
-                suffixIcon: IconButton(
-                  icon: ImageIcon(
-                    const AssetImage(AppAssets.filterAsset),
-                    color: AppColors.planButtonColor,
-                  ),
-                  onPressed: () async {
-                    Provider.of<FilterInteractor>(
-                      context,
-                      listen: false,
-                    ).activeToCandidate();
-                    Provider.of<FiltersProvider>(context, listen: false)
-                        .changeState(
-                      newSightCount: Provider.of<FilterInteractor>(
-                        context,
-                        listen: false,
-                      ).isAtLeastOneCategorySelected()
-                          ? places.length
-                          : 0,
-                      newIsButtonDisabled: Provider.of<FilterInteractor>(
-                        context,
-                        listen: false,
-                      ).isAtLeastOneCategorySelected()
-                          ? places.isEmpty
-                          : true,
-                    );
+      body: StreamBuilder<List<Place>>(
+        stream: _placesListController.stream,
+        builder: (context, snapshot) {
+          var placesSnapshot = snapshot.data ?? [];
 
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute<List<dynamic>>(
-                        builder: (context) => const FiltersScreen(),
-                      ),
-                    );
-                    setState(() {
-                      places = Provider.of<PlaceInteractor>(
-                        context,
-                        listen: false,
-                      ).getPlaces(
-                        radius: Provider.of<FilterInteractor>(
-                          context,
-                          listen: false,
-                        ).activeCurRadius,
-                        categories: Provider.of<FilterInteractor>(
-                          context,
-                          listen: false,
-                        ).getSelectedActiveCategories(),
-                      );
-                    });
-                  },
-                ),
-                controller: null,
-              ),
-            ),
-          ),
-          // Основной список
-          if (MediaQuery.of(context).orientation == Orientation.portrait)
-            _SightListPortrait(
-              filteredPlaces: places,
-            )
-          else
-            _SightListLandscape(
-              filteredPlaces: places,
-            ),
-        ],
+          return Stack(
+            children: [
+              placesSnapshot.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : CustomScrollView(
+                      slivers: [
+                        // AppBar
+                        SliverPersistentHeader(
+                          delegate: _SliverSightAppBar(),
+                          pinned: true,
+                        ),
+                        // Поисковая строка
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 16, right: 16),
+                            child: SearchBar(
+                              readOnly: true,
+                              onChanged: (value) {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<SightSearchScreen>(
+                                    builder: (context) => SightSearchScreen(),
+                                  ),
+                                );
+                              },
+                              suffixIcon: IconButton(
+                                icon: ImageIcon(
+                                  const AssetImage(AppAssets.filterAsset),
+                                  color: AppColors.planButtonColor,
+                                ),
+                                onPressed: () async {
+                                  Provider.of<FilterInteractor>(
+                                    context,
+                                    listen: false,
+                                  ).activeToCandidate();
+                                  Provider.of<FiltersProvider>(context,
+                                          listen: false)
+                                      .changeState(
+                                    newSightCount:
+                                        Provider.of<FilterInteractor>(
+                                      context,
+                                      listen: false,
+                                    ).isAtLeastOneCategorySelected()
+                                            ? places.length
+                                            : 0,
+                                    newIsButtonDisabled:
+                                        Provider.of<FilterInteractor>(
+                                      context,
+                                      listen: false,
+                                    ).isAtLeastOneCategorySelected()
+                                            ? places.isEmpty
+                                            : true,
+                                  );
+
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute<List<dynamic>>(
+                                      builder: (context) =>
+                                          const FiltersScreen(),
+                                    ),
+                                  );
+
+                                  places = Provider.of<PlaceInteractor>(
+                                    context,
+                                    listen: false,
+                                  ).getPlaces(
+                                    radius: Provider.of<FilterInteractor>(
+                                      context,
+                                      listen: false,
+                                    ).activeCurRadius,
+                                    categories: Provider.of<FilterInteractor>(
+                                      context,
+                                      listen: false,
+                                    ).getSelectedActiveCategories(),
+                                  );
+                                  _placesListController.sink.add(places);
+                                },
+                              ),
+                              controller: null,
+                            ),
+                          ),
+                        ),
+                        // Основной список
+                        if (MediaQuery.of(context).orientation ==
+                            Orientation.portrait)
+                          _SightListPortrait(
+                            filteredPlaces: places,
+                          )
+                        else
+                          _SightListLandscape(
+                            filteredPlaces: places,
+                          ),
+                      ],
+                    ),
+            ],
+          );
+        },
       ),
-      resizeToAvoidBottomInset: true,
     );
   }
 }
