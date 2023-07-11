@@ -9,6 +9,7 @@ import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/sight_search_screen.dart';
+import 'package:places/ui/screen/widgets/network_error_widget.dart';
 import 'package:places/ui/screen/widgets/search_bar.dart';
 import 'package:places/ui/screen/widgets/sight_card.dart';
 import 'package:provider/provider.dart';
@@ -64,104 +65,109 @@ class _SightListScreen extends State<SightListScreen> {
         builder: (context, snapshot) {
           var placesSnapshot = snapshot.data ?? [];
 
-          return Stack(
-            children: [
-              placesSnapshot.isEmpty
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : CustomScrollView(
-                      slivers: [
-                        // AppBar
-                        SliverPersistentHeader(
-                          delegate: _SliverSightAppBar(),
-                          pinned: true,
-                        ),
-                        // Поисковая строка
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 16, right: 16),
-                            child: SearchBar(
-                              readOnly: true,
-                              onChanged: (value) {},
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<SightSearchScreen>(
-                                    builder: (context) => SightSearchScreen(),
-                                  ),
-                                );
-                              },
-                              suffixIcon: IconButton(
-                                icon: ImageIcon(
-                                  const AssetImage(AppAssets.filterAsset),
-                                  color: AppColors.planButtonColor,
-                                ),
-                                onPressed: () async {
-                                  Provider.of<FilterInteractor>(
-                                    context,
-                                    listen: false,
-                                  ).activeToCandidate();
-                                  Provider.of<FiltersProvider>(context,
-                                          listen: false)
-                                      .changeState(
-                                    newSightCount:
-                                        Provider.of<FilterInteractor>(
-                                      context,
-                                      listen: false,
-                                    ).isAtLeastOneCategorySelected()
-                                            ? places.length
-                                            : 0,
-                                    newIsButtonDisabled:
-                                        Provider.of<FilterInteractor>(
-                                      context,
-                                      listen: false,
-                                    ).isAtLeastOneCategorySelected()
-                                            ? places.isEmpty
-                                            : true,
-                                  );
-
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute<List<dynamic>>(
-                                      builder: (context) =>
-                                          const FiltersScreen(),
-                                    ),
-                                  );
-
-                                  places = Provider.of<PlaceInteractor>(
-                                    context,
-                                    listen: false,
-                                  ).getPlaces(
-                                    radius: Provider.of<FilterInteractor>(
-                                      context,
-                                      listen: false,
-                                    ).activeCurRadius,
-                                    categories: Provider.of<FilterInteractor>(
-                                      context,
-                                      listen: false,
-                                    ).getSelectedActiveCategories(),
-                                  );
-                                },
-                              ),
-                              controller: null,
-                            ),
-                          ),
-                        ),
-                        // Основной список
-                        if (MediaQuery.of(context).orientation ==
-                            Orientation.portrait)
-                          _SightListPortrait(
-                            filteredPlaces: places,
+          return context.watch<PlaceInteractor>().isRequestDoneWithError
+              ? NetworkErrorWidget()
+              : Stack(
+                  children: [
+                    placesSnapshot.isEmpty
+                        ? const Center(
+                            child: CircularProgressIndicator(),
                           )
-                        else
-                          _SightListLandscape(
-                            filteredPlaces: places,
+                        : CustomScrollView(
+                            slivers: [
+                              // AppBar
+                              SliverPersistentHeader(
+                                delegate: _SliverSightAppBar(),
+                                pinned: true,
+                              ),
+                              // Поисковая строка
+                              SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 16),
+                                  child: SearchBar(
+                                    readOnly: true,
+                                    onChanged: (value) {},
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute<SightSearchScreen>(
+                                          builder: (context) =>
+                                              SightSearchScreen(),
+                                        ),
+                                      );
+                                    },
+                                    suffixIcon: IconButton(
+                                      icon: ImageIcon(
+                                        const AssetImage(AppAssets.filterAsset),
+                                        color: AppColors.planButtonColor,
+                                      ),
+                                      onPressed: () async {
+                                        Provider.of<FilterInteractor>(
+                                          context,
+                                          listen: false,
+                                        ).activeToCandidate();
+                                        Provider.of<FiltersProvider>(context,
+                                                listen: false)
+                                            .changeState(
+                                          newSightCount:
+                                              Provider.of<FilterInteractor>(
+                                            context,
+                                            listen: false,
+                                          ).isAtLeastOneCategorySelected()
+                                                  ? places.length
+                                                  : 0,
+                                          newIsButtonDisabled:
+                                              Provider.of<FilterInteractor>(
+                                            context,
+                                            listen: false,
+                                          ).isAtLeastOneCategorySelected()
+                                                  ? places.isEmpty
+                                                  : true,
+                                        );
+
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute<List<dynamic>>(
+                                            builder: (context) =>
+                                                const FiltersScreen(),
+                                          ),
+                                        );
+
+                                        places = Provider.of<PlaceInteractor>(
+                                          context,
+                                          listen: false,
+                                        ).getPlaces(
+                                          radius: Provider.of<FilterInteractor>(
+                                            context,
+                                            listen: false,
+                                          ).activeCurRadius,
+                                          categories:
+                                              Provider.of<FilterInteractor>(
+                                            context,
+                                            listen: false,
+                                          ).getSelectedActiveCategories(),
+                                        );
+                                      },
+                                    ),
+                                    controller: null,
+                                  ),
+                                ),
+                              ),
+                              // Основной список
+                              if (MediaQuery.of(context).orientation ==
+                                  Orientation.portrait)
+                                _SightListPortrait(
+                                  filteredPlaces: places,
+                                )
+                              else
+                                _SightListLandscape(
+                                  filteredPlaces: places,
+                                ),
+                            ],
                           ),
-                      ],
-                    ),
-            ],
-          );
+                  ],
+                );
         },
       ),
     );

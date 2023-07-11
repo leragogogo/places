@@ -9,6 +9,7 @@ import 'package:places/domain/location.dart';
 class PlaceInteractor with ChangeNotifier {
   static PlaceInteractor? _instance;
   final _placesListController = StreamController<List<Place>>();
+  bool isRequestDoneWithError = false;
   late final PlaceRepository placeRepository;
   List<Place> allPlaces = [];
 
@@ -23,7 +24,13 @@ class PlaceInteractor with ChangeNotifier {
   StreamController<List<Place>> get placesController => _placesListController;
 
   Future<void> initPlaces() async {
-    await placeRepository.initPlaces();
+    try {
+      await placeRepository.initPlaces();
+    } catch (e) {
+      isRequestDoneWithError = true;
+      notifyListeners();
+      return;
+    }
     allPlaces = placeRepository.places;
     notifyListeners();
   }
@@ -55,7 +62,7 @@ class PlaceInteractor with ChangeNotifier {
             Location(lat: b.lat, lon: b.lon),
             getUserLocation(),
           )));
-          
+
     _placesListController.sink.add(filteredAndSortedList);
 
     return filteredAndSortedList;
@@ -113,7 +120,14 @@ class PlaceInteractor with ChangeNotifier {
   }
 
   void addNewPlace({required Place newPlace}) {
-    placeRepository.addPlace(newPlace);
+    try {
+      placeRepository.addPlace(newPlace);
+    } catch (e) {
+      isRequestDoneWithError = true;
+      notifyListeners();
+      return;
+    }
+
     allPlaces.add(newPlace);
     notifyListeners();
   }

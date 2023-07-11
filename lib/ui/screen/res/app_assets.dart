@@ -22,4 +22,5 @@ class AppAssets {
   static const String photoAsset = 'res/icons/photo.png';
   static const String cameraAsset = 'res/icons/camera.png';
   static const String calendarAsset = 'res/icons/calendar.png';
+  static const String errorAsset = 'res/icons/error.png';
 }
