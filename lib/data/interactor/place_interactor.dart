@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:places/data/model/filter_item.dart';
@@ -7,6 +8,7 @@ import 'package:places/domain/location.dart';
 
 class PlaceInteractor with ChangeNotifier {
   static PlaceInteractor? _instance;
+  final _placesListController = StreamController<List<Place>>();
   late final PlaceRepository placeRepository;
   List<Place> allPlaces = [];
 
@@ -17,6 +19,8 @@ class PlaceInteractor with ChangeNotifier {
     placeRepository = PlaceRepository();
     initPlaces();
   }
+
+  StreamController<List<Place>> get placesController => _placesListController;
 
   Future<void> initPlaces() async {
     await placeRepository.initPlaces();
@@ -51,6 +55,8 @@ class PlaceInteractor with ChangeNotifier {
             Location(lat: b.lat, lon: b.lon),
             getUserLocation(),
           )));
+          
+    _placesListController.sink.add(filteredAndSortedList);
 
     return filteredAndSortedList;
   }

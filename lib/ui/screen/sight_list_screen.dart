@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:places/data/interactor/filter_interactor.dart';
 import 'package:places/data/interactor/place_interactor.dart';
@@ -23,17 +21,15 @@ class SightListScreen extends StatefulWidget {
 }
 
 class _SightListScreen extends State<SightListScreen> {
-  final _placesListController = StreamController<List<Place>>();
-
   @override
   void dispose() {
     super.dispose();
-    _placesListController.close();
+    context.watch<PlaceInteractor>().placesController.close();
   }
 
   @override
   void didChangeDependencies() {
-    final places = context.watch<PlaceInteractor>().getPlaces(
+    context.watch<PlaceInteractor>().getPlaces(
           radius: Provider.of<FilterInteractor>(
             context,
             listen: false,
@@ -43,7 +39,7 @@ class _SightListScreen extends State<SightListScreen> {
             listen: false,
           ).getSelectedActiveCategories(),
         );
-    _placesListController.sink.add(places);
+
     super.didChangeDependencies();
   }
 
@@ -59,13 +55,12 @@ class _SightListScreen extends State<SightListScreen> {
             listen: false,
           ).getSelectedActiveCategories(),
         );
-    _placesListController.sink.add(places);
 
     return Scaffold(
       floatingActionButton: _AddNewSightButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: StreamBuilder<List<Place>>(
-        stream: _placesListController.stream,
+        stream: context.watch<PlaceInteractor>().placesController.stream,
         builder: (context, snapshot) {
           var placesSnapshot = snapshot.data ?? [];
 
@@ -147,7 +142,6 @@ class _SightListScreen extends State<SightListScreen> {
                                       listen: false,
                                     ).getSelectedActiveCategories(),
                                   );
-                                  _placesListController.sink.add(places);
                                 },
                               ),
                               controller: null,
