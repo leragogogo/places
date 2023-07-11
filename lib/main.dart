@@ -13,7 +13,6 @@ import 'package:places/data_providers/history_provider.dart';
 import 'package:places/data_providers/search_provider.dart';
 import 'package:places/data_providers/visited_provider.dart';
 import 'package:places/data_providers/want_to_visit_provider.dart';
-import 'package:places/ui/screen/res/app_themes.dart';
 import 'package:places/ui/screen/splash_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -75,9 +74,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Places',
-      theme: context.watch<SettingsInteractor>().themeMode,/*context.watch<SettingsInteractor>().isDarkThemeOn
-          ? AppThemes.darkTheme
-          : AppThemes.lightTheme,*/
+      theme: context.watch<SettingsInteractor>().themeMode,
       home: const SplashScreen(),
     );
   }
