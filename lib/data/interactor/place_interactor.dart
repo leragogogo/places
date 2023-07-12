@@ -8,7 +8,8 @@ import 'package:places/domain/location.dart';
 
 class PlaceInteractor with ChangeNotifier {
   static PlaceInteractor? _instance;
-  final _placesListController = StreamController<List<Place>>();
+  final _placesListController = StreamController<List<Place>>.broadcast();
+  bool isRequestDoneWithError = false;
   late final PlaceRepository placeRepository;
   List<Place> allPlaces = [];
 
@@ -23,9 +24,14 @@ class PlaceInteractor with ChangeNotifier {
   StreamController<List<Place>> get placesController => _placesListController;
 
   Future<void> initPlaces() async {
-    await placeRepository.initPlaces();
-    allPlaces = placeRepository.places;
-    notifyListeners();
+    try {
+      await placeRepository.initPlaces();
+      allPlaces = placeRepository.places;
+    } catch (e) {
+      isRequestDoneWithError = true;
+    } finally {
+      notifyListeners();
+    }
   }
 
   List<Place> getPlaces({
@@ -55,7 +61,7 @@ class PlaceInteractor with ChangeNotifier {
             Location(lat: b.lat, lon: b.lon),
             getUserLocation(),
           )));
-          
+
     _placesListController.sink.add(filteredAndSortedList);
 
     return filteredAndSortedList;
@@ -113,8 +119,13 @@ class PlaceInteractor with ChangeNotifier {
   }
 
   void addNewPlace({required Place newPlace}) {
-    placeRepository.addPlace(newPlace);
-    allPlaces.add(newPlace);
-    notifyListeners();
+    try {
+      placeRepository.addPlace(newPlace);
+      allPlaces.add(newPlace);
+    } catch (e) {
+      isRequestDoneWithError = true;
+    } finally {
+      notifyListeners();
+    }
   }
 }

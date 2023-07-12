@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:places/configurators/dio_configurator.dart';
 import 'package:places/data/model/place.dart';
+import 'package:places/data/network_exception.dart';
 
 class PlaceApi {
   Future<List<Place>> loadPlaces() async {
@@ -10,7 +11,10 @@ class PlaceApi {
       '/place',
     );
     if (response.statusCode != 200) {
-      throw Exception('http error. Error code ${response.statusCode}');
+      throw NetworkException(
+        queryPath: '/place',
+        error: '${response.statusCode} ${response.statusMessage}',
+      );
     }
 
     return parsePlaces(response.data.toString());
@@ -31,7 +35,10 @@ class PlaceApi {
         .post<String>('/place', data: jsonEncode(newPlace));
 
     if (response.statusCode != 200) {
-      throw Exception('http error. Error code ${response.statusCode}');
+      throw NetworkException(
+        queryPath: '/place',
+        error: '${response.statusCode} ${response.statusMessage}',
+      );
     }
 
     return;

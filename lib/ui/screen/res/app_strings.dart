@@ -87,4 +87,8 @@ class AppStrings {
   static const fileText = 'Файл';
   static const photoText = 'Фотография';
   static const cameraText = 'Камера';
+
+  // NetworkErrorWidget
+  static const errorText1 = 'Ошибка';
+  static const errorText2 = 'Что-то пошло не так.\nПопробуйте позже.';
 }
