@@ -8,7 +8,7 @@ import 'package:places/domain/location.dart';
 
 class PlaceInteractor with ChangeNotifier {
   static PlaceInteractor? _instance;
-  final _placesListController = StreamController<List<Place>>();
+  final _placesListController = StreamController<List<Place>>.broadcast();
   bool isRequestDoneWithError = false;
   late final PlaceRepository placeRepository;
   List<Place> allPlaces = [];
@@ -26,13 +26,12 @@ class PlaceInteractor with ChangeNotifier {
   Future<void> initPlaces() async {
     try {
       await placeRepository.initPlaces();
+      allPlaces = placeRepository.places;
     } catch (e) {
       isRequestDoneWithError = true;
+    } finally {
       notifyListeners();
-      return;
     }
-    allPlaces = placeRepository.places;
-    notifyListeners();
   }
 
   List<Place> getPlaces({
@@ -122,13 +121,11 @@ class PlaceInteractor with ChangeNotifier {
   void addNewPlace({required Place newPlace}) {
     try {
       placeRepository.addPlace(newPlace);
+      allPlaces.add(newPlace);
     } catch (e) {
       isRequestDoneWithError = true;
+    } finally {
       notifyListeners();
-      return;
     }
-
-    allPlaces.add(newPlace);
-    notifyListeners();
   }
 }
