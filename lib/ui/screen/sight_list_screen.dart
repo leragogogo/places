@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:places/data/interactor/filter_interactor.dart';
-import 'package:places/data/interactor/place_interactor.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data_providers/filter_provider.dart';
 import 'package:places/ui/screen/add_sight_screen.dart';
@@ -12,6 +12,7 @@ import 'package:places/ui/screen/sight_search_screen.dart';
 import 'package:places/ui/screen/widgets/network_error_widget.dart';
 import 'package:places/ui/screen/widgets/search_bar.dart';
 import 'package:places/ui/screen/widgets/sight_card.dart';
+import 'package:places/ui/screen/widgets/store.dart';
 import 'package:provider/provider.dart';
 
 class SightListScreen extends StatefulWidget {
@@ -23,55 +24,19 @@ class SightListScreen extends StatefulWidget {
 
 class _SightListScreen extends State<SightListScreen> {
   @override
-  void dispose() {
-    super.dispose();
-    context.watch<PlaceInteractor>().placesController.close();
-  }
-
-  @override
-  void didChangeDependencies() {
-    context.watch<PlaceInteractor>().getPlaces(
-          radius: Provider.of<FilterInteractor>(
-            context,
-            listen: false,
-          ).activeCurRadius,
-          categories: Provider.of<FilterInteractor>(
-            context,
-            listen: false,
-          ).getSelectedActiveCategories(),
-        );
-
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    var places = context.watch<PlaceInteractor>().getPlaces(
-          radius: Provider.of<FilterInteractor>(
-            context,
-            listen: false,
-          ).activeCurRadius,
-          categories: Provider.of<FilterInteractor>(
-            context,
-            listen: false,
-          ).getSelectedActiveCategories(),
-        );
-
     return Scaffold(
-      floatingActionButton: _AddNewSightButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: StreamBuilder<List<Place>>(
-        stream: context.watch<PlaceInteractor>().placesController.stream,
-        builder: (context, snapshot) {
-          var placesSnapshot = snapshot.data ?? [];
-
-          return context.watch<PlaceInteractor>().isRequestDoneWithError
+        floatingActionButton: _AddNewSightButton(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        body: Observer(builder: (_) {
+          return store.isRequestDoneWithError
               ? NetworkErrorWidget()
               : Stack(
                   children: [
-                    placesSnapshot.isEmpty
-                        ? const Center(
-                            child: CircularProgressIndicator(),
+                    store.filteredPlaces.isEmpty
+                        ? Center(
+                            child: CircularProgressIndicator(
+                                color: AppColors.planButtonColor),
                           )
                         : CustomScrollView(
                             slivers: [
@@ -115,14 +80,14 @@ class _SightListScreen extends State<SightListScreen> {
                                             context,
                                             listen: false,
                                           ).isAtLeastOneCategorySelected()
-                                                  ? places.length
+                                                  ? store.filteredPlaces.length
                                                   : 0,
                                           newIsButtonDisabled:
                                               Provider.of<FilterInteractor>(
                                             context,
                                             listen: false,
                                           ).isAtLeastOneCategorySelected()
-                                                  ? places.isEmpty
+                                                  ? store.filteredPlaces.isEmpty
                                                   : true,
                                         );
 
@@ -130,24 +95,20 @@ class _SightListScreen extends State<SightListScreen> {
                                           context,
                                           MaterialPageRoute<List<dynamic>>(
                                             builder: (context) =>
-                                                const FiltersScreen(),
+                                                FiltersScreen(),
                                           ),
                                         );
-
-                                        places = Provider.of<PlaceInteractor>(
-                                          context,
-                                          listen: false,
-                                        ).getPlaces(
-                                          radius: Provider.of<FilterInteractor>(
-                                            context,
-                                            listen: false,
-                                          ).activeCurRadius,
-                                          categories:
-                                              Provider.of<FilterInteractor>(
-                                            context,
-                                            listen: false,
-                                          ).getSelectedActiveCategories(),
-                                        );
+                                        store.filterPlaces(
+                                            radius:
+                                                Provider.of<FilterInteractor>(
+                                              context,
+                                              listen: false,
+                                            ).activeCurRadius,
+                                            categories:
+                                                Provider.of<FilterInteractor>(
+                                              context,
+                                              listen: false,
+                                            ).getSelectedActiveCategories());
                                       },
                                     ),
                                     controller: null,
@@ -158,19 +119,17 @@ class _SightListScreen extends State<SightListScreen> {
                               if (MediaQuery.of(context).orientation ==
                                   Orientation.portrait)
                                 _SightListPortrait(
-                                  filteredPlaces: places,
+                                  filteredPlaces: store.filteredPlaces,
                                 )
                               else
                                 _SightListLandscape(
-                                  filteredPlaces: places,
+                                  filteredPlaces: store.filteredPlaces,
                                 ),
                             ],
                           ),
                   ],
                 );
-        },
-      ),
-    );
+        }));
   }
 }
 

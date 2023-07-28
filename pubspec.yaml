@@ -18,10 +18,14 @@ dependencies:
   provider: ^6.0.4
   surf_lint_rules: ^1.5.0
   cached_network_image: ^3.2.3
+  mobx: ^2.0.4
+  flutter_mobx: ^2.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^2.1.4
+  mobx_codegen: ^2.0.3
 
 flutter:
   uses-material-design: true

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:places/data/interactor/filter_interactor.dart';
-import 'package:places/data/interactor/place_interactor.dart';
 import 'package:places/data/model/filter_item.dart';
 import 'package:places/data/model/place.dart';
+import 'package:places/data/store/sight_list_store.dart';
 import 'package:places/data_providers/filter_provider.dart';
 import 'package:places/domain/location.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/bottom_button.dart';
+import 'package:places/ui/screen/widgets/store.dart';
 import 'package:provider/provider.dart';
 
 // соответсвие между значениями слайдера и длиной радиуса поиска в метрах
@@ -132,6 +133,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     child: SizedBox(
                       width: double.infinity,
                       child: _Categories(
+                        store: store,
                         radius: RangeValues(
                           Provider.of<FilterInteractor>(
                             context,
@@ -206,27 +208,24 @@ class _FiltersScreenState extends State<FiltersScreen> {
                             listen: false,
                           ).candidateCurRadius.end.round().toInt()} м';
 
-                          sightCount = Provider.of<PlaceInteractor>(
-                            context,
-                            listen: false,
-                          )
-                              .getPlaces(
-                                radius: RangeValues(
-                                  Provider.of<FilterInteractor>(
-                                    context,
-                                    listen: false,
-                                  ).candidateCurRadius.start,
-                                  Provider.of<FilterInteractor>(
-                                    context,
-                                    listen: false,
-                                  ).candidateCurRadius.end,
-                                ),
-                                categories: Provider.of<FilterInteractor>(
-                                  context,
-                                  listen: false,
-                                ).getSelectedCandidateCategories(),
-                              )
-                              .length;
+                          store.filterPlaces(
+                            radius: RangeValues(
+                              Provider.of<FilterInteractor>(
+                                context,
+                                listen: false,
+                              ).candidateCurRadius.start,
+                              Provider.of<FilterInteractor>(
+                                context,
+                                listen: false,
+                              ).candidateCurRadius.end,
+                            ),
+                            categories: Provider.of<FilterInteractor>(
+                              context,
+                              listen: false,
+                            ).getSelectedCandidateCategories(),
+                          );
+
+                          sightCount = store.filteredPlaces.length;
                           isButtonDisabled = sightCount == 0;
                         });
                         Provider.of<FiltersProvider>(context, listen: false)
@@ -272,11 +271,13 @@ class _Categories extends StatefulWidget {
   final RangeValues radius;
   final Location userLocation;
   final List<FilterItem> filterItems;
+  final SightListStore store;
 
   const _Categories({
     required this.userLocation,
     required this.filterItems,
     required this.radius,
+    required this.store,
     Key? key,
   }) : super(key: key);
 
@@ -303,30 +304,28 @@ class _CategoriesState extends State<_Categories> {
           name: e,
           isChosen: e.isSelected,
           onPressed: () {
-            _onCategoryButtonPressed(e.index);
+            _onCategoryButtonPressed(e.index, widget.store);
           },
         );
       }).toList(),
     );
   }
 
-  void _onCategoryButtonPressed(int index) {
+  void _onCategoryButtonPressed(int index, SightListStore store) {
     setState(
       () {
         Provider.of<FilterInteractor>(
           context,
           listen: false,
         ).changeStateOfCategory(index);
-
-        sightCount = Provider.of<PlaceInteractor>(context, listen: false)
-            .getPlaces(
-              radius: widget.radius,
-              categories: Provider.of<FilterInteractor>(
-                context,
-                listen: false,
-              ).getSelectedCandidateCategories(),
-            )
-            .length;
+        store.filterPlaces(
+          radius: widget.radius,
+          categories: Provider.of<FilterInteractor>(
+            context,
+            listen: false,
+          ).getSelectedCandidateCategories(),
+        );
+        sightCount = store.filteredPlaces.length;
         debugPrint(sightCount.toString());
         isButtonDisabled = sightCount == 0;
       },
