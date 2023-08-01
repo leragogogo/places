@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:places/data/interactor/place_interactor.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data_providers/want_to_visit_provider.dart';
 import 'package:places/ui/screen/widgets/parts_of_card.dart';
 import 'package:places/ui/screen/widgets/sight_details.dart';
+import 'package:places/ui/screen/widgets/store.dart';
 import 'package:provider/provider.dart';
 
 class SightCard extends StatefulWidget {
@@ -85,25 +85,19 @@ class _SightCardState extends State<SightCard> {
                     isFavouriteButtonClicked = !isFavouriteButtonClicked;
                   });
                   isFavouriteButtonClicked
-                      ? Provider.of<PlaceInteractor>(
-                          context,
-                          listen: false,
-                        ).addToFavorites(place: widget.place)
-                      : Provider.of<PlaceInteractor>(
-                          context,
-                          listen: false,
-                        ).removeFromFavorites(place: widget.place);
-                  final favouritePlaces = Provider.of<PlaceInteractor>(
-                    context,
-                    listen: false,
-                  ).getFavoritesPlaces();
+                      ? store.addToFavorites(place: widget.place)
+                      : store.removeFromFavorites(place: widget.place);
+                  final favouritePlaces = store.getFavoritesPlaces();
                   Provider.of<WantToVisitProvider>(context, listen: false)
                       .changeState(
                     newWantToVisit: favouritePlaces,
                     newIsWantToVisitEmpty: favouritePlaces.isEmpty,
                   );
                 },
-                child: isFavouriteButtonClicked
+                child: isFavouriteButtonClicked &&
+                        Provider.of<WantToVisitProvider>(context, listen: true)
+                            .wantToVisit
+                            .contains(widget.place)
                     ? const Icon(
                         Icons.favorite_sharp,
                         color: Colors.red,

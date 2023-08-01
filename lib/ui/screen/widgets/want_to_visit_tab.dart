@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:places/data/interactor/place_interactor.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data_providers/want_to_visit_provider.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
@@ -9,6 +8,7 @@ import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/empty_screen.dart';
 import 'package:places/ui/screen/widgets/sight_card_visited.dart';
+import 'package:places/ui/screen/widgets/store.dart';
 import 'package:provider/provider.dart';
 
 class WantToVisitTab extends StatefulWidget {
@@ -27,8 +27,6 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    //_wantToVisit = context
-    //    .watch<PlaceInteractor>().getFavoritesPlaces();
 
     _wantToVisit = Provider.of<WantToVisitProvider>(context).wantToVisit;
     _isWantToVisitEmpty =
@@ -57,15 +55,9 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                         key: ObjectKey(i.value),
                         sight: i.value,
                         deleteFromList: () {
-                          //_deleteWantToVisitedSight(i.value);
-                          Provider.of<PlaceInteractor>(
-                            context,
-                            listen: false,
-                          ).removeFromFavorites(place: i.value);
-                          final favouritePlaces = Provider.of<PlaceInteractor>(
-                            context,
-                            listen: false,
-                          ).getFavoritesPlaces();
+                          store.removeFromFavorites(place: i.value);
+                          final favouritePlaces = store.getFavoritesPlaces();
+
                           Provider.of<WantToVisitProvider>(
                             context,
                             listen: false,
@@ -73,12 +65,6 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                             newWantToVisit: favouritePlaces,
                             newIsWantToVisitEmpty: favouritePlaces.isEmpty,
                           );
-                          /*Provider.of<FavouriteButtonProvider>(
-                            context,
-                            listen: false,
-                          ).changeState(
-                            newIsFavouriteButtonClicked: false,
-                          );*/
                         },
                         lowerText: Text(
                           AppStrings.wantToVisitText,
@@ -180,5 +166,4 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
       _wantToVisit.insert(newIndex, item);
     });
   }
-
 }

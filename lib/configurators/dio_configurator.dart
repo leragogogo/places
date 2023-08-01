@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:places/ui/screen/res/app_api_urls.dart';
 
 class DioConfigurators {
@@ -14,15 +13,9 @@ class DioConfigurators {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          debugPrint(
-            'Запрос: ${options.method} ${options.path} ${options.queryParameters}',
-          );
-
           return handler.next(options);
         },
         onResponse: (response, handler) {
-          debugPrint('Ответ получен ${response.data} ');
-
           return handler.next(response);
         },
         onError: (e, handler) {

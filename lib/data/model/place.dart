@@ -79,4 +79,14 @@ class Place {
       'description': description,
     };
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is Place &&
+      lat == other.lat &&
+      lon == other.lon &&
+      name == other.name &&
+      urls == other.urls &&
+      placeType == other.placeType &&
+      description == other.description;
 }
