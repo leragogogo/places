@@ -1,6 +1,10 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:places/blocs/visiting_screen/visiting_screen_bloc.dart';
+import 'package:places/blocs/visiting_screen/visiting_screen_event.dart';
+import 'package:places/blocs/visiting_screen/visiting_screen_state.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data_providers/want_to_visit_provider.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
@@ -8,7 +12,6 @@ import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/empty_screen.dart';
 import 'package:places/ui/screen/widgets/sight_card_visited.dart';
-import 'package:places/ui/screen/widgets/store.dart';
 import 'package:provider/provider.dart';
 
 class WantToVisitTab extends StatefulWidget {
@@ -19,7 +22,6 @@ class WantToVisitTab extends StatefulWidget {
 }
 
 class _WantToVisitTabState extends State<WantToVisitTab> {
-  bool _isWantToVisitEmpty = true;
   DateTime? _chosenDateTime;
 
   List<Place> _wantToVisit = [];
@@ -29,63 +31,71 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
     final theme = Theme.of(context);
 
     _wantToVisit = Provider.of<WantToVisitProvider>(context).wantToVisit;
-    _isWantToVisitEmpty =
-        Provider.of<WantToVisitProvider>(context).isWantToVisitEmpty;
 
-    return _isWantToVisitEmpty
-        ? const EmptyScreen(
-            path: AppAssets.wantToVisitedEmpty,
-            text: AppStrings.wantToVisetedEmptyText,
-          )
-        : Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16),
-            child: ReorderableListView(
-              physics: Platform.isAndroid
-                  ? const ClampingScrollPhysics()
-                  : const BouncingScrollPhysics(),
-              proxyDecorator: (child, index, animation) => Material(
-                type: MaterialType.transparency,
-                child: child,
-              ),
-              onReorder: _updateWantToVisitList,
-              children: _wantToVisit
-                  .asMap()
-                  .entries
-                  .map((i) => VisitingSightCard(
-                        key: ObjectKey(i.value),
-                        sight: i.value,
-                        deleteFromList: () {
-                          store.removeFromFavorites(place: i.value);
-                          final favouritePlaces = store.getFavoritesPlaces();
-
-                          Provider.of<WantToVisitProvider>(
-                            context,
-                            listen: false,
-                          ).changeState(
-                            newWantToVisit: favouritePlaces,
-                            newIsWantToVisitEmpty: favouritePlaces.isEmpty,
-                          );
-                        },
-                        lowerText: Text(
-                          AppStrings.wantToVisitText,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: AppColors.planButtonColor,
-                            fontWeight: FontWeight.bold,
+    return BlocBuilder<VisitingScreenBloc, VisitingScreenState>(
+        builder: (context, state) {
+      return state is VisitingScreenWithFavourites
+          ? Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: ReorderableListView(
+                physics: Platform.isAndroid
+                    ? const ClampingScrollPhysics()
+                    : const BouncingScrollPhysics(),
+                proxyDecorator: (child, index, animation) => Material(
+                  type: MaterialType.transparency,
+                  child: child,
+                ),
+                onReorder: (oldIndex, newIndex) {
+                  context.read<VisitingScreenBloc>().add(DragFavouritePlace(
+                      oldIndex: oldIndex, newIndex: newIndex));
+                  Provider.of<WantToVisitProvider>(
+                    context,
+                    listen: false,
+                  ).changeState(
+                    newWantToVisit: state.favouritePlaces,
+                  );
+                },
+                children: _wantToVisit
+                    .asMap()
+                    .entries
+                    .map((i) => VisitingSightCard(
+                          key: ObjectKey(i.value),
+                          sight: i.value,
+                          deleteFromList: () {
+                            context.read<VisitingScreenBloc>().add(
+                                RemoveFavouritePlace(
+                                    placeForRemoving: i.value));
+                            Provider.of<WantToVisitProvider>(
+                              context,
+                              listen: false,
+                            ).changeState(
+                              newWantToVisit: state.favouritePlaces,
+                            );
+                          },
+                          lowerText: Text(
+                            AppStrings.wantToVisitText,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: AppColors.planButtonColor,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        leftIcon: const ImageIcon(
-                          AssetImage(AppAssets.calendarAsset),
-                          color: Colors.white,
-                        ),
-                        leftIconOnPressed: () {
-                          Platform.isAndroid
-                              ? _showAndroidPicker()
-                              : _showIOSPicker();
-                        },
-                      ))
-                  .toList(),
-            ),
-          );
+                          leftIcon: const ImageIcon(
+                            AssetImage(AppAssets.calendarAsset),
+                            color: Colors.white,
+                          ),
+                          leftIconOnPressed: () {
+                            Platform.isAndroid
+                                ? _showAndroidPicker()
+                                : _showIOSPicker();
+                          },
+                        ))
+                    .toList(),
+              ))
+          : const EmptyScreen(
+              path: AppAssets.wantToVisitedEmpty,
+              text: AppStrings.wantToVisetedEmptyText,
+            );
+    });
   }
 
   void _showAndroidPicker() {
@@ -157,13 +167,5 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
         );
       },
     );
-  }
-
-  void _updateWantToVisitList(int oldIndex, int newIndex) {
-    setState(() {
-      if (newIndex > oldIndex) newIndex -= 1;
-      final item = _wantToVisit.removeAt(oldIndex);
-      _wantToVisit.insert(newIndex, item);
-    });
   }
 }

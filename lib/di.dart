@@ -1,4 +1,7 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:places/blocs/visiting_screen/visiting_screen_bloc.dart';
+import 'package:places/data/repository/visiting_screen_repository.dart';
 import 'package:provider/provider.dart';
 
 import 'package:places/data/interactor/filter_interactor.dart';
@@ -21,52 +24,61 @@ import 'package:places/app.dart';
 class DI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => FiltersProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => SettingsInteractor(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ChoosingCategoryProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => AddSightProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ButtonSaveProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ButtonCreateProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => SearchProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => HistoryProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => FieldEmptyProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => WantToVisitProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => VisitedProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => PlaceInteractor(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => SearchInteractor(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => FilterInteractor(),
-        ),
-      ],
-      child: const App(),
+    return RepositoryProvider(
+      create: (_) => VisitingScreenRepository(),
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (_) => FiltersProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => SettingsInteractor(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => ChoosingCategoryProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => AddSightProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => ButtonSaveProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => ButtonCreateProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => SearchProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => HistoryProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => FieldEmptyProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => WantToVisitProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => VisitedProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => PlaceInteractor(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => SearchInteractor(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => FilterInteractor(),
+          ),
+          BlocProvider(
+            create: (context) => VisitingScreenBloc(
+              visitingScreenRepository:
+                  context.read<VisitingScreenRepository>(),
+            ),
+          ),
+        ],
+        child: const App(),
+      ),
     );
   }
 }
