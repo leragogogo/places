@@ -24,53 +24,31 @@ class WantToVisitTab extends StatefulWidget {
 class _WantToVisitTabState extends State<WantToVisitTab> {
   DateTime? _chosenDateTime;
 
-  List<Place> _wantToVisit = [];
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    _wantToVisit = Provider.of<WantToVisitProvider>(context).wantToVisit;
-
-    return BlocBuilder<VisitingScreenBloc, VisitingScreenState>(
-        builder: (context, state) {
+    return BlocBuilder<VisitingScreenBloc, VisitingScreenState>(builder: (context, state) {
       return state is VisitingScreenWithFavourites
           ? Padding(
               padding: const EdgeInsets.only(left: 16, right: 16),
               child: ReorderableListView(
-                physics: Platform.isAndroid
-                    ? const ClampingScrollPhysics()
-                    : const BouncingScrollPhysics(),
+                physics: Platform.isAndroid ? const ClampingScrollPhysics() : const BouncingScrollPhysics(),
                 proxyDecorator: (child, index, animation) => Material(
                   type: MaterialType.transparency,
                   child: child,
                 ),
                 onReorder: (oldIndex, newIndex) {
-                  context.read<VisitingScreenBloc>().add(DragFavouritePlace(
-                      oldIndex: oldIndex, newIndex: newIndex));
-                  Provider.of<WantToVisitProvider>(
-                    context,
-                    listen: false,
-                  ).changeState(
-                    newWantToVisit: state.favouritePlaces,
-                  );
+                  context.read<VisitingScreenBloc>().add(DragFavouritePlace(oldIndex: oldIndex, newIndex: newIndex));
                 },
-                children: _wantToVisit
+                children: state.favouritePlaces
                     .asMap()
                     .entries
                     .map((i) => VisitingSightCard(
                           key: ObjectKey(i.value),
                           sight: i.value,
                           deleteFromList: () {
-                            context.read<VisitingScreenBloc>().add(
-                                RemoveFavouritePlace(
-                                    placeForRemoving: i.value));
-                            Provider.of<WantToVisitProvider>(
-                              context,
-                              listen: false,
-                            ).changeState(
-                              newWantToVisit: state.favouritePlaces,
-                            );
+                            context.read<VisitingScreenBloc>().add(RemoveFavouritePlace(placeForRemoving: i.value));
                           },
                           lowerText: Text(
                             AppStrings.wantToVisitText,
@@ -84,9 +62,7 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                             color: Colors.white,
                           ),
                           leftIconOnPressed: () {
-                            Platform.isAndroid
-                                ? _showAndroidPicker()
-                                : _showIOSPicker();
+                            Platform.isAndroid ? _showAndroidPicker() : _showIOSPicker();
                           },
                         ))
                     .toList(),
@@ -135,8 +111,7 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                 child: CupertinoTheme(
                   data: CupertinoThemeData(
                     textTheme: CupertinoTextThemeData(
-                      dateTimePickerTextStyle:
-                          theme.textTheme.bodyMedium?.copyWith(
+                      dateTimePickerTextStyle: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.canvasColor,
                       ),
                     ),
