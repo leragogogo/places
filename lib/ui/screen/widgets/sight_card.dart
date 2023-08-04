@@ -91,7 +91,6 @@ class _SightCardState extends State<SightCard> {
                   Provider.of<WantToVisitProvider>(context, listen: false)
                       .changeState(
                     newWantToVisit: favouritePlaces,
-                    newIsWantToVisitEmpty: favouritePlaces.isEmpty,
                   );
                 },
                 child: isFavouriteButtonClicked &&
