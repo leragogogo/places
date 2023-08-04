@@ -10,7 +10,6 @@ import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/sight_search_screen.dart';
 import 'package:places/ui/screen/widgets/network_error_widget.dart';
-import 'package:places/ui/screen/widgets/search_bar.dart';
 import 'package:places/ui/screen/widgets/sight_card.dart';
 import 'package:places/ui/screen/widgets/store.dart';
 import 'package:provider/provider.dart';
@@ -35,8 +34,7 @@ class _SightListScreen extends State<SightListScreen> {
                   children: [
                     store.filteredPlaces.isEmpty
                         ? Center(
-                            child: CircularProgressIndicator(
-                                color: AppColors.planButtonColor),
+                            child: CircularProgressIndicator(color: AppColors.planButtonColor),
                           )
                         : CustomScrollView(
                             slivers: [
@@ -48,76 +46,23 @@ class _SightListScreen extends State<SightListScreen> {
                               // Поисковая строка
                               SliverToBoxAdapter(
                                 child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16),
+                                  padding: const EdgeInsets.only(left: 16, right: 16),
                                   child: SearchBar(
-                                    readOnly: true,
                                     onChanged: (value) {},
                                     onTap: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute<SightSearchScreen>(
-                                          builder: (context) =>
-                                              SightSearchScreen(),
+                                          builder: (context) => SightSearchScreen(),
                                         ),
                                       );
                                     },
-                                    suffixIcon: IconButton(
-                                      icon: ImageIcon(
-                                        const AssetImage(AppAssets.filterAsset),
-                                        color: AppColors.planButtonColor,
-                                      ),
-                                      onPressed: () async {
-                                        Provider.of<FilterInteractor>(
-                                          context,
-                                          listen: false,
-                                        ).activeToCandidate();
-                                        Provider.of<FiltersProvider>(context,
-                                                listen: false)
-                                            .changeState(
-                                          newSightCount:
-                                              Provider.of<FilterInteractor>(
-                                            context,
-                                            listen: false,
-                                          ).isAtLeastOneCategorySelected()
-                                                  ? store.filteredPlaces.length
-                                                  : 0,
-                                          newIsButtonDisabled:
-                                              Provider.of<FilterInteractor>(
-                                            context,
-                                            listen: false,
-                                          ).isAtLeastOneCategorySelected()
-                                                  ? store.filteredPlaces.isEmpty
-                                                  : true,
-                                        );
-
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute<List<dynamic>>(
-                                            builder: (context) =>
-                                                FiltersScreen(),
-                                          ),
-                                        );
-                                        store.filterPlaces(
-                                            radius:
-                                                Provider.of<FilterInteractor>(
-                                              context,
-                                              listen: false,
-                                            ).activeCurRadius,
-                                            categories:
-                                                Provider.of<FilterInteractor>(
-                                              context,
-                                              listen: false,
-                                            ).getSelectedActiveCategories());
-                                      },
-                                    ),
                                     controller: null,
                                   ),
                                 ),
                               ),
                               // Основной список
-                              if (MediaQuery.of(context).orientation ==
-                                  Orientation.portrait)
+                              if (MediaQuery.of(context).orientation == Orientation.portrait)
                                 _SightListPortrait(
                                   filteredPlaces: store.filteredPlaces,
                                 )
@@ -265,6 +210,5 @@ class _SliverSightAppBar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      true;
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
 }

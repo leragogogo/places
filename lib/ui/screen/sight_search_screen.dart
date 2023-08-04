@@ -8,7 +8,6 @@ import 'package:places/data_providers/history_provider.dart';
 import 'package:places/data_providers/search_provider.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
-import 'package:places/ui/screen/widgets/search_bar.dart';
 import 'package:places/ui/screen/widgets/sight_appbar.dart';
 import 'package:places/ui/screen/widgets/sight_details.dart';
 import 'package:provider/provider.dart';
@@ -58,18 +57,17 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
           },
         ),
         bottom: SearchBar(
-          readOnly: false,
           onChanged: (value) {
             isFieldEmpty = value.isEmpty;
             Provider.of<FieldEmptyProvider>(context, listen: false).changeState(
               newIsFieldEmpty: isFieldEmpty,
             );
-            
+
             final searchPlaces = Provider.of<SearchInteractor>(
               context,
               listen: false,
             ).searchPlaces(value);
-            
+
             searchList = [];
             for (final place in searchPlaces) {
               searchList
@@ -82,8 +80,7 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
                         history
                           ..removeAt(index)
                           ..removeAt(index);
-                        Provider.of<HistoryProvider>(context, listen: false)
-                            .changeState(
+                        Provider.of<HistoryProvider>(context, listen: false).changeState(
                           newHistory: history,
                         );
                       }))
@@ -92,8 +89,7 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
                         indent: 16,
                         endIndent: 16,
                       ));
-                    Provider.of<HistoryProvider>(context, listen: false)
-                        .changeState(
+                    Provider.of<HistoryProvider>(context, listen: false).changeState(
                       newHistory: history,
                     );
                     showModalBottomSheet<void>(
@@ -108,19 +104,12 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
                   indent: 88,
                 ));
             }
-            
+
             Provider.of<SearchProvider>(context, listen: false).changeState(
               newSearchList: searchList,
             );
           },
           onTap: () {},
-          suffixIcon: IconButton(
-            icon: Icon(
-              CupertinoIcons.clear_circled_solid,
-              color: theme.canvasColor,
-            ),
-            onPressed: clearText,
-          ),
           controller: widget.searchField,
         ),
       ),
@@ -129,8 +118,7 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
               history,
               () {
                 history = [];
-                Provider.of<HistoryProvider>(context, listen: false)
-                    .changeState(
+                Provider.of<HistoryProvider>(context, listen: false).changeState(
                   newHistory: history,
                 );
               },
@@ -172,8 +160,7 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
 class _HistoryScreen extends StatelessWidget {
   final List<Widget> history;
   final VoidCallback onPressed;
-  const _HistoryScreen(this.history, this.onPressed, {Key? key})
-      : super(key: key);
+  const _HistoryScreen(this.history, this.onPressed, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -269,8 +256,7 @@ class _MiniSightCard extends StatelessWidget {
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(12)),
           child: CachedNetworkImage(
-            imageUrl:
-                place.urls.isEmpty ? 'https://aa.aa.ru/1.jpg' : place.urls[0],
+            imageUrl: place.urls.isEmpty ? 'https://aa.aa.ru/1.jpg' : place.urls[0],
             placeholder: (context, url) => const CupertinoActivityIndicator(),
             errorWidget: (context, url, dynamic error) => Container(
               color: AppColors.planButtonColor,
@@ -281,7 +267,7 @@ class _MiniSightCard extends StatelessWidget {
               ),
             ),
             fit: BoxFit.cover,
-          ), 
+          ),
         ),
       ),
       title: Text(
