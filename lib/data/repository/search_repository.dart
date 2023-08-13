@@ -1,3 +1,3 @@
-class SearchRepository{
-    final List<String> history = [];
+class SearchRepository {
+  List<String> history = [];
 }

@@ -1,17 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:places/data/interactor/search_interactor.dart';
 import 'package:places/data/model/place.dart';
-import 'package:places/data_providers/field_empty_provider.dart';
-import 'package:places/data_providers/history_provider.dart';
-import 'package:places/data_providers/search_provider.dart';
+import 'package:places/data/repository/search_repository.dart';
+import 'package:places/redux/action/search_screen_action.dart';
+import 'package:places/redux/state/app_state.dart';
+import 'package:places/redux/state/search_screen_state.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/search_bar.dart';
 import 'package:places/ui/screen/widgets/sight_appbar.dart';
 import 'package:places/ui/screen/widgets/sight_details.dart';
-import 'package:provider/provider.dart';
 
 class SightSearchScreen extends StatefulWidget {
   final searchField = TextEditingController();
@@ -22,150 +23,80 @@ class SightSearchScreen extends StatefulWidget {
 }
 
 class _SightSearchScreenState extends State<SightSearchScreen> {
-  List<Widget> searchList = [];
-
-  List<Widget> history = [];
-  bool isFieldEmpty = true;
+  final searchRepository = SearchRepository();
+  final searchInteractor = SearchInteractor();
 
   @override
   Widget build(BuildContext context) {
-    searchList = Provider.of<SearchProvider>(context).searchList;
-    history = Provider.of<HistoryProvider>(context).history;
-    isFieldEmpty = Provider.of<FieldEmptyProvider>(context).isFieldEmpty;
     final theme = Theme.of(context);
-
     return Scaffold(
-      appBar: SightAppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: theme.canvasColor,
-          ),
-          onPressed: () {
-            searchList = [];
-            history = [];
-            isFieldEmpty = true;
-            Provider.of<SearchProvider>(context, listen: false).changeState(
-              newSearchList: searchList,
-            );
-            Provider.of<HistoryProvider>(context, listen: false).changeState(
-              newHistory: history,
-            );
-            Provider.of<FieldEmptyProvider>(context, listen: false).changeState(
-              newIsFieldEmpty: isFieldEmpty,
-            );
-            Navigator.pop(context);
-          },
-        ),
-        bottom: SearchBar(
-          readOnly: false,
-          onChanged: (value) {
-            isFieldEmpty = value.isEmpty;
-            Provider.of<FieldEmptyProvider>(context, listen: false).changeState(
-              newIsFieldEmpty: isFieldEmpty,
-            );
-            
-            final searchPlaces = Provider.of<SearchInteractor>(
-              context,
-              listen: false,
-            ).searchPlaces(value);
-            
-            searchList = [];
-            for (final place in searchPlaces) {
-              searchList
-                ..add(_MiniSightCard(
-                  place,
-                  () {
-                    history
-                      ..add(_HistoryTile(place.name, () {
-                        final index = findWidget(place.name);
-                        history
-                          ..removeAt(index)
-                          ..removeAt(index);
-                        Provider.of<HistoryProvider>(context, listen: false)
-                            .changeState(
-                          newHistory: history,
-                        );
-                      }))
-                      ..add(const Divider(
-                        thickness: 1,
-                        indent: 16,
-                        endIndent: 16,
-                      ));
-                    Provider.of<HistoryProvider>(context, listen: false)
-                        .changeState(
-                      newHistory: history,
-                    );
-                    showModalBottomSheet<void>(
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (_) => SightDetailsScreen(place),
-                    );
-                  },
-                ))
-                ..add(const Divider(
-                  thickness: 1,
-                  indent: 88,
-                ));
-            }
-            
-            Provider.of<SearchProvider>(context, listen: false).changeState(
-              newSearchList: searchList,
-            );
-          },
-          onTap: () {},
-          suffixIcon: IconButton(
+        appBar: SightAppBar(
+          leading: IconButton(
             icon: Icon(
-              CupertinoIcons.clear_circled_solid,
+              Icons.arrow_back_ios,
               color: theme.canvasColor,
             ),
-            onPressed: clearText,
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          controller: widget.searchField,
-        ),
-      ),
-      body: isFieldEmpty
-          ? _HistoryScreen(
-              history,
-              () {
-                history = [];
-                Provider.of<HistoryProvider>(context, listen: false)
-                    .changeState(
-                  newHistory: history,
-                );
+          bottom: SearchBar(
+            readOnly: false,
+            onChanged: (value) {
+              StoreProvider.of<AppState>(context).dispatch(
+                  SearchTextWasUpdatedAction(
+                      value, searchInteractor, searchRepository.history));
+            },
+            onTap: () {},
+            suffixIcon: IconButton(
+              icon: Icon(
+                CupertinoIcons.clear_circled_solid,
+                color: theme.canvasColor,
+              ),
+              onPressed: () {
+                widget.searchField.clear();
+                StoreProvider.of<AppState>(context).dispatch(
+                    SearchTextWasUpdatedAction(
+                        '', searchInteractor, searchRepository.history));
               },
-            )
-          : searchList.isEmpty
-              ? _EmptyScreen()
-              : SingleChildScrollView(child: Column(children: searchList)),
-      resizeToAvoidBottomInset: true,
-    );
-  }
-
-  int findWidget(String name) {
-    var ind = 0;
-    for (var i = 0; i < history.length; i++) {
-      final cur = history[i];
-      if (cur is _HistoryTile) {
-        if (cur.text == name) {
-          ind = i;
-        }
-      }
-    }
-
-    return ind;
-  }
-
-  void clearText() {
-    searchList = [];
-    Provider.of<SearchProvider>(context, listen: false).changeState(
-      newSearchList: searchList,
-    );
-    isFieldEmpty = true;
-    Provider.of<FieldEmptyProvider>(context, listen: false).changeState(
-      newIsFieldEmpty: isFieldEmpty,
-    );
-    widget.searchField.clear();
+            ),
+            controller: widget.searchField,
+          ),
+        ),
+        body: StoreConnector<AppState, SearchScreenState>(
+            builder: (BuildContext context, SearchScreenState vm) {
+          if (vm is SearchSreenErrorState) {
+            return _EmptyScreen();
+          } else if (vm is SearchScreenHistoryState) {
+            var historyWidgets = <Widget>[];
+            for (var i = 0; i < vm.history.length; i++) {
+              historyWidgets.add(_HistoryTile(vm.history[i], () {
+                StoreProvider.of<AppState>(context).dispatch(
+                    RemoveItemFromHistoryAction(i, searchRepository.history));
+              }));
+            }
+            return _HistoryScreen(historyWidgets, () {
+              StoreProvider.of<AppState>(context).dispatch(
+                  RemoveAllItemsFromHistory(searchRepository.history));
+            });
+          } else if (vm is SearchScreenDataState) {
+            var searchList = <Widget>[];
+            for (int i = 0; i < vm.places.length; i++) {
+              searchList.add(_MiniSightCard(vm.places[i], () {
+                searchRepository.history.add(vm.places[i].name);
+                showModalBottomSheet<void>(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (_) => SightDetailsScreen(vm.places[i]),
+                );
+              }));
+            }
+            return SingleChildScrollView(child: Column(children: searchList));
+          }
+          return Container();
+        }, converter: (store) {
+          return store.state.searchScreenState;
+        }));
   }
 }
 
@@ -231,11 +162,14 @@ class _HistoryTile extends StatelessWidget {
     final theme = Theme.of(context);
 
     return ListTile(
-      leading: Text(
-        text,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.primaryColorDark,
-          fontSize: 16,
+      leading: SizedBox(
+        width: MediaQuery.of(context).size.width / 2,
+        child: Text(
+          text,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.primaryColorDark,
+            fontSize: 16,
+          ),
         ),
       ),
       trailing: IconButton(
@@ -281,7 +215,7 @@ class _MiniSightCard extends StatelessWidget {
               ),
             ),
             fit: BoxFit.cover,
-          ), 
+          ),
         ),
       ),
       title: Text(

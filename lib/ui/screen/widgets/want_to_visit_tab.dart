@@ -5,14 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:places/blocs/visiting_screen/visiting_screen_bloc.dart';
 import 'package:places/blocs/visiting_screen/visiting_screen_event.dart';
 import 'package:places/blocs/visiting_screen/visiting_screen_state.dart';
-import 'package:places/data/model/place.dart';
-import 'package:places/data_providers/want_to_visit_provider.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/empty_screen.dart';
 import 'package:places/ui/screen/widgets/sight_card_visited.dart';
-import 'package:provider/provider.dart';
 
 class WantToVisitTab extends StatefulWidget {
   const WantToVisitTab({super.key});
@@ -24,13 +21,13 @@ class WantToVisitTab extends StatefulWidget {
 class _WantToVisitTabState extends State<WantToVisitTab> {
   DateTime? _chosenDateTime;
 
-  List<Place> _wantToVisit = [];
+  //List<Place> _wantToVisit = [];
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    _wantToVisit = Provider.of<WantToVisitProvider>(context).wantToVisit;
+    //_wantToVisit = Provider.of<WantToVisitProvider>(context).wantToVisit;
 
     return BlocBuilder<VisitingScreenBloc, VisitingScreenState>(
         builder: (context, state) {
@@ -48,14 +45,8 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                 onReorder: (oldIndex, newIndex) {
                   context.read<VisitingScreenBloc>().add(DragFavouritePlace(
                       oldIndex: oldIndex, newIndex: newIndex));
-                  Provider.of<WantToVisitProvider>(
-                    context,
-                    listen: false,
-                  ).changeState(
-                    newWantToVisit: state.favouritePlaces,
-                  );
                 },
-                children: _wantToVisit
+                children: state.favouritePlaces
                     .asMap()
                     .entries
                     .map((i) => VisitingSightCard(
@@ -65,12 +56,12 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                             context.read<VisitingScreenBloc>().add(
                                 RemoveFavouritePlace(
                                     placeForRemoving: i.value));
-                            Provider.of<WantToVisitProvider>(
+                            /*Provider.of<WantToVisitProvider>(
                               context,
                               listen: false,
                             ).changeState(
                               newWantToVisit: state.favouritePlaces,
-                            );
+                            );*/
                           },
                           lowerText: Text(
                             AppStrings.wantToVisitText,
