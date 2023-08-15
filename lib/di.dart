@@ -77,7 +77,7 @@ class DI extends StatelessWidget {
             ),
           ),
         ],
-        child: const App(),
+        child: App(),
       ),
     );
   }
