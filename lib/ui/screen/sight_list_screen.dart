@@ -3,7 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:places/data/interactor/filter_interactor.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data_providers/filter_provider.dart';
-import 'package:places/ui/screen/add_sight_screen.dart';
+import 'package:places/ui/screen/add_sight_screen/add_sight_screen.dart';
 import 'package:places/ui/screen/filters_screen.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
@@ -206,7 +206,7 @@ class _AddNewSightButton extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute<AddSightScreen>(
-              builder: (context) => const AddSightScreen(),
+              builder: (context) => AddSightScreen(),
             ),
           );
         },
