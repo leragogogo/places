@@ -16,7 +16,6 @@ dependencies:
   dart_code_metrics: ^4.17.1
   flutter_svg: ^1.1.4
   provider: ^6.0.4
-  surf_lint_rules: ^1.5.0
   cached_network_image: ^3.2.3
   mobx: ^2.0.4
   flutter_mobx: ^2.0.2
@@ -24,6 +23,8 @@ dependencies:
   equatable: ^2.0.5
   redux: ^5.0.0
   flutter_redux: ^0.8.2
+  mwwm: ^1.0.0
+  relation: ^3.1.0
 
 dev_dependencies:
   flutter_test:
