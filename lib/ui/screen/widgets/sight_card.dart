@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:places/data/model/place.dart';
-import 'package:places/data_providers/want_to_visit_provider.dart';
+import 'package:places/data/repository/repositories.dart';
 import 'package:places/ui/screen/widgets/parts_of_card.dart';
 import 'package:places/ui/screen/widgets/sight_details.dart';
-import 'package:places/ui/screen/widgets/store.dart';
-import 'package:provider/provider.dart';
 
 class SightCard extends StatefulWidget {
   final Place place;
+  final VoidCallback addToFavourites;
+  final VoidCallback removeFromFavorites;
 
-  const SightCard(this.place, {Key? key}) : super(key: key);
+  const SightCard(
+      {required this.place,
+      required this.addToFavourites,
+      required this.removeFromFavorites,
+      Key? key})
+      : super(key: key);
 
   @override
   State<SightCard> createState() => _SightCardState();
@@ -21,7 +26,6 @@ class _SightCardState extends State<SightCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    isFavouriteButtonClicked = widget.place.wished;
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -85,17 +89,11 @@ class _SightCardState extends State<SightCard> {
                     isFavouriteButtonClicked = !isFavouriteButtonClicked;
                   });
                   isFavouriteButtonClicked
-                      ? store.addToFavorites(place: widget.place)
-                      : store.removeFromFavorites(place: widget.place);
-                  final favouritePlaces = store.getFavoritesPlaces();
-                  Provider.of<WantToVisitProvider>(context, listen: false)
-                      .changeState(
-                    newWantToVisit: favouritePlaces,
-                  );
+                      ? widget.addToFavourites()
+                      : widget.removeFromFavorites();
                 },
                 child: isFavouriteButtonClicked &&
-                        Provider.of<WantToVisitProvider>(context, listen: true)
-                            .wantToVisit
+                        visitingScreenRepository.favouritePlaces
                             .contains(widget.place)
                     ? const Icon(
                         Icons.favorite_sharp,

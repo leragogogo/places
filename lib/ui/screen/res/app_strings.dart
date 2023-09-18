@@ -91,4 +91,9 @@ class AppStrings {
   // NetworkErrorWidget
   static const errorText1 = 'Ошибка';
   static const errorText2 = 'Что-то пошло не так.\nПопробуйте позже.';
+
+  // AddSightError
+  static const addSightErrorText1 = 'Не получилось создать место.';
+  static const addSightErrorText2 = 'Попробуйте чуть позже.';
+  static const okButtonText = 'ОK';
 }

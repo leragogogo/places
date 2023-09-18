@@ -31,6 +31,7 @@ class PlaceApi {
 
   Future<void> addPlace(Place newPlace) async {
     DioConfigurators.addInterceptors();
+
     final Response response = await DioConfigurators.dio
         .post<String>('/place', data: jsonEncode(newPlace));
 

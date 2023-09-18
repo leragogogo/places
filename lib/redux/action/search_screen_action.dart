@@ -1,4 +1,3 @@
-import 'package:places/data/interactor/search_interactor.dart';
 
 /// Базовый класс действий с экраном поиска.
 abstract class SearchScreenAction {}
@@ -6,10 +5,10 @@ abstract class SearchScreenAction {}
 /// Обновление текста поиска.
 class SearchTextWasUpdatedAction extends SearchScreenAction {
   String searchText;
-  SearchInteractor searchInteractor;
+  //SearchInteractor searchInteractor;
   List<String> history;
   SearchTextWasUpdatedAction(
-      this.searchText, this.searchInteractor, this.history);
+      this.searchText, this.history);
 }
 
 /// Удаление из истории поиска.

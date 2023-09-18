@@ -4,7 +4,7 @@ import 'package:places/data/model/place.dart';
 class PlaceRepository {
   final placeApi = PlaceApi();
   List<Place> places = [];
-  Future<void> initPlaces() async {
+  Future<void> loadPlaces() async {
     places = await placeApi.loadPlaces();
   }
 

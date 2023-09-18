@@ -49,7 +49,7 @@ class FilterRepository {
     ),
   ];
 
-  RangeValues candidateRadius = const RangeValues(100, 10000);
+  RangeValues candidateRadius = const RangeValues(1, 10);
 
   List<FilterItem> activeFilterItems = [
     FilterItem(
@@ -96,5 +96,5 @@ class FilterRepository {
     ),
   ];
 
-  RangeValues activeRadius = const RangeValues(100, 10000);
+  RangeValues activeRadius = const RangeValues(1, 10);
 }

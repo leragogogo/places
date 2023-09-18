@@ -1,13 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:places/data_providers/button_save_provider.dart';
-import 'package:places/data_providers/choosing_category_provider.dart';
-import 'package:places/domain/categories.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:places/data/repository/repositories.dart';
+import 'package:places/data/model/categories.dart';
+import 'package:places/redux/action/choosing_category_screen_action.dart';
+import 'package:places/redux/state/app_state.dart';
+import 'package:places/redux/state/choosing_category_screen_state.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/bottom_button.dart';
-import 'package:provider/provider.dart';
 
 class ChoosingCategoryScreen extends StatefulWidget {
   final Categories? lastChosenCategory;
@@ -19,123 +21,78 @@ class ChoosingCategoryScreen extends StatefulWidget {
 }
 
 class _ChoosingCategoryScreenState extends State<ChoosingCategoryScreen> {
-  // состояние каждой категории(выбрана или нет)
-  Map<Categories, bool> statesOfCategories = {
-    Categories.hotel: false,
-    Categories.restaurant: false,
-    Categories.specialPlace: false,
-    Categories.park: false,
-    Categories.museum: false,
-    Categories.cafe: false,
-  };
-  Categories? chosenCategory;
-
-  bool isButtonDisabled = true;
-
-  @override
-  void initState() {
-    super.initState();
-    chosenCategory = widget.lastChosenCategory;
-    if (chosenCategory != null) {
-      statesOfCategories[chosenCategory!] = true;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    isButtonDisabled =
-        Provider.of<ButtonSaveProvider>(context).isButtonDisabled;
-    chosenCategory =
-        Provider.of<ChoosingCategoryProvider>(context).chosenCategory;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.choosingCategoryScreenTitle),
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: theme.canvasColor,
+    return StoreConnector<AppState, ChoosingCategoryScreenState>(
+        onInit: (store) {
+      StoreProvider.of<AppState>(context)
+          .dispatch(InitChoosingCategoryAction());
+    }, builder: (BuildContext context, ChoosingCategoryScreenState vm) {
+      if (vm is ChoosingCategoryScreenMainState) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text(AppStrings.choosingCategoryScreenTitle),
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: theme.canvasColor,
+              ),
+              onPressed: () {
+                StoreProvider.of<AppState>(context)
+                    .dispatch(ExitFromChoosingCategoryScreenAction(context));
+              },
+            ),
           ),
-          onPressed: () {
-            Navigator.pop(context, chosenCategory);
-          },
-        ),
-      ),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 24,
-          ),
-          Expanded(
-            flex: 2,
-            child: ListView(
-              physics: Platform.isAndroid
-                  ? const ClampingScrollPhysics()
-                  : const BouncingScrollPhysics(),
-              children: Categories.values.map(
-                (category) {
-                  return _Category(
-                    category: category,
-                    isChosen: statesOfCategories[category]!,
-                    onTap: () {
-                      _onCategoryTap(category);
+          body: Column(
+            children: [
+              const SizedBox(
+                height: 24,
+              ),
+              Expanded(
+                flex: 2,
+                child: ListView(
+                  physics: Platform.isAndroid
+                      ? const ClampingScrollPhysics()
+                      : const BouncingScrollPhysics(),
+                  children: Categories.values.map(
+                    (category) {
+                      return _Category(
+                        category: category,
+                        isChosen:
+                            category == addSightRepository.candidateCategory,
+                        onTap: () {
+                          StoreProvider.of<AppState>(context)
+                              .dispatch(ChooseCategoryAction(category));
+                        },
+                      );
                     },
-                  );
-                },
-              ).toList(),
-            ),
+                  ).toList(),
+                ),
+              ),
+              Expanded(
+                child: BottomButton(
+                  text: AppStrings.saveButtonText,
+                  onPressed: vm.isButtonDisabled
+                      ? null
+                      : () {
+                          StoreProvider.of<AppState>(context).dispatch(
+                              ReturnChosenCategoryAction(
+                                  addSightRepository.candidateCategory!,
+                                  context));
+                        },
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: BottomButton(
-              text: AppStrings.saveButtonText,
-              onPressed: isButtonDisabled ? null : _bottomButtonOnPressed,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _bottomButtonOnPressed() {
-    setState(() {
-      for (final category in statesOfCategories.keys) {
-        if (statesOfCategories[category]!) {
-          chosenCategory = statesOfCategories[category]! ? category : null;
-        }
+        );
       }
+      return Container();
+    }, converter: (store) {
+      return store.state.choosingCategoryScreenState;
     });
-    Provider.of<ChoosingCategoryProvider>(
-      context,
-      listen: false,
-    ).changeState(
-      newChosenCategory: chosenCategory,
-    );
-    Navigator.pop(context, chosenCategory);
-  }
-
-  void _onCategoryTap(Categories category) {
-    setState(() {
-      statesOfCategories.forEach((key, value) {
-        if (key != category) {
-          statesOfCategories.update(key, (value) => false);
-        }
-      });
-
-      statesOfCategories[category] = !statesOfCategories[category]!;
-      var count = 0;
-      for (final category in statesOfCategories.keys) {
-        if (statesOfCategories[category]!) {
-          count += 1;
-        }
-      }
-      isButtonDisabled = count == 0;
-    });
-
-    Provider.of<ButtonSaveProvider>(context, listen: false).changeState(
-      newIsButtonDisabled: isButtonDisabled,
-    );
   }
 }
 
