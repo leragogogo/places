@@ -112,7 +112,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   }
 }
 
-class _Page extends StatelessWidget {
+class _Page extends StatefulWidget {
   final String icon;
   final String boldText;
   final String text;
@@ -122,6 +122,35 @@ class _Page extends StatelessWidget {
     required this.text,
     Key? key,
   }) : super(key: key);
+
+  @override
+  State<_Page> createState() => _PageState();
+}
+
+class _PageState extends State<_Page> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _sizeAnimation;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+        vsync: this,
+        lowerBound: 0,
+        upperBound: 1,
+        duration: Duration(seconds: 1));
+    _animationController.forward();
+
+    _sizeAnimation = Tween<double>(begin: 0, end: 150).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.linear));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -130,33 +159,42 @@ class _Page extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ImageIcon(
-            AssetImage(icon),
-            color: theme.canvasColor,
-            size: 100,
-          ),
-          const SizedBox(
-            height: 42,
-          ),
-          Text(
-            boldText,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.canvasColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
+          Expanded(
+            flex: 3,
+            child: AnimatedBuilder(
+              animation: _animationController,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: _animationController.value,
+                  child: ImageIcon(
+                    AssetImage(widget.icon),
+                    color: theme.canvasColor,
+                    size: _sizeAnimation.value,
+                  ),
+                );
+              },
             ),
           ),
-          const SizedBox(
-            height: 8,
+          Expanded(
+            child: Text(
+              widget.boldText,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.canvasColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
           ),
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.primaryColorDark,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
+          Expanded(
+            child: Text(
+              widget.text,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.primaryColorDark,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
             ),
           ),
         ],
