@@ -1,16 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:places/data/interactor/place_interactor.dart';
-import 'package:places/data/model/place.dart';
-import 'package:places/data_providers/add_sight_provider.dart';
-import 'package:places/data_providers/button_create_provider.dart';
-import 'package:places/domain/categories.dart';
-import 'package:places/ui/screen/choosing_category_screen.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:places/data/repository/repositories.dart';
+import 'package:places/data/model/categories.dart';
+import 'package:places/redux/action/add_sight_screen_action.dart';
+import 'package:places/redux/state/add_sight_screen_state.dart';
+import 'package:places/redux/state/app_state.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/bottom_button.dart';
-import 'package:places/ui/screen/widgets/image_dialog.dart';
-import 'package:provider/provider.dart';
 
 class AddSightScreen extends StatefulWidget {
   const AddSightScreen({Key? key}) : super(key: key);
@@ -24,27 +22,16 @@ String replaceNull(Categories? category) {
 }
 
 class _AddSightScreenState extends State<AddSightScreen> {
-  Categories? category;
-  String? name;
-  double? lat;
-  double? lon;
-  String? details;
-
-  bool stateOfCategory = false;
-
   FocusNode nameFocus = FocusNode();
   FocusNode latFocus = FocusNode();
   FocusNode lonFocus = FocusNode();
   FocusNode detailsFocus = FocusNode();
-
-  bool isButtonDisabled = true;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController latController = TextEditingController();
   TextEditingController lonController = TextEditingController();
   TextEditingController detailsController = TextEditingController();
 
-  List<int> images = [];
   @override
   Widget build(BuildContext context) {
     final controllers = [
@@ -55,319 +42,291 @@ class _AddSightScreenState extends State<AddSightScreen> {
     ];
 
     final theme = Theme.of(context);
-    isButtonDisabled =
-        Provider.of<ButtonCreateProvider>(context).isButtonDisabled;
-    category = Provider.of<AddSightProvider>(context).category;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.addSightScreenTitle),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: theme.canvasColor,
+    return StoreConnector<AppState, AddSightScreenState>(onInit: (store) {
+      store.dispatch(InitAddSightScreenAction());
+    }, builder: (BuildContext context, AddSightScreenState vm) {
+      if (vm is AddSightScreenMainState) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text(AppStrings.addSightScreenTitle),
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: theme.canvasColor,
+              ),
+              onPressed: () {
+                StoreProvider.of<AppState>(context)
+                    .dispatch(ExitFromAddSightScreenAction(context));
+              },
+            ),
+            elevation: 0,
+            automaticallyImplyLeading: false,
           ),
-          onPressed: _resetState,
-        ),
-        elevation: 0,
-        automaticallyImplyLeading: false,
-      ),
-      body: CustomScrollView(
-        slivers: [
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 24,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        _AddImageWidget(
-                          onTap: () {
-                            showDialog<void>(
-                              context: context,
-                              builder: (_) => const ImageDialog(),
-                            );
-                          },
-                        ),
-                        Row(
-                          children: images.asMap().entries.map((item) {
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 16),
-                              child: _ImageWidget(
-                                key: ValueKey(item.value),
-                                delete: () {
-                                  setState(() {
-                                    images.remove(item.value);
-                                  });
-                                },
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 16),
-                  child: _Label(text: AppStrings.categoryOfNewSightText),
-                ),
-                ListTile(
-                  leading: Text(
-                    replaceNull(category),
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(color: theme.canvasColor),
-                  ),
-                  trailing: IconButton(
-                    onPressed: () async {
-                      await _openChoosingCategoryScreen(controllers);
-                    },
-                    icon: const Icon(Icons.arrow_forward_ios),
-                    color: theme.canvasColor,
-                  ),
-                ),
-                const Divider(
-                  height: 28,
-                  indent: 16,
-                  endIndent: 16,
-                  thickness: 1,
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 16),
-                  child: _Label(text: AppStrings.nameFieldText),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16),
-                  child: _SightTextField(
-                    focusNode: nameFocus,
-                    onSubmitted: (value) {
-                      name = value;
-                      _changeButtonState(controllers);
-                      FocusScope.of(context).requestFocus(latFocus);
-                    },
-                    onTapOutside: (p) {
-                      name = controllers[0].text;
-                      _changeButtonState(controllers);
-                      nameFocus.unfocus();
-                    },
-                    controller: nameController,
-                    keyboardType: TextInputType.text,
-                  ),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Row(
+          body: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
                   children: [
+                    const SizedBox(
+                      height: 24,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 16),
-                      child: Column(
-                        children: [
-                          const _Label(text: AppStrings.latFieldText),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          SizedBox(
-                            width: (MediaQuery.of(context).size.width - 48) / 2,
-                            child: _SightTextField(
-                              focusNode: latFocus,
-                              onSubmitted: (value) {
-                                lat = double.tryParse(value);
-                                _changeButtonState(controllers);
-                                FocusScope.of(context).requestFocus(lonFocus);
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _AddImageWidget(
+                              onTap: () {
+                                StoreProvider.of<AppState>(context)
+                                    .dispatch(ChooseImagesAction(context));
                               },
-                              onTapOutside: (p) {
-                                lat = double.tryParse(controllers[1].text);
-                                _changeButtonState(controllers);
-                                latFocus.unfocus();
-                              },
-                              controller: latController,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                decimal: true,
-                              ),
                             ),
-                          ),
-                        ],
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                            Row(
+                              children: vm.images.asMap().entries.map((item) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 16),
+                                  child: _ImageWidget(
+                                    key: ValueKey(item.value),
+                                    delete: () {
+                                      StoreProvider.of<AppState>(context)
+                                          .dispatch(
+                                              RemoveImageAction(item.value));
+                                    },
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
                       ),
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 16),
+                      child: _Label(text: AppStrings.categoryOfNewSightText),
+                    ),
+                    ListTile(
+                      leading: Text(
+                        replaceNull(vm.category),
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(color: theme.canvasColor),
+                      ),
+                      trailing: IconButton(
+                        onPressed: () {
+                          StoreProvider.of<AppState>(context).dispatch(
+                              OpenChoosingCategoryScreenAction(context));
+                        },
+                        icon: const Icon(Icons.arrow_forward_ios),
+                        color: theme.canvasColor,
+                      ),
+                    ),
+                    const Divider(
+                      height: 28,
+                      indent: 16,
+                      endIndent: 16,
+                      thickness: 1,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 16),
+                      child: _Label(text: AppStrings.nameFieldText),
+                    ),
+                    const SizedBox(
+                      height: 12,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: Column(
-                        children: [
-                          const _Label(text: AppStrings.lonFieldText),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          SizedBox(
-                            width: (MediaQuery.of(context).size.width - 48) / 2,
-                            child: _SightTextField(
-                              focusNode: lonFocus,
-                              onSubmitted: (value) {
-                                lon = double.tryParse(value);
-                                _changeButtonState(controllers);
-                                FocusScope.of(context)
-                                    .requestFocus(detailsFocus);
-                              },
-                              onTapOutside: (p) {
-                                lon = double.tryParse(controllers[2].text);
-                                _changeButtonState(controllers);
-                                lonFocus.unfocus();
-                              },
-                              controller: lonController,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                decimal: true,
-                              ),
-                            ),
-                          ),
-                        ],
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      padding: const EdgeInsets.only(left: 16, right: 16),
+                      child: _SightTextField(
+                        focusNode: nameFocus,
+                        onSubmitted: (value) {
+                          StoreProvider.of<AppState>(context)
+                              .dispatch(FillNameAction(value));
+                          FocusScope.of(context).requestFocus(latFocus);
+                        },
+                        onTapOutside: (p) {
+                          if (addSightRepository.name != controllers[0].text) {
+                            StoreProvider.of<AppState>(context)
+                                .dispatch(FillNameAction(controllers[0].text));
+                          }
+                          nameFocus.unfocus();
+                        },
+                        controller: nameController,
+                        keyboardType: TextInputType.text,
                       ),
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Column(
+                            children: [
+                              const _Label(text: AppStrings.latFieldText),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              SizedBox(
+                                width:
+                                    (MediaQuery.of(context).size.width - 48) /
+                                        2,
+                                child: _SightTextField(
+                                  focusNode: latFocus,
+                                  onSubmitted: (value) {
+                                    StoreProvider.of<AppState>(context)
+                                        .dispatch(FillLatAction(
+                                            double.tryParse(value)!));
+                                    FocusScope.of(context)
+                                        .requestFocus(lonFocus);
+                                  },
+                                  onTapOutside: (p) {
+                                    if (addSightRepository.lat !=
+                                        double.tryParse(controllers[1].text)) {
+                                      StoreProvider.of<AppState>(context)
+                                          .dispatch(FillLatAction(
+                                              double.tryParse(
+                                                  controllers[1].text)!));
+                                    }
+                                    latFocus.unfocus();
+                                  },
+                                  controller: latController,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
+                                ),
+                              ),
+                            ],
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16),
+                          child: Column(
+                            children: [
+                              const _Label(text: AppStrings.lonFieldText),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              SizedBox(
+                                width:
+                                    (MediaQuery.of(context).size.width - 48) /
+                                        2,
+                                child: _SightTextField(
+                                  focusNode: lonFocus,
+                                  onSubmitted: (value) {
+                                    StoreProvider.of<AppState>(context)
+                                        .dispatch(FillLonAction(
+                                            double.tryParse(value)!));
+                                    FocusScope.of(context)
+                                        .requestFocus(detailsFocus);
+                                  },
+                                  onTapOutside: (p) {
+                                    if (addSightRepository.lon !=
+                                        double.tryParse(controllers[2].text)) {
+                                      StoreProvider.of<AppState>(context)
+                                          .dispatch(FillLonAction(
+                                              double.tryParse(
+                                                  controllers[2].text)!));
+                                    }
+                                    lonFocus.unfocus();
+                                  },
+                                  controller: lonController,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
+                                ),
+                              ),
+                            ],
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                          ),
+                        ),
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          AppStrings.pointOnMapText,
+                          style: TextStyle(
+                            color: AppColors.planButtonColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 37,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 16),
+                      child: _Label(text: AppStrings.detailsFieldText),
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16, right: 16),
+                      child: _SightTextField(
+                        focusNode: detailsFocus,
+                        onSubmitted: (value) {
+                          StoreProvider.of<AppState>(context)
+                              .dispatch(FillDescriptionAction(value));
+                        },
+                        onTapOutside: (p) {
+                          if (addSightRepository.details !=
+                              controllers[3].text) {
+                            StoreProvider.of<AppState>(context).dispatch(
+                                FillDescriptionAction(controllers[3].text));
+                          }
+                          detailsFocus.unfocus();
+                        },
+                        controller: detailsController,
+                        keyboardType: TextInputType.text,
+                      ),
+                    ),
+                    Expanded(
+                      child: BottomButton(
+                          text: AppStrings.createSightButtonText,
+                          onPressed: vm.isAllFieldsFilled
+                              ? () {
+                                  StoreProvider.of<AppState>(context).dispatch(
+                                      CreateNewPlaceAction(
+                                          [
+                                        'https://avatars.mds.yandex.net/get-altay/5235198/2a0000017afdeefb6009b7fd234b65744604/XXXL',
+                                      ],
+                                          vm.category ??
+                                              Categories.specialPlace,
+                                          vm.name ?? 'name',
+                                          vm.lat ?? 0,
+                                          vm.lon ?? 0,
+                                          vm.details ?? '',
+                                          context));
+                                }
+                              : null),
                     ),
                   ],
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      AppStrings.pointOnMapText,
-                      style: TextStyle(
-                        color: AppColors.planButtonColor,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 37,
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 16),
-                  child: _Label(text: AppStrings.detailsFieldText),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16),
-                  child: _SightTextField(
-                    focusNode: detailsFocus,
-                    onSubmitted: (value) {
-                      details = value;
-                      _changeButtonState(controllers);
-                    },
-                    onTapOutside: (p) {
-                      details = controllers[3].text;
-                      _changeButtonState(controllers);
-                      detailsFocus.unfocus();
-                    },
-                    controller: detailsController,
-                    keyboardType: TextInputType.text,
-                  ),
-                ),
-                Expanded(
-                  child: BottomButton(
-                    text: AppStrings.createSightButtonText,
-                    onPressed: isButtonDisabled
-                        ? null
-                        : () {
-                            Provider.of<PlaceInteractor>(context, listen: false)
-                                .addNewPlace(
-                              newPlace: Place(
-                                id: '1',
-                                lat: lat ?? 0,
-                                lon: lon ?? 0,
-                                name: name ?? 'name',
-                                urls: [
-                                  'https://avatars.mds.yandex.net/get-altay/5235198/2a0000017afdeefb6009b7fd234b65744604/XXXL',
-                                ],
-                                placeType: category == null ? Categories.specialPlace.name : category!.name,//category!.name,
-                                description: details ?? '',
-                              ),
-                            );
-                            _resetState();
-                          },
-                  ),
-                ),
-              ],
-              crossAxisAlignment: CrossAxisAlignment.start,
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
-      resizeToAvoidBottomInset: true,
-    );
-  }
-
-  Future<void> _openChoosingCategoryScreen(
-    List<TextEditingController> controllers,
-  ) async {
-    category = await Navigator.push(
-      context,
-      MaterialPageRoute<Categories>(
-        builder: (context) => ChoosingCategoryScreen(
-          lastChosenCategory: category,
-        ),
-      ),
-    );
-    if (!mounted) return;
-    stateOfCategory = category != null;
-    _changeButtonState(controllers);
-
-    Provider.of<AddSightProvider>(context, listen: false).changeState(
-      newCategory: category,
-    );
-  }
-
-  void _resetState() {
-    category = null;
-    isButtonDisabled = true;
-    Provider.of<AddSightProvider>(context, listen: false).changeState(
-      newCategory: category,
-    );
-    Provider.of<ButtonCreateProvider>(
-      context,
-      listen: false,
-    ).changeState(
-      newIsButtonDisabled: isButtonDisabled,
-    );
-    Navigator.pop(context);
-  }
-
-  void _changeButtonState(List<TextEditingController> controllers) {
-    var c = 0;
-    if (stateOfCategory) {
-      c = 1;
-    }
-
-    for (final controller in controllers) {
-      if (controller.text != '') {
-        c += 1;
+          resizeToAvoidBottomInset: true,
+        );
       }
-    }
-    isButtonDisabled = c != 5;
-    Provider.of<ButtonCreateProvider>(
-      context,
-      listen: false,
-    ).changeState(
-      newIsButtonDisabled: isButtonDisabled,
-    );
+
+      return Container();
+    }, converter: (store) {
+      return store.state.addSightScreenState;
+    });
   }
 }
 

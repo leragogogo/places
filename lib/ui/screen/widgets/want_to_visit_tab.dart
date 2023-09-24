@@ -1,10 +1,9 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:places/blocs/visiting_screen/visiting_screen_bloc.dart';
-import 'package:places/blocs/visiting_screen/visiting_screen_event.dart';
-import 'package:places/blocs/visiting_screen/visiting_screen_state.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:places/redux/action/favourite_tab_action.dart';
+import 'package:places/redux/state/app_state.dart';
+import 'package:places/redux/state/favourite_tab_state.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
@@ -21,18 +20,17 @@ class WantToVisitTab extends StatefulWidget {
 class _WantToVisitTabState extends State<WantToVisitTab> {
   DateTime? _chosenDateTime;
 
-  //List<Place> _wantToVisit = [];
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    //_wantToVisit = Provider.of<WantToVisitProvider>(context).wantToVisit;
-
-    return BlocBuilder<VisitingScreenBloc, VisitingScreenState>(
-        builder: (context, state) {
-      return state is VisitingScreenWithFavourites
-          ? Padding(
+    return StoreConnector<AppState, FavouriteTabState>(
+      onInit: (store) {
+        store.dispatch(InitFavouriteTabAction());
+      },
+      builder: (BuildContext context, FavouriteTabState vm) {
+        if (vm is FavouritePlacesTabDataState) {
+          return Padding(
               padding: const EdgeInsets.only(left: 16, right: 16),
               child: ReorderableListView(
                 physics: Platform.isAndroid
@@ -43,25 +41,18 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                   child: child,
                 ),
                 onReorder: (oldIndex, newIndex) {
-                  context.read<VisitingScreenBloc>().add(DragFavouritePlace(
-                      oldIndex: oldIndex, newIndex: newIndex));
+                  StoreProvider.of<AppState>(context)
+                      .dispatch(DragFavouritePlaceAction(newIndex, oldIndex));
                 },
-                children: state.favouritePlaces
+                children: vm.favouritePlaces
                     .asMap()
                     .entries
                     .map((i) => VisitingSightCard(
                           key: ObjectKey(i.value),
                           sight: i.value,
                           deleteFromList: () {
-                            context.read<VisitingScreenBloc>().add(
-                                RemoveFavouritePlace(
-                                    placeForRemoving: i.value));
-                            /*Provider.of<WantToVisitProvider>(
-                              context,
-                              listen: false,
-                            ).changeState(
-                              newWantToVisit: state.favouritePlaces,
-                            );*/
+                            StoreProvider.of<AppState>(context)
+                                .dispatch(RemoveFavouritePlaceAction(i.value));
                           },
                           lowerText: Text(
                             AppStrings.wantToVisitText,
@@ -75,87 +66,30 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                             color: Colors.white,
                           ),
                           leftIconOnPressed: () {
-                            Platform.isAndroid
-                                ? _showAndroidPicker()
-                                : _showIOSPicker();
+                            StoreProvider.of<AppState>(context)
+                                .dispatch(PlanVisitOfPlaceAction(
+                              Platform.isAndroid,
+                              context,
+                              (val) {
+                                setState(() {
+                                  _chosenDateTime = val;
+                                });
+                              },
+                            ));
                           },
                         ))
                     .toList(),
-              ))
-          : const EmptyScreen(
-              path: AppAssets.wantToVisitedEmpty,
-              text: AppStrings.wantToVisetedEmptyText,
-            );
-    });
-  }
-
-  void _showAndroidPicker() {
-    final theme = Theme.of(context);
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2023),
-      lastDate: DateTime(2026),
-      builder: (context, child) {
-        return Theme(
-          data: theme.copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.planButtonColor,
-              onSurface: theme.canvasColor,
-            ),
-            dialogBackgroundColor: theme.appBarTheme.backgroundColor,
-          ),
-          child: child!,
-        );
+              ));
+        } else if (vm is FavouritePlacesTabEmptyState) {
+          return EmptyScreen(
+            path: AppAssets.wantToVisitedEmpty,
+            text: AppStrings.wantToVisetedEmptyText,
+          );
+        }
+        return Container();
       },
-    );
-  }
-
-  void _showIOSPicker() {
-    final theme = Theme.of(context);
-    showCupertinoModalPopup<DateTime>(
-      context: context,
-      builder: (_) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.5,
-          color: theme.appBarTheme.backgroundColor,
-          child: Column(
-            children: [
-              Expanded(
-                flex: 4,
-                child: CupertinoTheme(
-                  data: CupertinoThemeData(
-                    textTheme: CupertinoTextThemeData(
-                      dateTimePickerTextStyle:
-                          theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.canvasColor,
-                      ),
-                    ),
-                  ),
-                  child: CupertinoDatePicker(
-                    initialDateTime: DateTime.now(),
-                    onDateTimeChanged: (val) {
-                      setState(() {
-                        _chosenDateTime = val;
-                      });
-                    },
-                  ),
-                ),
-              ),
-              Expanded(
-                child: CupertinoButton(
-                  child: Text(
-                    'OK',
-                    style: TextStyle(
-                      color: AppColors.planButtonColor,
-                    ),
-                  ),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
-            ],
-          ),
-        );
+      converter: (store) {
+        return store.state.favouriteTabState;
       },
     );
   }

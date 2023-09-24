@@ -2,9 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:places/data/interactor/search_interactor.dart';
 import 'package:places/data/model/place.dart';
-import 'package:places/data/repository/search_repository.dart';
+import 'package:places/data/repository/repositories.dart';
 import 'package:places/redux/action/search_screen_action.dart';
 import 'package:places/redux/state/app_state.dart';
 import 'package:places/redux/state/search_screen_state.dart';
@@ -23,9 +22,7 @@ class SightSearchScreen extends StatefulWidget {
 }
 
 class _SightSearchScreenState extends State<SightSearchScreen> {
-  final searchRepository = SearchRepository();
-  final searchInteractor = SearchInteractor();
-
+  
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -45,7 +42,7 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
             onChanged: (value) {
               StoreProvider.of<AppState>(context).dispatch(
                   SearchTextWasUpdatedAction(
-                      value, searchInteractor, searchRepository.history));
+                      value,  searchRepository.history));
             },
             onTap: () {},
             suffixIcon: IconButton(
@@ -57,7 +54,7 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
                 widget.searchField.clear();
                 StoreProvider.of<AppState>(context).dispatch(
                     SearchTextWasUpdatedAction(
-                        '', searchInteractor, searchRepository.history));
+                        '',  searchRepository.history));
               },
             ),
             controller: widget.searchField,

@@ -1,42 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:places/data/interactor/filter_interactor.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:places/data/model/filter_item.dart';
 import 'package:places/data/model/place.dart';
-import 'package:places/data/store/sight_list_store.dart';
-import 'package:places/data_providers/filter_provider.dart';
-import 'package:places/domain/location.dart';
+import 'package:places/data/repository/repositories.dart';
+import 'package:places/data/model/location.dart';
+import 'package:places/methods.dart';
+import 'package:places/redux/action/filters_screen_action.dart';
+import 'package:places/redux/state/app_state.dart';
+import 'package:places/redux/state/filters_screen_state.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/bottom_button.dart';
-import 'package:places/ui/screen/widgets/store.dart';
-import 'package:provider/provider.dart';
-
-// соответсвие между значениями слайдера и длиной радиуса поиска в метрах
-Map<int, double> _points = {
-  1: 100,
-  2: 500,
-  3: 1000,
-  4: 2000,
-  5: 3000,
-  6: 4000,
-  7: 5000,
-  8: 6000,
-  9: 7500,
-  10: 10000,
-};
-
-Map<double, double> _fromRepository = {
-  100: 1,
-  500: 2,
-  1000: 3,
-  2000: 4,
-  3000: 5,
-  4000: 6,
-  5000: 7,
-  6000: 8,
-  7500: 9,
-  10000: 10,
-};
 
 class FiltersScreen extends StatefulWidget {
   const FiltersScreen({
@@ -48,221 +22,256 @@ class FiltersScreen extends StatefulWidget {
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
-  String distance = 'от 100 до 10000 м';
-
-  // количество подходящих под критерии мест
-  int sightCount = 0;
-
-  // состояние кнопки "ПОКАЗАТЬ"
-  bool isButtonDisabled = true;
-
   Location userLocation = Location(lat: 45, lon: 44);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    sightCount = Provider.of<FiltersProvider>(context).sightCount;
-    isButtonDisabled = Provider.of<FiltersProvider>(context).isButtonDisabled;
 
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: theme.canvasColor,
-          ),
-          onPressed: () {
-            Navigator.pop(context, <dynamic>[]);
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              setState(() {
-                Provider.of<FilterInteractor>(
-                  context,
-                  listen: false,
-                ).clearActiveCategories();
-                sightCount = 0;
-                isButtonDisabled = true;
-                Provider.of<FilterInteractor>(
-                  context,
-                  listen: false,
-                ).candidateCurRadius = const RangeValues(100, 10000);
-                distance = 'от 100 до 10000 м';
-              });
-              Provider.of<FiltersProvider>(context, listen: false).changeState(
-                newSightCount: sightCount,
-                newIsButtonDisabled: isButtonDisabled,
-              );
-            },
-            child: Text(
-              AppStrings.cleanButtonText,
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: AppColors.planButtonColor),
+    return StoreConnector<AppState, FiltersScreenState>(onInit: (store) {
+      store.dispatch(InitFiltersScreenAction());
+    }, builder: (BuildContext context, FiltersScreenState vm) {
+      if (vm is AtLeastOneCategoryChosenState) {
+        return Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: theme.canvasColor,
+              ),
+              onPressed: () {
+                StoreProvider.of<AppState>(context)
+                    .dispatch(ExitFromFiltersScreenAction(context));
+              },
             ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  StoreProvider.of<AppState>(context)
+                      .dispatch(ClearSelectionsAction());
+                },
+                child: Text(
+                  AppStrings.cleanButtonText,
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.planButtonColor),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: LayoutBuilder(
-        builder: (context, constraint) => SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraint.maxHeight),
-            child: IntrinsicHeight(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16, top: 32),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        AppStrings.categoryText,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.primaryColorDark,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 41, right: 41),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: _Categories(
-                        store: store,
-                        radius: RangeValues(
-                          Provider.of<FilterInteractor>(
-                            context,
-                            listen: false,
-                          ).candidateCurRadius.start,
-                          Provider.of<FilterInteractor>(
-                            context,
-                            listen: false,
-                          ).candidateCurRadius.end,
-                        ),
-                        userLocation: userLocation,
-                        filterItems: Provider.of<FilterInteractor>(
-                          context,
-                          listen: false,
-                        ).candidateFilterItems,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 60,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 16),
-                    child: Row(
-                      children: [
-                        Text(
-                          AppStrings.distanceText,
-                          style: theme.textTheme.bodyMedium
-                              ?.copyWith(color: theme.canvasColor),
-                        ),
-                        Text(
-                          distance,
-                          style: theme.textTheme.bodyMedium
-                              ?.copyWith(color: theme.primaryColorDark),
-                        ),
-                      ],
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 32,
-                  ),
-                  SliderTheme(
-                    data: const SliderThemeData(
-                      trackHeight: 1,
-                    ),
-                    child: RangeSlider(
-                      values: RangeValues(
-                        _fromRepository[Provider.of<FilterInteractor>(
-                          context,
-                          listen: false,
-                        ).candidateCurRadius.start]!,
-                        _fromRepository[Provider.of<FilterInteractor>(
-                          context,
-                          listen: false,
-                        ).candidateCurRadius.end]!,
-                      ),
-                      onChanged: (values) {
-                        setState(() {
-                          Provider.of<FilterInteractor>(
-                            context,
-                            listen: false,
-                          ).candidateCurRadius = RangeValues(
-                            _points[values.start]!,
-                            _points[values.end]!,
-                          );
-                          distance = 'от ${Provider.of<FilterInteractor>(
-                            context,
-                            listen: false,
-                          ).candidateCurRadius.start.round().toInt()} до ${Provider.of<FilterInteractor>(
-                            context,
-                            listen: false,
-                          ).candidateCurRadius.end.round().toInt()} м';
-
-                          store.filterPlaces(
-                            radius: RangeValues(
-                              Provider.of<FilterInteractor>(
-                                context,
-                                listen: false,
-                              ).candidateCurRadius.start,
-                              Provider.of<FilterInteractor>(
-                                context,
-                                listen: false,
-                              ).candidateCurRadius.end,
+          body: LayoutBuilder(
+            builder: (context, constraint) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraint.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, top: 32),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            AppStrings.categoryText,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.primaryColorDark,
+                              fontSize: 12,
                             ),
-                            categories: Provider.of<FilterInteractor>(
-                              context,
-                              listen: false,
-                            ).getSelectedCandidateCategories(),
-                          );
-
-                          sightCount = store.filteredPlaces.length;
-                          isButtonDisabled = sightCount == 0;
-                        });
-                        Provider.of<FiltersProvider>(context, listen: false)
-                            .changeState(
-                          newSightCount: sightCount,
-                          newIsButtonDisabled: isButtonDisabled,
-                        );
-                      },
-                      min: 1,
-                      max: 10,
-                      activeColor: AppColors.planButtonColor,
-                      inactiveColor: AppColors.ltTextColor,
-                      divisions: 9,
-                    ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 41, right: 41),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: _Categories(
+                            radius: filterRepository.candidateRadius,
+                            userLocation: userLocation,
+                            filterItems: filterRepository.candidateFilterItems,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 60,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16),
+                        child: Row(
+                          children: [
+                            Text(
+                              AppStrings.distanceText,
+                              style: theme.textTheme.bodyMedium
+                                  ?.copyWith(color: theme.canvasColor),
+                            ),
+                            Text(
+                              'от ${points[vm.radius.start.round()]!.toInt()} до ${points[vm.radius.end.round()]!.toInt()} м',
+                              style: theme.textTheme.bodyMedium
+                                  ?.copyWith(color: theme.primaryColorDark),
+                            ),
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 32,
+                      ),
+                      SliderTheme(
+                        data: const SliderThemeData(
+                          trackHeight: 1,
+                        ),
+                        child: RangeSlider(
+                          values: filterRepository.candidateRadius,
+                          onChanged: (values) {
+                            StoreProvider.of<AppState>(context)
+                                .dispatch(ChangeRangeOfSliderAction(values));
+                          },
+                          min: 1,
+                          max: 10,
+                          activeColor: AppColors.planButtonColor,
+                          inactiveColor: AppColors.ltTextColor,
+                          divisions: 9,
+                        ),
+                      ),
+                      Expanded(
+                        child: BottomButton(
+                          text:
+                              '${AppStrings.showButtonText} (${vm.result.length})',
+                          onPressed: () {
+                            StoreProvider.of<AppState>(context)
+                                .dispatch(ShowResultAction(context, vm.result));
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: BottomButton(
-                      text: '${AppStrings.showButtonText} ($sightCount)',
-                      onPressed: isButtonDisabled
-                          ? null
-                          : () {
-                              Provider.of<FilterInteractor>(
-                                context,
-                                listen: false,
-                              ).candidateToActive();
-
-                              Navigator.pop(context, <dynamic>[]);
-                            },
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    );
+        );
+      } else if (vm is NoOneCategoryChosenState) {
+        return Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: theme.canvasColor,
+              ),
+              onPressed: () {
+                StoreProvider.of<AppState>(context)
+                    .dispatch(ExitFromFiltersScreenAction(context));
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  StoreProvider.of<AppState>(context)
+                      .dispatch(ClearSelectionsAction());
+                },
+                child: Text(
+                  AppStrings.cleanButtonText,
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: AppColors.planButtonColor),
+                ),
+              ),
+            ],
+          ),
+          body: LayoutBuilder(
+            builder: (context, constraint) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraint.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, top: 32),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            AppStrings.categoryText,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.primaryColorDark,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 41, right: 41),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: _Categories(
+                            radius: filterRepository.candidateRadius,
+                            userLocation: userLocation,
+                            filterItems: filterRepository.candidateFilterItems,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 60,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16),
+                        child: Row(
+                          children: [
+                            Text(
+                              AppStrings.distanceText,
+                              style: theme.textTheme.bodyMedium
+                                  ?.copyWith(color: theme.canvasColor),
+                            ),
+                            Text(
+                              'от ${points[vm.radius.start.round()]!.toInt()} до ${points[vm.radius.end.round()]!.toInt()} м',
+                              style: theme.textTheme.bodyMedium
+                                  ?.copyWith(color: theme.primaryColorDark),
+                            ),
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 32,
+                      ),
+                      SliderTheme(
+                        data: const SliderThemeData(
+                          trackHeight: 1,
+                        ),
+                        child: RangeSlider(
+                          values: filterRepository.candidateRadius,
+                          onChanged: (values) {
+                            StoreProvider.of<AppState>(context)
+                                .dispatch(ChangeRangeOfSliderAction(values));
+                          },
+                          min: 1,
+                          max: 10,
+                          activeColor: AppColors.planButtonColor,
+                          inactiveColor: AppColors.ltTextColor,
+                          divisions: 9,
+                        ),
+                      ),
+                      Expanded(
+                        child: BottomButton(
+                          text: '${AppStrings.showButtonText} (0)',
+                          onPressed: null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+      return Container();
+    }, converter: (store) {
+      return store.state.filtersScreenState;
+    });
   }
 }
 
@@ -271,13 +280,11 @@ class _Categories extends StatefulWidget {
   final RangeValues radius;
   final Location userLocation;
   final List<FilterItem> filterItems;
-  final SightListStore store;
 
   const _Categories({
     required this.userLocation,
     required this.filterItems,
     required this.radius,
-    required this.store,
     Key? key,
   }) : super(key: key);
 
@@ -296,43 +303,16 @@ class _CategoriesState extends State<_Categories> {
     return Wrap(
       runSpacing: 40,
       alignment: WrapAlignment.spaceBetween,
-      children: Provider.of<FilterInteractor>(
-        context,
-        listen: false,
-      ).candidateFilterItems.map((e) {
+      children: filterRepository.candidateFilterItems.map((e) {
         return _CategoryButton(
           name: e,
           isChosen: e.isSelected,
           onPressed: () {
-            _onCategoryButtonPressed(e.index, widget.store);
+            StoreProvider.of<AppState>(context)
+                .dispatch(ClickOnCategoryAction(e));
           },
         );
       }).toList(),
-    );
-  }
-
-  void _onCategoryButtonPressed(int index, SightListStore store) {
-    setState(
-      () {
-        Provider.of<FilterInteractor>(
-          context,
-          listen: false,
-        ).changeStateOfCategory(index);
-        store.filterPlaces(
-          radius: widget.radius,
-          categories: Provider.of<FilterInteractor>(
-            context,
-            listen: false,
-          ).getSelectedCandidateCategories(),
-        );
-        sightCount = store.filteredPlaces.length;
-        debugPrint(sightCount.toString());
-        isButtonDisabled = sightCount == 0;
-      },
-    );
-    Provider.of<FiltersProvider>(context, listen: false).changeState(
-      newSightCount: sightCount,
-      newIsButtonDisabled: isButtonDisabled,
     );
   }
 }

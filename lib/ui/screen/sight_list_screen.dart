@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:places/data/interactor/filter_interactor.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:places/data/model/place.dart';
-import 'package:places/data_providers/filter_provider.dart';
+import 'package:places/redux/action/sight_list_screen_action.dart';
+import 'package:places/redux/action/favourite_tab_action.dart';
+import 'package:places/redux/state/app_state.dart';
+import 'package:places/redux/state/sight_list_screen_state.dart';
 import 'package:places/ui/screen/add_sight_screen.dart';
-import 'package:places/ui/screen/filters_screen.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
-import 'package:places/ui/screen/sight_search_screen.dart';
 import 'package:places/ui/screen/widgets/network_error_widget.dart';
 import 'package:places/ui/screen/widgets/search_bar.dart';
 import 'package:places/ui/screen/widgets/sight_card.dart';
-import 'package:places/ui/screen/widgets/store.dart';
-import 'package:provider/provider.dart';
 
 class SightListScreen extends StatefulWidget {
   const SightListScreen({Key? key}) : super(key: key);
@@ -25,111 +23,93 @@ class SightListScreen extends StatefulWidget {
 class _SightListScreen extends State<SightListScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        floatingActionButton: _AddNewSightButton(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        body: Observer(builder: (_) {
-          return store.isRequestDoneWithError
-              ? NetworkErrorWidget()
-              : Stack(
-                  children: [
-                    store.filteredPlaces.isEmpty
-                        ? Center(
-                            child: CircularProgressIndicator(
-                                color: AppColors.planButtonColor),
-                          )
-                        : CustomScrollView(
-                            slivers: [
-                              // AppBar
-                              SliverPersistentHeader(
-                                delegate: _SliverSightAppBar(),
-                                pinned: true,
-                              ),
-                              // Поисковая строка
-                              SliverToBoxAdapter(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16),
-                                  child: SearchBar(
-                                    readOnly: true,
-                                    onChanged: (value) {},
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute<SightSearchScreen>(
-                                          builder: (context) =>
-                                              SightSearchScreen(),
-                                        ),
-                                      );
-                                    },
-                                    suffixIcon: IconButton(
-                                      icon: ImageIcon(
-                                        const AssetImage(AppAssets.filterAsset),
-                                        color: AppColors.planButtonColor,
-                                      ),
-                                      onPressed: () async {
-                                        Provider.of<FilterInteractor>(
-                                          context,
-                                          listen: false,
-                                        ).activeToCandidate();
-                                        Provider.of<FiltersProvider>(context,
-                                                listen: false)
-                                            .changeState(
-                                          newSightCount:
-                                              Provider.of<FilterInteractor>(
-                                            context,
-                                            listen: false,
-                                          ).isAtLeastOneCategorySelected()
-                                                  ? store.filteredPlaces.length
-                                                  : 0,
-                                          newIsButtonDisabled:
-                                              Provider.of<FilterInteractor>(
-                                            context,
-                                            listen: false,
-                                          ).isAtLeastOneCategorySelected()
-                                                  ? store.filteredPlaces.isEmpty
-                                                  : true,
-                                        );
+    return StoreConnector<AppState, SightListScreenState>(onInit: (store) {
+      store.dispatch(LoadSightsAction());
+    }, builder: (BuildContext context, SightListScreenState vm) {
+      if (vm is SightListScreenLoadingState) {
+        return _LoadingSightListScreen();
+      } else if (vm is SightListScreenDataState) {
+        return _LoadedSightListScreen(vm.places);
+      } else if (vm is SightListScreenErrorState) {
+        return _ErrorSightListScreen();
+      }
+      return Container();
+    }, converter: (store) {
+      return store.state.sightListScreenState;
+    });
+  }
+}
 
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute<List<dynamic>>(
-                                            builder: (context) =>
-                                                FiltersScreen(),
-                                          ),
-                                        );
-                                        store.filterPlaces(
-                                            radius:
-                                                Provider.of<FilterInteractor>(
-                                              context,
-                                              listen: false,
-                                            ).activeCurRadius,
-                                            categories:
-                                                Provider.of<FilterInteractor>(
-                                              context,
-                                              listen: false,
-                                            ).getSelectedActiveCategories());
-                                      },
-                                    ),
-                                    controller: null,
-                                  ),
-                                ),
-                              ),
-                              // Основной список
-                              if (MediaQuery.of(context).orientation ==
-                                  Orientation.portrait)
-                                _SightListPortrait(
-                                  filteredPlaces: store.filteredPlaces,
-                                )
-                              else
-                                _SightListLandscape(
-                                  filteredPlaces: store.filteredPlaces,
-                                ),
-                            ],
-                          ),
-                  ],
-                );
-        }));
+class _ErrorSightListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: NetworkErrorWidget(),
+    );
+  }
+}
+
+class _LoadingSightListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: _AddNewSightButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: Center(
+        child: CircularProgressIndicator(color: AppColors.planButtonColor),
+      ),
+    );
+  }
+}
+
+class _LoadedSightListScreen extends StatelessWidget {
+  final List<Place> places;
+  _LoadedSightListScreen(this.places);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: _AddNewSightButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: CustomScrollView(
+        slivers: [
+          // AppBar
+          SliverPersistentHeader(
+            delegate: _SliverSightAppBar(),
+            pinned: true,
+          ),
+          // Поисковая строка
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: SearchBar(
+                readOnly: true,
+                onChanged: (value) {},
+                onTap: () {
+                  StoreProvider.of<AppState>(context)
+                      .dispatch(OpenSearchScreenAction(context));
+                },
+                suffixIcon: IconButton(
+                  icon: ImageIcon(
+                    const AssetImage(AppAssets.filterAsset),
+                    color: AppColors.planButtonColor,
+                  ),
+                  onPressed: () async {
+                    StoreProvider.of<AppState>(context)
+                        .dispatch(OpenFiltersScreenAction(context));
+                  },
+                ),
+                controller: null,
+              ),
+            ),
+          ),
+          // Основной список
+          if (MediaQuery.of(context).orientation == Orientation.portrait)
+            _SightListPortrait(filteredPlaces: places)
+          else
+            _SightListLandscape(filteredPlaces: places),
+        ],
+      ),
+    );
   }
 }
 
@@ -144,7 +124,17 @@ class _SightListPortrait extends StatelessWidget {
         (context, index) {
           return Padding(
             padding: const EdgeInsets.only(top: 16.0),
-            child: SightCard(filteredPlaces[index]),
+            child: SightCard(
+                place: filteredPlaces[index],
+                addToFavourites: () {
+                  StoreProvider.of<AppState>(context).dispatch(
+                      AddSightToFavouriteAction(
+                          filteredPlaces[index], filteredPlaces));
+                },
+                removeFromFavorites: () {
+                  StoreProvider.of<AppState>(context).dispatch(
+                      RemoveFavouritePlaceAction(filteredPlaces[index]));
+                }),
           );
         },
         childCount: filteredPlaces.length,
@@ -168,7 +158,17 @@ class _SightListLandscape extends StatelessWidget {
               const SizedBox(
                 height: 16,
               ),
-              SightCard(filteredPlaces[index]),
+              SightCard(
+                  place: filteredPlaces[index],
+                  addToFavourites: () {
+                    StoreProvider.of<AppState>(context).dispatch(
+                        AddSightToFavouriteAction(
+                            filteredPlaces[index], filteredPlaces));
+                  },
+                  removeFromFavorites: () {
+                    StoreProvider.of<AppState>(context).dispatch(
+                        RemoveFavouritePlaceAction(filteredPlaces[index]));
+                  }),
             ],
           );
         },
