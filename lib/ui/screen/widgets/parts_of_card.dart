@@ -1,13 +1,51 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/data/model/place.dart';
-import 'package:places/ui/screen/res/app_colors.dart';
+import 'package:places/ui/screen/res/app_assets.dart';
+
+enum WidgetStatus { isLoading, isReady, isEmpty, isError }
 
 //верхняя часть верстки карточки с изображением
-class UpperPart extends StatelessWidget {
+class UpperPart extends StatefulWidget {
   final Place place;
   const UpperPart(this.place, {Key? key}) : super(key: key);
+
+  @override
+  State<UpperPart> createState() => _UpperPartState();
+}
+
+class _UpperPartState extends State<UpperPart> {
+  late NetworkImage _networkImage;
+
+  WidgetStatus status = WidgetStatus.isLoading;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.place.urls.isEmpty) {
+      status = WidgetStatus.isEmpty;
+      _networkImage = NetworkImage(AppAssets.placeholderAsset);
+    } else {
+      _networkImage = NetworkImage(widget.place.urls[0]);
+      _networkImage.resolve(ImageConfiguration.empty).addListener(
+            ImageStreamListener(
+              (_, __) async {
+                if (mounted) {
+                  setState(() {
+                    status = WidgetStatus.isReady;
+                  });
+                }
+              },
+              onError: (_, __) {
+                if (mounted) {
+                  setState(() {
+                    status = WidgetStatus.isError;
+                  });
+                }
+              },
+            ),
+          );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,19 +59,34 @@ class UpperPart extends StatelessWidget {
               topLeft: Radius.circular(12),
               topRight: Radius.circular(12),
             ),
-            child: CachedNetworkImage(
-              imageUrl:
-                  place.urls.isEmpty ? 'https://aa.aa.ru/1.jpg' : place.urls[0],
-              placeholder: (context, url) => const CupertinoActivityIndicator(),
-              errorWidget: (context, url, dynamic error) => Container(
-                color: AppColors.planButtonColor,
-                alignment: Alignment.center,
-                child: const Text(
-                  'Whoops!',
-                  style: TextStyle(fontSize: 30),
+            child: AnimatedCrossFade(
+              firstChild: status == WidgetStatus.isEmpty
+                  ? Center(
+                      child: Image.asset(
+                        AppAssets.placeholderAsset,
+                        width: 200,
+                        height: 200,
+                      ),
+                    )
+                  : Image.network(
+                      _networkImage.url,
+                      width: double.infinity,
+                      height: 96,
+                      fit: BoxFit.fitWidth,
+                    ),
+              secondChild: Center(
+                child: Image.asset(
+                  AppAssets.placeholderAsset,
+                  width: 200,
+                  height: 200,
                 ),
               ),
-              fit: BoxFit.cover,
+              duration: Duration(seconds: 1),
+              crossFadeState: (status == WidgetStatus.isLoading) ||
+                      (status == WidgetStatus.isError) ||
+                      (status == WidgetStatus.isEmpty)
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
             ),
           ),
         ),
@@ -41,7 +94,7 @@ class UpperPart extends StatelessWidget {
           top: 16,
           left: 16,
           child: Text(
-            place.beatifulType,
+            widget.place.beatifulType,
             style: const TextStyle(
               color: Colors.white,
             ),
