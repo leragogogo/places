@@ -81,9 +81,7 @@ class _SightCardState extends State<SightCard> {
             Positioned(
               right: 0,
               child: TextButton(
-                style: TextButton.styleFrom(
-                  shape: const CircleBorder(),
-                ),
+                style: const ButtonStyle(splashFactory: NoSplash.splashFactory),
                 onPressed: () {
                   setState(() {
                     isFavouriteButtonClicked = !isFavouriteButtonClicked;
@@ -92,17 +90,22 @@ class _SightCardState extends State<SightCard> {
                       ? widget.addToFavourites()
                       : widget.removeFromFavorites();
                 },
-                child: isFavouriteButtonClicked &&
-                        visitingScreenRepository.favouritePlaces
-                            .contains(widget.place)
-                    ? const Icon(
-                        Icons.favorite_sharp,
-                        color: Colors.red,
-                      )
-                    : const Icon(
-                        Icons.favorite_outline,
-                        color: Colors.white,
-                      ),
+                child: AnimatedCrossFade(
+                  firstChild: const Icon(
+                    Icons.favorite_outline,
+                    color: Colors.white,
+                  ),
+                  secondChild: const Icon(
+                    Icons.favorite_sharp,
+                    color: Colors.red,
+                  ),
+                  duration: Duration(milliseconds: 600),
+                  crossFadeState: isFavouriteButtonClicked &&
+                          visitingScreenRepository.favouritePlaces
+                              .contains(widget.place)
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                ),
               ),
             ),
           ],

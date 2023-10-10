@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:places/data/model/place.dart';
+import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/res/app_styles.dart';
@@ -97,6 +98,8 @@ class _SightPageView extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Stack(
       children: [
         PageView(
@@ -113,12 +116,15 @@ class _SightPageView extends StatelessWidget {
                     placeholder: (context, url) =>
                         const CupertinoActivityIndicator(),
                     errorWidget: (context, url, dynamic error) => Container(
-                      color: AppColors.planButtonColor,
+                      color: theme.primaryColor,
                       alignment: Alignment.center,
-                      child: const Text(
-                        'Whoops!',
-                        style: TextStyle(fontSize: 30),
-                      ),
+                      child: Center(
+                        child: Image.asset(
+                          AppAssets.placeholderAsset,
+                          width: 500,
+                          height: 500,
+                        ),
+                      ), 
                     ),
                     fit: BoxFit.cover,
                   ),

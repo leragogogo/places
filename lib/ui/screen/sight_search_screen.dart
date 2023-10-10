@@ -7,6 +7,7 @@ import 'package:places/data/repository/repositories.dart';
 import 'package:places/redux/action/search_screen_action.dart';
 import 'package:places/redux/state/app_state.dart';
 import 'package:places/redux/state/search_screen_state.dart';
+import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/search_bar.dart';
@@ -22,7 +23,6 @@ class SightSearchScreen extends StatefulWidget {
 }
 
 class _SightSearchScreenState extends State<SightSearchScreen> {
-  
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -41,8 +41,7 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
             readOnly: false,
             onChanged: (value) {
               StoreProvider.of<AppState>(context).dispatch(
-                  SearchTextWasUpdatedAction(
-                      value,  searchRepository.history));
+                  SearchTextWasUpdatedAction(value, searchRepository.history));
             },
             onTap: () {},
             suffixIcon: IconButton(
@@ -53,8 +52,7 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
               onPressed: () {
                 widget.searchField.clear();
                 StoreProvider.of<AppState>(context).dispatch(
-                    SearchTextWasUpdatedAction(
-                        '',  searchRepository.history));
+                    SearchTextWasUpdatedAction('', searchRepository.history));
               },
             ),
             controller: widget.searchField,
@@ -199,20 +197,35 @@ class _MiniSightCard extends StatelessWidget {
         height: 56,
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(12)),
-          child: CachedNetworkImage(
-            imageUrl:
-                place.urls.isEmpty ? 'https://aa.aa.ru/1.jpg' : place.urls[0],
-            placeholder: (context, url) => const CupertinoActivityIndicator(),
-            errorWidget: (context, url, dynamic error) => Container(
-              color: AppColors.planButtonColor,
-              alignment: Alignment.center,
-              child: const Text(
-                'Whoops!',
-                style: TextStyle(fontSize: 30),
-              ),
-            ),
-            fit: BoxFit.cover,
-          ),
+          child: place.urls.isEmpty
+              ? Container(
+                  color: theme.primaryColor,
+                  alignment: Alignment.center,
+                  child: Center(
+                    child: Image.asset(
+                      AppAssets.placeholderAsset,
+                      width: 100,
+                      height: 100,
+                    ),
+                  ),
+                )
+              : CachedNetworkImage(
+                  imageUrl: place.urls[0],
+                  placeholder: (context, url) =>
+                      const CupertinoActivityIndicator(),
+                  errorWidget: (context, url, dynamic error) => Container(
+                    color: theme.primaryColor,
+                    alignment: Alignment.center,
+                    child: Center(
+                      child: Image.asset(
+                        AppAssets.placeholderAsset,
+                        width: 100,
+                        height: 100,
+                      ),
+                    ),
+                  ),
+                  fit: BoxFit.cover,
+                ),
         ),
       ),
       title: Text(

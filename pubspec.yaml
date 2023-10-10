@@ -58,6 +58,7 @@ flutter:
     - res/icons/camera.png
     - res/icons/calendar.png
     - res/icons/error.png
+    - res/images/placeholder.png
 
 
 
