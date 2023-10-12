@@ -69,11 +69,24 @@ class _SightCardState extends State<SightCard> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   onTap: () {
-                    showModalBottomSheet<void>(
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (_) => SightDetailsScreen(widget.place),
-                    );
+                    Navigator.of(context).push(PageRouteBuilder(
+                      pageBuilder: (context, _, __) {
+                        return SightDetailsScreen(widget.place);
+                      },
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        return FadeTransition(
+                          opacity: Tween<double>(
+                            begin: 0,
+                            end: 1,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
+                      transitionDuration: const Duration(milliseconds: 500),
+                      reverseTransitionDuration:
+                          const Duration(milliseconds: 500),
+                    ));
                   },
                 ),
               ),
