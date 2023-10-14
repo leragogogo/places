@@ -8,12 +8,10 @@ import 'package:places/ui/screen/filters_screen.dart';
 import 'package:places/ui/screen/sight_search_screen.dart';
 
 AppState loadSightsReducer(AppState state, LoadSightsAction action) {
-  debugPrint('loadSightsReducer');
   return state.cloneWith(sightListScreenState: SightListScreenLoadingState());
 }
 
 AppState resultSightsReducer(AppState state, ResultSightsAction action) {
-  debugPrint('resultSightsReducer');
   return state.cloneWith(
       sightListScreenState: SightListScreenDataState(action.places));
 }

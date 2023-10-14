@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:places/data/model/filter_item.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data/repository/repositories.dart';

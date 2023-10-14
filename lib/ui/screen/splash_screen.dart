@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:places/data/first_entrance.dart';
+import 'package:places/data/shared_prefernces.dart';
 import 'package:places/main_screens.dart';
+import 'package:places/ui/screen/on_boarding_screen.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 
@@ -18,10 +21,11 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void initState() {
+    WorkWithSharedPreferences.readInformationAboutEntrance(context);
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 4));
     _animationController.repeat();
-    _navigateToNext();
+    _navigate();
     super.initState();
   }
 
@@ -63,14 +67,28 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 
-  Future<void> _navigateToNext() async {
+  Future<void> _navigate() async {
     if (await intialized) {
-      if (context.mounted) {
-        await Navigator.of(context)
-            .pushReplacement(MaterialPageRoute<MainScreens>(
-          builder: (context) => const MainScreens(),
-        ));
-      }
+      isFirstEntrance ? _navigateToOnboarding() : _navigateToNext();
+    }
+  }
+
+  Future<void> _navigateToNext() async {
+    if (context.mounted) {
+      await Navigator.of(context)
+          .pushReplacement(MaterialPageRoute<MainScreens>(
+        builder: (context) => const MainScreens(),
+      ));
+    }
+  }
+
+  Future<void> _navigateToOnboarding() async {
+    if (context.mounted) {
+      await Navigator.of(context)
+          .pushReplacement(MaterialPageRoute<MainScreens>(
+        builder: (context) =>
+            const OnBoardingScreen(isGoingToSettingsScreen: false),
+      ));
     }
   }
 }

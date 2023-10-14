@@ -24,6 +24,7 @@ dependencies:
   equatable: ^2.0.5
   redux: ^5.0.0
   flutter_redux: ^0.8.2
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

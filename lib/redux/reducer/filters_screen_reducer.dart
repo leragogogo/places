@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:places/data/repository/repositories.dart';
+import 'package:places/data/shared_prefernces.dart';
 import 'package:places/methods.dart';
 import 'package:places/redux/action/filters_screen_action.dart';
 import 'package:places/redux/state/app_state.dart';
@@ -62,6 +63,9 @@ AppState showResultReducer(AppState state, ShowResultAction action) {
       filterRepository.candidateRadius.start,
       filterRepository.candidateRadius.end);
   Navigator.pop(action.context, <dynamic>[]);
+  WorkWithSharedPreferences.saveRadius();
+  WorkWithSharedPreferences.saveCategories();
+
   return state.cloneWith(
       sightListScreenState: SightListScreenDataState(action.result));
 }
@@ -81,6 +85,8 @@ AppState exitFromFiltersScreenReducer(
 
 AppState initFiltersScreenReducer(
     AppState state, InitFiltersScreenAction action) {
+  WorkWithSharedPreferences.readRadius();
+  WorkWithSharedPreferences.readCategories();
   var filteredPlaces = getFilteredPlaces();
 
   return filteredPlaces.isEmpty
