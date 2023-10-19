@@ -18,12 +18,11 @@ class WorkWithSharedPreferences extends ChangeNotifier {
 
   static Future<void> saveCategories() async {
     final pref = await SharedPreferences.getInstance();
-    var categories = <String>[];
-    for (var i = 0; i < filterRepository.activeFilterItems.length; i++) {
-      if (filterRepository.activeFilterItems[i].isSelected) {
-        categories.add(filterRepository.activeFilterItems[i].name);
-      }
-    }
+    final categories = filterRepository.activeFilterItems
+        .where((e) => e.isSelected)
+        .map((e) => e.name)
+        .toList();
+
     pref.setStringList('categories', categories);
   }
 
