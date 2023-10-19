@@ -38,10 +38,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ?.copyWith(color: theme.canvasColor),
             ),
             trailing: CupertinoSwitch(
-              value: context.watch<SettingsInteractor>().isDarkThemeOn,
+              value: context
+                  .watch<SettingsInteractor>()
+                  .settingsRepository
+                  .isDarkThemeOn,
               activeColor: AppColors.planButtonColor,
-              onChanged: (value) {
-                context.read<SettingsInteractor>().changeTheme();
+              onChanged: (value) async {
+                await context.read<SettingsInteractor>().changeTheme();
               },
             ),
           ),
@@ -60,7 +63,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute<OnBoardingScreen>(
-                    builder: (context) => const OnBoardingScreen(),
+                    builder: (context) => const OnBoardingScreen(
+                      isGoingToSettingsScreen: true,
+                    ),
                   ),
                 );
               },

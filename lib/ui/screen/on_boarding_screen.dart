@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:places/data/shared_prefernces.dart';
+import 'package:places/main_screens.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/bottom_button.dart';
 
 class OnBoardingScreen extends StatefulWidget {
-  const OnBoardingScreen({Key? key}) : super(key: key);
+  final bool isGoingToSettingsScreen;
+  const OnBoardingScreen({required this.isGoingToSettingsScreen, Key? key})
+      : super(key: key);
 
   @override
   State<OnBoardingScreen> createState() => _OnBoardingScreenState();
@@ -42,8 +46,12 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
         actions: _currentPage < 2
             ? [
                 TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    widget.isGoingToSettingsScreen
+                        ? Navigator.pop(context)
+                        : _navigateToMainScreens();
+                    await WorkWithSharedPreferences
+                        .saveInformationAboutEntrance();
                   },
                   child: Text(
                     AppStrings.skipText,
@@ -98,10 +106,12 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               opacity: _buttonOpacity,
               child: BottomButton(
                 text: AppStrings.onStartText,
-                onPressed: () {
-                  Navigator.pop(
-                    context,
-                  );
+                onPressed: () async {
+                  widget.isGoingToSettingsScreen
+                      ? Navigator.pop(context)
+                      : _navigateToMainScreens();
+                  await WorkWithSharedPreferences
+                      .saveInformationAboutEntrance();
                 },
               ),
             ),
@@ -109,6 +119,15 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _navigateToMainScreens() async {
+    if (context.mounted) {
+      await Navigator.of(context)
+          .pushReplacement(MaterialPageRoute<MainScreens>(
+        builder: (context) => const MainScreens(),
+      ));
+    }
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:places/data/model/filter_item.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data/repository/repositories.dart';
 import 'package:places/data/model/location.dart';
+import 'package:places/data/shared_prefernces.dart';
 import 'package:places/methods.dart';
 import 'package:places/redux/action/filters_screen_action.dart';
 import 'package:places/redux/state/app_state.dart';
@@ -25,11 +26,18 @@ class _FiltersScreenState extends State<FiltersScreen> {
   Location userLocation = Location(lat: 45, lon: 44);
 
   @override
+  void initState() {
+    WorkWithSharedPreferences.readRadiusWithAction(context);
+    WorkWithSharedPreferences.readCategoriesWithAction(context);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return StoreConnector<AppState, FiltersScreenState>(onInit: (store) {
-      store.dispatch(InitFiltersScreenAction());
+      store.dispatch(InitFiltersScreenAction(context));
     }, builder: (BuildContext context, FiltersScreenState vm) {
       if (vm is AtLeastOneCategoryChosenState) {
         return Scaffold(

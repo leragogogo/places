@@ -6,7 +6,10 @@ import 'package:places/data/model/place.dart';
 abstract class FiltersScreenAction {}
 
 // Инициализация экрана фильтров.
-class InitFiltersScreenAction extends FiltersScreenAction {}
+class InitFiltersScreenAction extends FiltersScreenAction {
+  BuildContext context;
+  InitFiltersScreenAction(this.context);
+}
 
 // Клик на категорию.
 class ClickOnCategoryAction extends FiltersScreenAction {
