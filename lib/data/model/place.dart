@@ -39,7 +39,7 @@ class Place {
   });
 
   Place.fromJson(Map<String, dynamic> json) {
-    id = json['id'].toString();
+    id = (json['id']).toString();
     lat = double.parse(json['lat'].toString());
     lon = double.parse(json['lng'].toString());
     name = json['name'].toString();

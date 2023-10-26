@@ -4,7 +4,7 @@ import 'package:places/data/repository/repositories.dart';
 import 'package:places/ui/screen/widgets/parts_of_card.dart';
 import 'package:places/ui/screen/widgets/sight_details.dart';
 
-class SightCard extends StatefulWidget {
+class SightCard extends StatelessWidget {
   final Place place;
   final VoidCallback addToFavourites;
   final VoidCallback removeFromFavorites;
@@ -15,13 +15,6 @@ class SightCard extends StatefulWidget {
       required this.removeFromFavorites,
       Key? key})
       : super(key: key);
-
-  @override
-  State<SightCard> createState() => _SightCardState();
-}
-
-class _SightCardState extends State<SightCard> {
-  bool isFavouriteButtonClicked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -43,15 +36,15 @@ class _SightCardState extends State<SightCard> {
         ),
         child: Stack(
           children: [
-            UpperPart(widget.place),
+            UpperPart(place),
             Positioned(
               top: 96,
               left: 16,
               right: 16,
               child: LowerPart(
-                widget.place,
+                place,
                 Text(
-                  widget.place.description,
+                  place.description,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -71,7 +64,7 @@ class _SightCardState extends State<SightCard> {
                   onTap: () {
                     Navigator.of(context).push(PageRouteBuilder(
                       pageBuilder: (context, _, __) {
-                        return SightDetailsScreen(widget.place);
+                        return SightDetailsScreen(place);
                       },
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {
@@ -96,12 +89,9 @@ class _SightCardState extends State<SightCard> {
               child: TextButton(
                 style: const ButtonStyle(splashFactory: NoSplash.splashFactory),
                 onPressed: () {
-                  setState(() {
-                    isFavouriteButtonClicked = !isFavouriteButtonClicked;
-                  });
-                  isFavouriteButtonClicked
-                      ? widget.addToFavourites()
-                      : widget.removeFromFavorites();
+                  visitingScreenRepository.favouritePlaces.contains(place)
+                      ? removeFromFavorites()
+                      : addToFavourites();
                 },
                 child: AnimatedCrossFade(
                   firstChild: const Icon(
@@ -113,11 +103,10 @@ class _SightCardState extends State<SightCard> {
                     color: Colors.red,
                   ),
                   duration: Duration(milliseconds: 600),
-                  crossFadeState: isFavouriteButtonClicked &&
-                          visitingScreenRepository.favouritePlaces
-                              .contains(widget.place)
-                      ? CrossFadeState.showSecond
-                      : CrossFadeState.showFirst,
+                  crossFadeState:
+                      visitingScreenRepository.favouritePlaces.contains(place)
+                          ? CrossFadeState.showSecond
+                          : CrossFadeState.showFirst,
                 ),
               ),
             ),

@@ -26,7 +26,7 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
 
     return StoreConnector<AppState, FavouriteTabState>(
       onInit: (store) {
-        store.dispatch(InitFavouriteTabAction());
+        store.dispatch(InitFavouriteTabAction(context));
       },
       builder: (BuildContext context, FavouriteTabState vm) {
         if (vm is FavouritePlacesTabDataState) {
@@ -51,8 +51,8 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                           key: ObjectKey(i.value),
                           sight: i.value,
                           deleteFromList: () {
-                            StoreProvider.of<AppState>(context)
-                                .dispatch(RemoveFavouritePlaceAction(i.value));
+                            StoreProvider.of<AppState>(context).dispatch(
+                                RemoveFavouritePlaceAction(i.value, context));
                           },
                           lowerText: Text(
                             AppStrings.wantToVisitText,

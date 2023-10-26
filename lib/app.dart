@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:places/data/interactor/settings_interactor.dart';
 import 'package:places/data/shared_prefernces.dart';
+import 'package:places/database/database.dart';
 import 'package:places/redux/middleware/add_sight_middleware.dart';
+import 'package:places/redux/middleware/search_screen_middleware.dart';
 import 'package:places/redux/middleware/sight_list_screen_middleware.dart';
+import 'package:places/redux/middleware/want_to_visit_middleware.dart';
 import 'package:places/redux/reducer/reducer.dart';
 import 'package:places/redux/state/app_state.dart';
 import 'package:places/ui/screen/splash_screen.dart';
@@ -34,15 +37,21 @@ class _AppState extends State<App> {
       middleware: [
         SightListScreenMiddleware(),
         AddSightMiddleware(),
+        SearchScreenMiddleware(),
+        WantToVisitMiddleware(),
       ],
     );
 
     return StoreProvider<AppState>(
       store: store,
-      child: MaterialApp(
-        title: 'Places',
-        theme: context.watch<SettingsInteractor>().settingsRepository.themeMode,
-        home: const SplashScreen(),
+      child: Provider<AppDb>(
+        create: (_) => AppDb(),
+        child: MaterialApp(
+          title: 'Places',
+          theme:
+              context.watch<SettingsInteractor>().settingsRepository.themeMode,
+          home: const SplashScreen(),
+        ),
       ),
     );
   }

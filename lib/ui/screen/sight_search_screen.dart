@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data/repository/repositories.dart';
+import 'package:places/database/database.dart';
 import 'package:places/redux/action/search_screen_action.dart';
 import 'package:places/redux/state/app_state.dart';
 import 'package:places/redux/state/search_screen_state.dart';
@@ -13,6 +14,7 @@ import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/search_bar.dart';
 import 'package:places/ui/screen/widgets/sight_appbar.dart';
 import 'package:places/ui/screen/widgets/sight_details.dart';
+import 'package:provider/provider.dart';
 
 class SightSearchScreen extends StatefulWidget {
   final searchField = TextEditingController();
@@ -23,6 +25,15 @@ class SightSearchScreen extends StatefulWidget {
 }
 
 class _SightSearchScreenState extends State<SightSearchScreen> {
+  late AppDb _db;
+
+  @override
+  void initState() {
+    super.initState();
+    _db = context.read<AppDb>();
+    _loadHistory();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -58,27 +69,33 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
             controller: widget.searchField,
           ),
         ),
-        body: StoreConnector<AppState, SearchScreenState>(
-            builder: (BuildContext context, SearchScreenState vm) {
+        body: StoreConnector<AppState, SearchScreenState>(onInit: (store) {
+          return store.dispatch(InitSearchScreenAction());
+        }, builder: (BuildContext context, SearchScreenState vm) {
           if (vm is SearchSreenErrorState) {
             return _EmptyScreen();
           } else if (vm is SearchScreenHistoryState) {
             var historyWidgets = <Widget>[];
             for (var i = 0; i < vm.history.length; i++) {
-              historyWidgets.add(_HistoryTile(vm.history[i], () {
+              historyWidgets.add(_HistoryTile(vm.history[i].title, () {
                 StoreProvider.of<AppState>(context).dispatch(
-                    RemoveItemFromHistoryAction(i, searchRepository.history));
+                    RemoveItemFromHistoryAction(context, vm.history[i].id));
               }));
             }
             return _HistoryScreen(historyWidgets, () {
-              StoreProvider.of<AppState>(context).dispatch(
-                  RemoveAllItemsFromHistory(searchRepository.history));
+              StoreProvider.of<AppState>(context)
+                  .dispatch(RemoveAllItemsFromHistory(
+                context,
+              ));
             });
           } else if (vm is SearchScreenDataState) {
             var searchList = <Widget>[];
             for (int i = 0; i < vm.places.length; i++) {
               searchList.add(_MiniSightCard(vm.places[i], () {
-                searchRepository.history.add(vm.places[i].name);
+                StoreProvider.of<AppState>(context).dispatch(TapOnMiniCardSight(
+                  context,
+                  vm.places[i].name,
+                ));
                 showModalBottomSheet<void>(
                   isScrollControlled: true,
                   context: context,
@@ -92,6 +109,10 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
         }, converter: (store) {
           return store.state.searchScreenState;
         }));
+  }
+
+  Future<void> _loadHistory() async {
+    searchRepository.history = await _db.allHistory;
   }
 }
 

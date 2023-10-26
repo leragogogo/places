@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:places/data/model/place.dart';
 
-// Базовое действие экрана любимых мест. 
+// Базовое действие экрана любимых мест.
 abstract class FavouriteTabAction {}
 
 // Инициализация экрана любимых мест.
-class InitFavouriteTabAction extends FavouriteTabAction {}
+class InitFavouriteTabAction extends FavouriteTabAction {
+  BuildContext context;
+  InitFavouriteTabAction(this.context);
+}
 
 // Удаление места из списка любимыхю
 class RemoveFavouritePlaceAction extends FavouriteTabAction {
   Place placeForRemoval;
-  RemoveFavouritePlaceAction(this.placeForRemoval);
+  BuildContext context;
+  RemoveFavouritePlaceAction(this.placeForRemoval, this.context);
 }
 
 // Перетягивание места по списку любимых.

@@ -21,6 +21,10 @@ final reducer = combineReducers<AppState>([
       removeAllItemsFromHistoryReducer),
   TypedReducer<AppState, SearchTextWasUpdatedAction>(
       searchTextWasUpdatedReducer),
+  TypedReducer<AppState, TapOnMiniCardSight>(
+      tapOnMiniCardSightReducer),
+  TypedReducer<AppState, InitSearchScreenAction>(
+      initSearchScreenReducer),
 
   /// SightListScreen
   TypedReducer<AppState, AddSightToFavouriteAction>(addSightToFavouriteReducer),

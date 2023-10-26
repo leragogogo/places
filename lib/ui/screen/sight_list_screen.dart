@@ -24,7 +24,7 @@ class _SightListScreen extends State<SightListScreen> {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, SightListScreenState>(onInit: (store) {
-      store.dispatch(LoadSightsAction());
+      store.dispatch(LoadSightsAction(context));
     }, builder: (BuildContext context, SightListScreenState vm) {
       if (vm is SightListScreenLoadingState) {
         return _LoadingSightListScreen();
@@ -129,11 +129,12 @@ class _SightListPortrait extends StatelessWidget {
                 addToFavourites: () {
                   StoreProvider.of<AppState>(context).dispatch(
                       AddSightToFavouriteAction(
-                          filteredPlaces[index], filteredPlaces));
+                          filteredPlaces[index], filteredPlaces, context));
                 },
                 removeFromFavorites: () {
                   StoreProvider.of<AppState>(context).dispatch(
-                      RemoveFavouritePlaceAction(filteredPlaces[index]));
+                      RemoveFavouritePlaceAction(
+                          filteredPlaces[index], context));
                 }),
           );
         },
@@ -163,11 +164,12 @@ class _SightListLandscape extends StatelessWidget {
                   addToFavourites: () {
                     StoreProvider.of<AppState>(context).dispatch(
                         AddSightToFavouriteAction(
-                            filteredPlaces[index], filteredPlaces));
+                            filteredPlaces[index], filteredPlaces, context));
                   },
                   removeFromFavorites: () {
                     StoreProvider.of<AppState>(context).dispatch(
-                        RemoveFavouritePlaceAction(filteredPlaces[index]));
+                        RemoveFavouritePlaceAction(
+                            filteredPlaces[index], context));
                   }),
             ],
           );

@@ -22,7 +22,6 @@ AppState errorReducer(AppState state, ErrorAction action) {
 
 AppState addSightToFavouriteReducer(
     AppState state, AddSightToFavouriteAction action) {
-  visitingScreenRepository.favouritePlaces.add(action.place);
   return state.cloneWith(
       sightListScreenState: SightListScreenDataState(action.places),
       favouriteTabState: FavouritePlacesTabDataState(

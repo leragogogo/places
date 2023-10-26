@@ -5,7 +5,10 @@ import 'package:places/data/model/place.dart';
 abstract class SightListScreenAction {}
 
 // Загрузка мест с сервера.
-class LoadSightsAction extends SightListScreenAction {}
+class LoadSightsAction extends SightListScreenAction {
+  BuildContext context;
+  LoadSightsAction(this.context);
+}
 
 // Результат загрузки мест с сервера.
 class ResultSightsAction extends SightListScreenAction {
@@ -20,7 +23,8 @@ class ErrorAction extends SightListScreenAction {}
 class AddSightToFavouriteAction extends SightListScreenAction {
   List<Place> places;
   Place place;
-  AddSightToFavouriteAction(this.place, this.places);
+  BuildContext context;
+  AddSightToFavouriteAction(this.place, this.places,this.context);
 }
 
 // Открытие экрана поиска.
