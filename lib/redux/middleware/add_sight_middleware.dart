@@ -1,4 +1,6 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data/repository/repositories.dart';
 import 'package:places/data/model/categories.dart';
@@ -34,6 +36,36 @@ class AddSightMiddleware implements MiddlewareClass<AppState> {
         store.dispatch(SuccesCreatingNewPlaceAction(newPlace, action.context));
       } catch (NetworkException) {
         store.dispatch(ErrorCreatingNewPlaceAction(action.context));
+      }
+    }
+    if (action is UploadImageAction) {
+      var imagePicker = ImagePicker();
+
+      try {
+        if (action.typeOfUploding == 1) {
+          XFile? image = await imagePicker.pickImage(
+              source: ImageSource.camera, imageQuality: 50);
+          if (image != null) {
+            store.dispatch(AddImageAction(image));
+          }
+          Navigator.of(action.context).pop();
+        } else if (action.typeOfUploding == 2) {
+          XFile? image = await imagePicker.pickImage(
+              source: ImageSource.gallery, imageQuality: 50);
+          if (image != null) {
+            store.dispatch(AddImageAction(image));
+          }
+          Navigator.of(action.context).pop();
+        } else {
+          FilePickerResult? result = await FilePicker.platform.pickFiles();
+          if (result != null) {
+            var image = XFile(result.files.single.path!);
+            store.dispatch(AddImageAction(image));
+          }
+          Navigator.of(action.context).pop();
+        }
+      } catch (_) {
+        store.dispatch(UploadImageErrorAction(action.context));
       }
     }
     next(action);

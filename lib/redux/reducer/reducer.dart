@@ -68,6 +68,13 @@ final reducer = combineReducers<AppState>([
       succesCreatingNewPlaceReducer),
   TypedReducer<AppState, ErrorCreatingNewPlaceAction>(
       errorCreatingNewPlaceReducer),
+  TypedReducer<AppState, UploadImageAction>(
+      uploadImageReducer),
+  TypedReducer<AppState, AddImageAction>(
+      addImageReducer),
+  TypedReducer<AppState, UploadImageErrorAction>(
+      uploadImageErrorReducer),
+  
 
   // ChoosingCategoryScreen
   TypedReducer<AppState, InitChoosingCategoryAction>(

@@ -6,7 +6,8 @@ import 'package:places/redux/action/add_sight_screen_action.dart';
 import 'package:places/redux/state/add_sight_screen_state.dart';
 import 'package:places/redux/state/app_state.dart';
 import 'package:places/redux/state/sight_list_screen_state.dart';
-import 'package:places/ui/screen/widgets/add_sight_error.dart';
+import 'package:places/ui/screen/res/app_strings.dart';
+import 'package:places/ui/screen/widgets/error_alert_dialog.dart';
 import 'package:places/ui/screen/widgets/image_dialog.dart';
 
 AppState initAddSightScreenReducer(
@@ -30,8 +31,12 @@ AppState chooseImagesReducer(AppState state, ChooseImagesAction action) {
   return state;
 }
 
+AppState uploadImageReducer(AppState state, UploadImageAction action) {
+  return state;
+}
+
 AppState removeImageReducer(AppState state, RemoveImageAction action) {
-  addSightRepository.images.removeAt(action.index);
+  addSightRepository.images.remove(action.imageForRemoval);
   return state.cloneWith(
       addSightScreenState: AddSightScreenMainState(
           addSightRepository.images,
@@ -46,6 +51,20 @@ AppState removeImageReducer(AppState state, RemoveImageAction action) {
 AppState openChoosingCategoryScreenReducer(
     AppState state, OpenChoosingCategoryScreenAction action) {
   return state;
+}
+
+AppState addImageReducer(AppState state, AddImageAction action) {
+  addSightRepository.images.add(action.image);
+
+  return state.cloneWith(
+      addSightScreenState: AddSightScreenMainState(
+          addSightRepository.images,
+          addSightRepository.activeCategory,
+          addSightRepository.name,
+          addSightRepository.lat,
+          addSightRepository.lon,
+          addSightRepository.details,
+          checkStateOfAddSightFields()));
 }
 
 AppState fillNameReducer(AppState state, FillNameAction action) {
@@ -139,7 +158,31 @@ AppState errorCreatingNewPlaceReducer(
     context: action.context,
     barrierDismissible: false,
     builder: (BuildContext context) {
-      return AddSightError();
+      return ErrorAlertDialog(
+          firstText: AppStrings.addSightErrorText1,
+          secondText: AppStrings.addSightErrorText2,
+          exitFromDialog: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+          });
+    },
+  );
+  return state;
+}
+
+AppState uploadImageErrorReducer(
+    AppState state, UploadImageErrorAction action) {
+  showDialog<void>(
+    context: action.context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return ErrorAlertDialog(
+        firstText: AppStrings.uploadImageText1,
+        secondText: AppStrings.uploadImageText2,
+        exitFromDialog: () {
+          Navigator.of(context).pop();
+        },
+      );
     },
   );
   return state;

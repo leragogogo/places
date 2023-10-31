@@ -79,7 +79,8 @@ class AppStrings {
   static const page2BoldText = 'Построй маршрут\n и отправляйся в путь';
   static const page2Text = 'Достигай цели максимально\n быстро и комфортно';
   static const page3BoldText = 'Добавляй места,\n которые нашел сам';
-  static const page3Text = 'Делись самыми интересными\n и помоги нам стать лучше!';
+  static const page3Text =
+      'Делись самыми интересными\n и помоги нам стать лучше!';
   static const onStartText = 'НА СТАРТ';
   static const skipText = 'Пропустить';
 
@@ -92,8 +93,10 @@ class AppStrings {
   static const errorText1 = 'Ошибка';
   static const errorText2 = 'Что-то пошло не так.\nПопробуйте позже.';
 
-  // AddSightError
+  // ErrorAlertDialog
   static const addSightErrorText1 = 'Не получилось создать место.';
   static const addSightErrorText2 = 'Попробуйте чуть позже.';
   static const okButtonText = 'ОK';
+  static const uploadImageText1 = 'Не получилось добавить картинку';
+  static const uploadImageText2 = 'Попробуйте добавить другую';
 }

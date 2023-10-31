@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:places/redux/action/add_sight_screen_action.dart';
+import 'package:places/redux/state/app_state.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
@@ -40,6 +43,9 @@ class ImageDialog extends StatelessWidget {
                         fontSize: 16,
                       ),
                     ),
+                    onTap: () {
+                      StoreProvider.of<AppState>(context).dispatch(UploadImageAction(context,1));
+                    },
                   ),
                   Divider(
                     height: 26,
@@ -60,6 +66,9 @@ class ImageDialog extends StatelessWidget {
                         fontSize: 16,
                       ),
                     ),
+                    onTap: () {
+                      StoreProvider.of<AppState>(context).dispatch(UploadImageAction(context,2));
+                    },
                   ),
                   Divider(
                     height: 26,
@@ -80,6 +89,9 @@ class ImageDialog extends StatelessWidget {
                         fontSize: 16,
                       ),
                     ),
+                    onTap: () {
+                      StoreProvider.of<AppState>(context).dispatch(UploadImageAction(context,3));
+                    },
                   ),
                 ],
               ),

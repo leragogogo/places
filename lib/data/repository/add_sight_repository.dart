@@ -1,7 +1,10 @@
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
 import 'package:places/data/model/categories.dart';
 
 class AddSightRepository {
-  List<int> images = [];
+  List<XFile?> images = [];
   Categories? candidateCategory;
   Categories? activeCategory;
   String? name;
