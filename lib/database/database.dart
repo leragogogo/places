@@ -54,8 +54,8 @@ class AppDb extends _$AppDb {
     return customStatement('DELETE FROM favourite_places WHERE title = $title');
   }
 
-  Future<void> removeVisitedPlace(int id) {
-    return customStatement('DELETE FROM visitedPlaces WHERE id = $id');
+  Future<void> removeVisitedPlace(String title) {
+    return customStatement('DELETE FROM visited_places WHERE title = $title');
   }
 }
 

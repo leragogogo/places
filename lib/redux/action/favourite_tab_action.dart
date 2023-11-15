@@ -10,7 +10,7 @@ class InitFavouriteTabAction extends FavouriteTabAction {
   InitFavouriteTabAction(this.context);
 }
 
-// Удаление места из списка любимыхю
+// Удаление места из списка любимых
 class RemoveFavouritePlaceAction extends FavouriteTabAction {
   Place placeForRemoval;
   BuildContext context;

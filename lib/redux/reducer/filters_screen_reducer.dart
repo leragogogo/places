@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:places/data/model/map_point.dart';
 import 'package:places/data/repository/repositories.dart';
 import 'package:places/data/shared_prefernces.dart';
 import 'package:places/methods.dart';
 import 'package:places/redux/action/filters_screen_action.dart';
 import 'package:places/redux/state/app_state.dart';
 import 'package:places/redux/state/filters_screen_state.dart';
+import 'package:places/redux/state/map_screen_state.dart';
 import 'package:places/redux/state/sight_list_screen_state.dart';
 
 AppState clickOnCategoryReducer(AppState state, ClickOnCategoryAction action) {
@@ -67,7 +69,11 @@ AppState showResultReducer(AppState state, ShowResultAction action) {
   WorkWithSharedPreferences.saveCategories();
 
   return state.cloneWith(
-      sightListScreenState: SightListScreenDataState(action.result));
+      sightListScreenState: SightListScreenDataState(action.result),
+      mapScreenState: MapScreenMainState(action.result
+          .map((place) => MapPoint(
+              name: place.name, latitude: place.lat, longitude: place.lon,isClicked: false))
+          .toList(),null));
 }
 
 AppState exitFromFiltersScreenReducer(

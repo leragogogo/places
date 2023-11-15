@@ -31,7 +31,10 @@ dependencies:
   shared_preferences: ^2.2.2
   image_picker: ^1.0.4
   file_picker: ^5.3.1
-  yandex_mapkit: ^3.3.0
+  yandex_mapkit: ^3.3.3
+  permission_handler: ^11.0.1
+  geolocator: ^10.1.0
+  map_launcher: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +71,12 @@ flutter:
     - res/icons/calendar.png
     - res/icons/error.png
     - res/images/placeholder.png
-
+    - res/icons/geolocation.png
+    - res/icons/refresh.png
+    - res/icons/unchosen_placemark.png
+    - res/icons/chosen_placemark.png
+    - res/icons/build_route.png
+    - res/icons/user_location.png
 
 
   fonts:

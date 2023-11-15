@@ -48,7 +48,7 @@ class _SightSearchScreenState extends State<SightSearchScreen> {
               Navigator.pop(context);
             },
           ),
-          bottom: SearchBar(
+          bottom: SearchSightBar(
             readOnly: false,
             onChanged: (value) {
               StoreProvider.of<AppState>(context).dispatch(

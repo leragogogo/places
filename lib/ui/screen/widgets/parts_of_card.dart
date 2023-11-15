@@ -21,6 +21,10 @@ class _UpperPartState extends State<UpperPart> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     if (widget.place.urls.isEmpty) {
       status = WidgetStatus.isEmpty;
       _networkImage = NetworkImage(AppAssets.placeholderAsset);
@@ -45,10 +49,7 @@ class _UpperPartState extends State<UpperPart> {
             ),
           );
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Stack(
       children: [
         SizedBox(

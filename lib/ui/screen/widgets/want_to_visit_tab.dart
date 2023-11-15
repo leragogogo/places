@@ -18,8 +18,6 @@ class WantToVisitTab extends StatefulWidget {
 }
 
 class _WantToVisitTabState extends State<WantToVisitTab> {
-  DateTime? _chosenDateTime;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -71,9 +69,6 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                               Platform.isAndroid,
                               context,
                               (val) {
-                                setState(() {
-                                  _chosenDateTime = val;
-                                });
                               },
                             ));
                           },

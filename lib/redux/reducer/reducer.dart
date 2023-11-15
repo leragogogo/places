@@ -1,15 +1,19 @@
 import 'package:places/redux/action/add_sight_screen_action.dart';
 import 'package:places/redux/action/choosing_category_screen_action.dart';
 import 'package:places/redux/action/filters_screen_action.dart';
+import 'package:places/redux/action/map_screen_action.dart';
 import 'package:places/redux/action/search_screen_action.dart';
 import 'package:places/redux/action/sight_list_screen_action.dart';
 import 'package:places/redux/action/favourite_tab_action.dart';
+import 'package:places/redux/action/visited_tab_action.dart';
 import 'package:places/redux/reducer/add_sight_screen_reducer.dart';
 import 'package:places/redux/reducer/choosing_category_screen_reducer.dart';
 import 'package:places/redux/reducer/filters_screen_reducer.dart';
+import 'package:places/redux/reducer/map_screen_reducer.dart';
 import 'package:places/redux/reducer/search_screen_reducer.dart';
 import 'package:places/redux/reducer/sight_list_screen_reducer.dart';
 import 'package:places/redux/reducer/favourite_tab_reducer.dart';
+import 'package:places/redux/reducer/visited_tab_reducer.dart';
 import 'package:places/redux/state/app_state.dart';
 import 'package:redux/redux.dart';
 
@@ -21,10 +25,8 @@ final reducer = combineReducers<AppState>([
       removeAllItemsFromHistoryReducer),
   TypedReducer<AppState, SearchTextWasUpdatedAction>(
       searchTextWasUpdatedReducer),
-  TypedReducer<AppState, TapOnMiniCardSight>(
-      tapOnMiniCardSightReducer),
-  TypedReducer<AppState, InitSearchScreenAction>(
-      initSearchScreenReducer),
+  TypedReducer<AppState, TapOnMiniCardSight>(tapOnMiniCardSightReducer),
+  TypedReducer<AppState, InitSearchScreenAction>(initSearchScreenReducer),
 
   /// SightListScreen
   TypedReducer<AppState, AddSightToFavouriteAction>(addSightToFavouriteReducer),
@@ -68,13 +70,9 @@ final reducer = combineReducers<AppState>([
       succesCreatingNewPlaceReducer),
   TypedReducer<AppState, ErrorCreatingNewPlaceAction>(
       errorCreatingNewPlaceReducer),
-  TypedReducer<AppState, UploadImageAction>(
-      uploadImageReducer),
-  TypedReducer<AppState, AddImageAction>(
-      addImageReducer),
-  TypedReducer<AppState, UploadImageErrorAction>(
-      uploadImageErrorReducer),
-  
+  TypedReducer<AppState, UploadImageAction>(uploadImageReducer),
+  TypedReducer<AppState, AddImageAction>(addImageReducer),
+  TypedReducer<AppState, UploadImageErrorAction>(uploadImageErrorReducer),
 
   // ChoosingCategoryScreen
   TypedReducer<AppState, InitChoosingCategoryAction>(
@@ -84,4 +82,20 @@ final reducer = combineReducers<AppState>([
       exitFromChoosingCategoryScreenReducer),
   TypedReducer<AppState, ReturnChosenCategoryAction>(
       returnChosenCategoryReducer),
+
+  // MapScreen
+  TypedReducer<AppState, InitMapPointsAction>(initMapPointsReducer),
+  TypedReducer<AppState, UpdateMapPointsAction>(updateMapPointsReducer),
+  TypedReducer<AppState, ShowUserLocationAction>(showUserLocationReducer),
+  TypedReducer<AppState, ClickOnMapPointAction>(clickOnMapPointReducer),
+  TypedReducer<AppState, ResultOfUserLocationAction>(
+      resultOfUserLocationReducer),
+  TypedReducer<AppState, BuildRouteAction>(buildRouteReducer),
+  TypedReducer<AppState, OpenMapSheetAction>(openMapSheetReducer),
+  TypedReducer<AppState, AddSightToVisitedAction>(addSightToVisitedReducer),
+
+  // VisitedPlacesTab
+  TypedReducer<AppState, RemoveVisitedPlaceAction>(removeVisitedPlaceReducer),
+  TypedReducer<AppState, InitVisitedTabAction>(initVisitedTabReducer),
+  TypedReducer<AppState, DragVisitedPlaceAction>(dragVisitedPlaceReducer),
 ]);

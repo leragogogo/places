@@ -4,8 +4,10 @@ import 'package:places/data/interactor/settings_interactor.dart';
 import 'package:places/data/shared_prefernces.dart';
 import 'package:places/database/database.dart';
 import 'package:places/redux/middleware/add_sight_middleware.dart';
+import 'package:places/redux/middleware/map_screen_middleware.dart';
 import 'package:places/redux/middleware/search_screen_middleware.dart';
 import 'package:places/redux/middleware/sight_list_screen_middleware.dart';
+import 'package:places/redux/middleware/visited_tab_middleware.dart';
 import 'package:places/redux/middleware/want_to_visit_middleware.dart';
 import 'package:places/redux/reducer/reducer.dart';
 import 'package:places/redux/state/app_state.dart';
@@ -39,6 +41,8 @@ class _AppState extends State<App> {
         AddSightMiddleware(),
         SearchScreenMiddleware(),
         WantToVisitMiddleware(),
+        MapScreenMidlleware(),
+        VisitedTabMiddleware(),
       ],
     );
 

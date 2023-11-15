@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data/repository/repositories.dart';
+import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/widgets/parts_of_card.dart';
 import 'package:places/ui/screen/widgets/sight_details.dart';
 
@@ -8,11 +9,15 @@ class SightCard extends StatelessWidget {
   final Place place;
   final VoidCallback addToFavourites;
   final VoidCallback removeFromFavorites;
+  final bool isMapCard;
+  final VoidCallback? buildRoute;
 
   const SightCard(
       {required this.place,
       required this.addToFavourites,
       required this.removeFromFavorites,
+      required this.isMapCard,
+      required this.buildRoute,
       Key? key})
       : super(key: key);
 
@@ -110,6 +115,20 @@ class SightCard extends StatelessWidget {
                 ),
               ),
             ),
+            isMapCard
+                ? Positioned(
+                  right:0,
+                  top: 101,
+                    child: IconButton(
+                      onPressed: buildRoute,
+                      icon: Image.asset(
+                        AppAssets.buildRouteAsset,
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
+                  )
+                : SizedBox.shrink(),
           ],
         ),
       ),

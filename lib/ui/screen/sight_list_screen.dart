@@ -5,13 +5,13 @@ import 'package:places/redux/action/sight_list_screen_action.dart';
 import 'package:places/redux/action/favourite_tab_action.dart';
 import 'package:places/redux/state/app_state.dart';
 import 'package:places/redux/state/sight_list_screen_state.dart';
-import 'package:places/ui/screen/add_sight_screen.dart';
 import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
+import 'package:places/ui/screen/widgets/add_sight_button.dart';
 import 'package:places/ui/screen/widgets/network_error_widget.dart';
-import 'package:places/ui/screen/widgets/search_bar.dart';
 import 'package:places/ui/screen/widgets/sight_card.dart';
+import 'package:places/ui/screen/widgets/search_bar.dart';
 
 class SightListScreen extends StatefulWidget {
   const SightListScreen({Key? key}) : super(key: key);
@@ -53,7 +53,7 @@ class _LoadingSightListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: _AddNewSightButton(),
+      floatingActionButton: AddNewSightButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Center(
         child: CircularProgressIndicator(color: AppColors.planButtonColor),
@@ -68,7 +68,7 @@ class _LoadedSightListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: _AddNewSightButton(),
+      floatingActionButton: AddNewSightButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: CustomScrollView(
         slivers: [
@@ -81,7 +81,7 @@ class _LoadedSightListScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.only(left: 16, right: 16),
-              child: SearchBar(
+              child: SearchSightBar(
                 readOnly: true,
                 onChanged: (value) {},
                 onTap: () {
@@ -125,17 +125,19 @@ class _SightListPortrait extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: SightCard(
-                place: filteredPlaces[index],
-                addToFavourites: () {
-                  StoreProvider.of<AppState>(context).dispatch(
-                      AddSightToFavouriteAction(
-                          filteredPlaces[index], filteredPlaces, context));
-                },
-                removeFromFavorites: () {
-                  StoreProvider.of<AppState>(context).dispatch(
-                      RemoveFavouritePlaceAction(
-                          filteredPlaces[index], context));
-                }),
+              place: filteredPlaces[index],
+              addToFavourites: () {
+                StoreProvider.of<AppState>(context).dispatch(
+                    AddSightToFavouriteAction(
+                        filteredPlaces[index], filteredPlaces, context));
+              },
+              removeFromFavorites: () {
+                StoreProvider.of<AppState>(context).dispatch(
+                    RemoveFavouritePlaceAction(filteredPlaces[index], context));
+              },
+              isMapCard: false,
+              buildRoute: null,
+            ),
           );
         },
         childCount: filteredPlaces.length,
@@ -160,17 +162,20 @@ class _SightListLandscape extends StatelessWidget {
                 height: 16,
               ),
               SightCard(
-                  place: filteredPlaces[index],
-                  addToFavourites: () {
-                    StoreProvider.of<AppState>(context).dispatch(
-                        AddSightToFavouriteAction(
-                            filteredPlaces[index], filteredPlaces, context));
-                  },
-                  removeFromFavorites: () {
-                    StoreProvider.of<AppState>(context).dispatch(
-                        RemoveFavouritePlaceAction(
-                            filteredPlaces[index], context));
-                  }),
+                place: filteredPlaces[index],
+                addToFavourites: () {
+                  StoreProvider.of<AppState>(context).dispatch(
+                      AddSightToFavouriteAction(
+                          filteredPlaces[index], filteredPlaces, context));
+                },
+                removeFromFavorites: () {
+                  StoreProvider.of<AppState>(context).dispatch(
+                      RemoveFavouritePlaceAction(
+                          filteredPlaces[index], context));
+                },
+                isMapCard: false,
+                buildRoute: null,
+              ),
             ],
           );
         },
@@ -179,49 +184,6 @@ class _SightListLandscape extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         mainAxisExtent: 210,
         crossAxisCount: 2,
-      ),
-    );
-  }
-}
-
-class _AddNewSightButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      width: 177,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: <Color>[
-            AppColors.gradientStartColor,
-            AppColors.planButtonColor,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-        ),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute<AddSightScreen>(
-              builder: (context) => const AddSightScreen(),
-            ),
-          );
-        },
-        child: Center(
-          child: Row(
-            children: const [
-              Icon(Icons.add),
-              Text(
-                AppStrings.newSightText,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

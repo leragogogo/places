@@ -24,4 +24,10 @@ class AppAssets {
   static const String calendarAsset = 'res/icons/calendar.png';
   static const String errorAsset = 'res/icons/error.png';
   static const String placeholderAsset = 'res/images/placeholder.png';
+  static const String geolocationAsset = 'res/icons/geolocation.png';
+  static const String refreshAsset = 'res/icons/refresh.png';
+  static const String unchosenPlacemarkAsset = 'res/icons/unchosen_placemark.png';
+  static const String chosenPlacemarkAsset = 'res/icons/chosen_placemark.png';
+  static const String buildRouteAsset = 'res/icons/build_route.png';
+  static const String userLocationAsset = 'res/icons/user_location.png';
 }

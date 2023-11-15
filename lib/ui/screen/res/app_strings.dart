@@ -99,4 +99,7 @@ class AppStrings {
   static const okButtonText = 'ОK';
   static const uploadImageText1 = 'Не получилось добавить картинку';
   static const uploadImageText2 = 'Попробуйте добавить другую';
+
+  // MapScreen
+  static const mapTitle = 'Карта';
 }
