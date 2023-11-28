@@ -8,7 +8,6 @@ import 'package:places/ui/screen/res/app_colors.dart';
 
 AppState removeFavouritePlaceReducer(
     AppState state, RemoveFavouritePlaceAction action) {
-  visitingScreenRepository.favouritePlaces.remove(action.placeForRemoval);
   if (visitingScreenRepository.favouritePlaces.isEmpty) {
     return state.cloneWith(favouriteTabState: FavouritePlacesTabEmptyState());
   }

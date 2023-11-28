@@ -52,6 +52,7 @@ class _MainScreensState extends State<MainScreens> {
         ],
       ),
       body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
         controller: _controller,
         onPageChanged: (page) {
           setState(() {

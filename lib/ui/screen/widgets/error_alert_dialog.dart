@@ -3,7 +3,13 @@ import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 
-class AddSightError extends StatelessWidget {
+class ErrorAlertDialog extends StatelessWidget {
+  final String firstText;
+  final String secondText;
+  final VoidCallback exitFromDialog;
+
+  const ErrorAlertDialog({super.key, required this.firstText, required this.secondText, required this.exitFromDialog});
+  
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -32,7 +38,7 @@ class AddSightError extends StatelessWidget {
                   color: AppColors.planButtonColor,
                 ),
                 Text(
-                  AppStrings.addSightErrorText1,
+                  firstText,//AppStrings.addSightErrorText1,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 18,
@@ -41,7 +47,7 @@ class AddSightError extends StatelessWidget {
                       ),
                 ),
                 Text(
-                  AppStrings.addSightErrorText2,
+                  secondText,//AppStrings.addSightErrorText2,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: 18,
@@ -62,10 +68,10 @@ class AddSightError extends StatelessWidget {
                       color: AppColors.planButtonColor,
                       fontWeight: FontWeight.bold,
                     )),
-            onPressed: () {
+            onPressed: exitFromDialog/*() {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
-            },
+            },*/
           ),
         ],
       ),

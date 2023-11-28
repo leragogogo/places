@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:places/data/model/map_point.dart';
 import 'package:places/data/repository/repositories.dart';
 import 'package:places/redux/action/sight_list_screen_action.dart';
 import 'package:places/redux/state/app_state.dart';
+import 'package:places/redux/state/map_screen_state.dart';
 import 'package:places/redux/state/sight_list_screen_state.dart';
 import 'package:places/redux/state/favourite_tab_state.dart';
 import 'package:places/ui/screen/filters_screen.dart';
@@ -13,7 +15,16 @@ AppState loadSightsReducer(AppState state, LoadSightsAction action) {
 
 AppState resultSightsReducer(AppState state, ResultSightsAction action) {
   return state.cloneWith(
-      sightListScreenState: SightListScreenDataState(action.places));
+      sightListScreenState: SightListScreenDataState(action.places),
+      mapScreenState: MapScreenMainState(
+          action.places
+              .map((place) => MapPoint(
+                  name: place.name,
+                  latitude: place.lat,
+                  longitude: place.lon,
+                  isClicked: false))
+              .toList(),
+          null));
 }
 
 AppState errorReducer(AppState state, ErrorAction action) {
@@ -22,7 +33,6 @@ AppState errorReducer(AppState state, ErrorAction action) {
 
 AppState addSightToFavouriteReducer(
     AppState state, AddSightToFavouriteAction action) {
-  visitingScreenRepository.favouritePlaces.add(action.place);
   return state.cloneWith(
       sightListScreenState: SightListScreenDataState(action.places),
       favouriteTabState: FavouritePlacesTabDataState(

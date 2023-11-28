@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:places/data/repository/repositories.dart';
 import 'package:places/data/model/categories.dart';
 import 'package:places/redux/action/add_sight_screen_action.dart';
 import 'package:places/redux/state/add_sight_screen_state.dart';
 import 'package:places/redux/state/app_state.dart';
+import 'package:places/ui/screen/res/app_assets.dart';
 import 'package:places/ui/screen/res/app_colors.dart';
 import 'package:places/ui/screen/res/app_strings.dart';
 import 'package:places/ui/screen/widgets/bottom_button.dart';
@@ -89,6 +93,8 @@ class _AddSightScreenState extends State<AddSightScreen> {
                                 return Padding(
                                   padding: const EdgeInsets.only(left: 16),
                                   child: _ImageWidget(
+                                    image: item.value ??
+                                        XFile(AppAssets.placeholderAsset),
                                     key: ValueKey(item.value),
                                     delete: () {
                                       StoreProvider.of<AppState>(context)
@@ -424,8 +430,10 @@ class _AddImageWidget extends StatelessWidget {
 }
 
 class _ImageWidget extends StatelessWidget {
+  final XFile image;
   final VoidCallback delete;
   const _ImageWidget({
+    required this.image,
     required this.delete,
     required Key key,
   }) : super(key: key);
@@ -446,14 +454,17 @@ class _ImageWidget extends StatelessWidget {
               borderRadius: const BorderRadius.all(
                 Radius.circular(12),
               ),
-              child: Image.network(
-                'https://b1.vpoxod.ru/ckeditor/1d/8f/28/149695.jpg',
+              child: Image.file(
+                File(image.path),
+                fit: BoxFit.fitHeight,
+              ), /*Image.network(
+                image.//'https://b1.vpoxod.ru/ckeditor/1d/8f/28/149695.jpg',
                 loadingBuilder: (context, child, loadingProgress) =>
                     loadingProgress == null
                         ? child
                         : const CupertinoActivityIndicator(),
                 fit: BoxFit.fitHeight,
-              ),
+              ),*/
             ),
           ),
           Positioned(

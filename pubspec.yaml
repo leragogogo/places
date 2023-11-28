@@ -13,6 +13,10 @@ dependencies:
   
   cupertino_icons: ^1.0.2
   dio: ^5.2.0
+  moor_flutter: ^4.1.0
+  sqlite3_flutter_libs: ^0.5.17
+  path_provider: ^2.1.1
+  path: ^1.8.2
   dart_code_metrics: ^4.17.1
   flutter_svg: ^1.1.4
   provider: ^6.0.4
@@ -25,11 +29,18 @@ dependencies:
   redux: ^5.0.0
   flutter_redux: ^0.8.2
   shared_preferences: ^2.2.2
+  image_picker: ^1.0.4
+  file_picker: ^5.3.1
+  yandex_mapkit: ^3.3.3
+  permission_handler: ^11.0.1
+  geolocator: ^10.1.0
+  map_launcher: ^3.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.1.4
+  moor_generator: ^4.1.0
   mobx_codegen: ^2.0.3
 
 flutter:
@@ -60,7 +71,12 @@ flutter:
     - res/icons/calendar.png
     - res/icons/error.png
     - res/images/placeholder.png
-
+    - res/icons/geolocation.png
+    - res/icons/refresh.png
+    - res/icons/unchosen_placemark.png
+    - res/icons/chosen_placemark.png
+    - res/icons/build_route.png
+    - res/icons/user_location.png
 
 
   fonts:

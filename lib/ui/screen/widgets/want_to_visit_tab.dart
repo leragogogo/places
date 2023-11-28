@@ -18,15 +18,13 @@ class WantToVisitTab extends StatefulWidget {
 }
 
 class _WantToVisitTabState extends State<WantToVisitTab> {
-  DateTime? _chosenDateTime;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return StoreConnector<AppState, FavouriteTabState>(
       onInit: (store) {
-        store.dispatch(InitFavouriteTabAction());
+        store.dispatch(InitFavouriteTabAction(context));
       },
       builder: (BuildContext context, FavouriteTabState vm) {
         if (vm is FavouritePlacesTabDataState) {
@@ -51,8 +49,8 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                           key: ObjectKey(i.value),
                           sight: i.value,
                           deleteFromList: () {
-                            StoreProvider.of<AppState>(context)
-                                .dispatch(RemoveFavouritePlaceAction(i.value));
+                            StoreProvider.of<AppState>(context).dispatch(
+                                RemoveFavouritePlaceAction(i.value, context));
                           },
                           lowerText: Text(
                             AppStrings.wantToVisitText,
@@ -71,9 +69,6 @@ class _WantToVisitTabState extends State<WantToVisitTab> {
                               Platform.isAndroid,
                               context,
                               (val) {
-                                setState(() {
-                                  _chosenDateTime = val;
-                                });
                               },
                             ));
                           },

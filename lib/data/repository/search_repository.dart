@@ -1,3 +1,5 @@
+import 'package:places/database/database.dart';
+
 class SearchRepository {
-  List<String> history = [];
+  List<History> history = [];
 }

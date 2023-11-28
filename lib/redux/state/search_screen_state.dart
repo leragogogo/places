@@ -1,4 +1,5 @@
 import 'package:places/data/model/place.dart';
+import 'package:places/database/database.dart';
 
 /// Базовое состояние экрана поиска.
 abstract class SearchScreenState {}
@@ -14,7 +15,7 @@ class SearchScreenDataState extends SearchScreenState {
 
 /// Состояние экрана с историей поиска.
 class SearchScreenHistoryState extends SearchScreenState {
-  List<String> history;
+  List<History> history;
   SearchScreenHistoryState(this.history);
 }
 

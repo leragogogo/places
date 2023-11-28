@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:places/data/model/place.dart';
 import 'package:places/data/model/categories.dart';
 
@@ -14,16 +15,35 @@ class ChooseImagesAction extends AddSightScreenAction {
   ChooseImagesAction(this.context);
 }
 
+// Загрузка картинок для нового места.
+class UploadImageAction extends AddSightScreenAction {
+  BuildContext context;
+  int typeOfUploding;
+  UploadImageAction(this.context, this.typeOfUploding);
+}
+
 // Удалить картинку.
 class RemoveImageAction extends AddSightScreenAction {
-  int index;
-  RemoveImageAction(this.index);
+  XFile? imageForRemoval;
+  RemoveImageAction(this.imageForRemoval);
+}
+
+// Ошибка при загрузки картинки.
+class UploadImageErrorAction extends AddSightScreenAction {
+  BuildContext context;
+  UploadImageErrorAction(this.context);
 }
 
 // Открытие экрана выбора категориию
 class OpenChoosingCategoryScreenAction extends AddSightScreenAction {
   BuildContext context;
   OpenChoosingCategoryScreenAction(this.context);
+}
+
+// Добавдение картинки.
+class AddImageAction extends AddSightScreenAction {
+  XFile? image;
+  AddImageAction(this.image);
 }
 
 // Заполнение поля с именем места.
