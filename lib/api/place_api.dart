@@ -5,7 +5,7 @@ import 'package:places/data/model/place.dart';
 import 'package:places/data/network_exception.dart';
 
 class PlaceApi {
-  Future<List<Place>> loadPlaces() async {
+  /*Future<List<Place>> loadPlaces() async {
     DioConfigurators.addInterceptors();
     final Response response = await DioConfigurators.dio.get<String>(
       '/place',
@@ -18,7 +18,7 @@ class PlaceApi {
     }
 
     return parsePlaces(response.data.toString());
-  }
+  }*/
 
   List<Place> parsePlaces(String json) {
     final listJson = jsonDecode(json) as List;
