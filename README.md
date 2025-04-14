@@ -1,16 +1,5 @@
-# places
+# Places
 
-A new Flutter project.
+A cross-platform mobile application made with Flutter aiming to show interesting places nearby. Users can set the radius and the type of a place and see sights in a list on the map.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The video demonstrating app's interface: https://drive.google.com/file/d/1fA-3F9GaVx7NEfd6qOW8rdscP_658rM2/view?usp=sharing
